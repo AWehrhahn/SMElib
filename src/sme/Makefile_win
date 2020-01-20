@@ -1,0 +1,86 @@
+#
+#  Platform independent makefile for the SME Call_External's.
+#
+SHELL=/bin/sh
+F_LD_POST=
+F_LD_BLAS=
+#EOS_DIR = $(HOME)/EOS
+MINGW_DIR = C:/minGW/bin
+EOS_DIR = $(PWD)/../EOS
+SME_DIR = $(PWD)
+
+# The following is the default entry point. This section will determine
+# what system we are on, set the correct flags and call this same makefile
+# again with the correct flags.
+# The commands to make the library on the Windows platform using MinGW are:
+# cd (source)
+# C:\MinGW\bin\mingw32-make
+
+CC_32=g++
+F77_32=gfortran
+C_LD_32=gfortran
+F_LD_32=gfortran
+CFLAGS_32= -O -DBUILDING_SME_WIN_DLL
+FFLAGS_32= -O
+FF1_32= -O
+FF2_32= -O
+F_LD_FLAGS_32= -shared -static
+F_LD_POST_32= -Wl,--out-implib,libsme_dll.a -lm -lstdc++
+SHL_EXT_32=Win32.x86.32
+
+CC_64=g++.exe
+F77=gfortran.exe
+C_LD_64=gfortran.exe
+F_LD_64=gfortran.exe
+CFLAGS_64= -O -DBUILDING_SME_WIN_DLL -m64
+FFLAGS_64= -O  -m64
+FF1_64= -O -m64
+FF2_64= -O -m64
+F_LD_FLAGS_64= -shared -static -m64
+F_LD_POST_64= -Wl,--out-implib,libsme_dll.a -lm -lstdc++
+SHL_EXT_64=Win32.x86_64.64
+
+all: 64bit
+
+32bit:
+	$(CC_32) $(CFLAGS_32) -c sme_synth_faster.c
+	$(F77_32) -c $(FFLAGS_32) -o ./eos.o $(EOS_DIR)/eos.f
+	$(F77_32) -c $(FFLAGS_32) -o ./eos_eqns.o $(EOS_DIR)/eos_eqns.f
+	$(F77_32) -c $(FFLAGS_32) -o ./eos_math.o 	$(EOS_DIR)/eos_math_special.f
+	$(F77_32) $(FF1_32) -c -o ./hlinop.o $(SME_DIR)/hlinop.f
+	$(F77_32) $(FF2_32) -c -o ./hlinprof.o $(SME_DIR)/hlinprof.f
+	$(F_LD_32) $(F_LD_FLAGS_32) -o sme_synth.$(SHL_EXT_32) sme_synth_faster.o \
+                eos_math.o eos.o eos_eqns.o hlinop.o hlinprof.o \
+                $(F_LD_POST) $(F_LD_BLAS)
+	copy .\sme_synth.$(SHL_EXT_32) .\sme_synth.so.Win32.x86.32
+
+64bit:
+	$(CC_64) $(CFLAGS_64) -c sme_synth_faster.c
+	$(F77_64) -c $(FFLAGS_64) -o ./eos.o $(EOS_DIR)/eos.f
+	$(F77_64) -c $(FFLAGS_64) -o ./eos_eqns.o $(EOS_DIR)/eos_eqns.f
+	$(F77_64) -c $(FFLAGS_64) -o ./eos_math.o $(EOS_DIR)/eos_math_special.f
+	$(F77_64) $(FF1_64) -c -o ./hlinop.o $(SME_DIR)/hlinop.f
+	$(F77_64) $(FF2_64) -c ./hlinprof.o $(SME_DIR)/hlinprof.f
+	$(F_LD_64) $(F_LD_FLAGS_64) -o sme_synth.$(SHL_EXT_64) sme_synth_faster.o \
+                eos_math.o eos.o eos_eqns.o hlinop.o hlinprof.o \
+                $(F_LD_POST) $(F_LD_BLAS)
+	copy .\sme_synth.$(SHL_EXT_64) .\sme_synth.so.Win32.x86_64.64
+
+# Cleanup
+
+tidy :
+	rm -f *.o
+
+clean :
+	rm -f *.o *.so *.sl *.a
+
+
+#  Rules for building the object files.
+
+#.SUFFIXES: .c .o .f
+#
+#.f.o :
+#	$(F77) $(FFLAGS) -c $*.f
+#
+#.c.o :
+#	$(CC) $(CFLAGS) -c $*.c

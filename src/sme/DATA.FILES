@@ -1,0 +1,4 @@
+      CHARACTER*(*) STEHLEFILE,SELFFILE,VCSFILE
+      PARAMETER(STEHLEFILE='stehle_long.dat.INTEL')
+      PARAMETER(SELFFILE='bpo_self.grid.INTEL')
+      PARAMETER(VCSFILE='vcsbalmer.dat')

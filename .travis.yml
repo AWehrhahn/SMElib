@@ -1,0 +1,10 @@
+language: c
+compiler: gcc
+os: linux
+sudo: required
+before_install:
+  - sudo apt-get install gfortran
+
+script:
+  - cd ./src/sme/
+  - make

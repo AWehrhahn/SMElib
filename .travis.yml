@@ -1,11 +1,15 @@
 language: c
 compiler: gcc
-os: linux
-sudo: required
+os: 
+  - linux
+  - osx
+  - windows
 before_install:
   - sudo apt-get install gfortran
 
-script:
+install:
   - ./bootstrap
+
+script:
   - ./configure
   - make

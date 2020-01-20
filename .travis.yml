@@ -1,11 +1,12 @@
 language: c
 compiler: gcc
-os: 
-  - linux
-  - osx
-  - windows
-before_install:
-  - sudo apt-get install gfortran
+
+jobs:
+  include:
+    - os: linux
+      before_install:
+        - sudo apt-get install gfortran
+    - os: osx
 
 install:
   - ./bootstrap

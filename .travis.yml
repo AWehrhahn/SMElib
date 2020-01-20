@@ -6,5 +6,6 @@ before_install:
   - sudo apt-get install gfortran
 
 script:
-  - cd ./src/sme/
+  - ./bootstrap
+  - ./configure
   - make

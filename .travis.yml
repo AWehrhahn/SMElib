@@ -7,6 +7,9 @@ jobs:
       before_install:
         - sudo apt-get install gfortran
     - os: osx
+      before_install:
+        - brew reinstall libtool
+        - brew install gfortran
 
 install:
   - ./bootstrap

@@ -51,4 +51,24 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
+# Automake
+m4/
+autom4te.cache/
+config.status
+Makefile.in
+missing
+Makefile
+.libs/libsme.lai
+ltmain.sh
+libtool
+install-sh
+depcomp
+configure
+config.sub
+config.log
+config.guess
+compile
+aclocal.m4
+
 src/sme/platform.h
+smelib-5.22.tar.gz

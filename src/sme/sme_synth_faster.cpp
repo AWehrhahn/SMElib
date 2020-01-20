@@ -15,6 +15,12 @@
 #define SME_DLL
 #endif
 
+/* Datafile locations */
+// DATA_DIR is defined in platform.h
+
+#define DATAFILE_FE DATA_DIR"Fe1_Bautista2017.dat.INTEL"
+#define DATAFILE_NH DATA_DIR"NH_Stancil2018.dat.INTEL"
+
 /* Constants */
 
 #define MAX_OUT_LEN 511
@@ -117,8 +123,11 @@ double *WLCENT = NULL, *EXCIT = NULL, *GF = NULL,
        *Wlim_left = NULL, *Wlim_right = NULL, VW_scale;
 char *SPLIST = NULL, *spname = NULL;
 int *SPINDEX = NULL;
-char PATH[512];
-int PATHLEN = 0, change_byte_order = 0;
+int change_byte_order = 0;
+
+// These are technically constants but need to be variable for the Fortran call
+char PATH[] = DATA_DIR;
+int PATHLEN = strlen(PATH);
 
 /* Default OK response */
 
@@ -309,26 +318,16 @@ int compress(char *target, char *source)
   return t - 1;
 }
 
-extern "C" char const *SME_DLL SMELibraryVersion(int n, void *arg[]) /* Retern SME library version */
+extern "C" char const *SME_DLL SMELibraryVersion(int n, void *arg[]) /* Return SME library version */
 {
   sprintf(result, "SME Library version: 5.10, September 2017, %s", PLATFORM);
   return result;
 }
 
-extern "C" char const *SME_DLL SetLibraryPath(int n, void *arg[]) /* Retern SME library version */
+extern "C" char const *SME_DLL SetLibraryPath(int n, void *arg[]) /* Set SME library datafile location */
 {
-  PATHLEN = 0;
-  if (n == 1)
-  {
-    PATHLEN = (*(IDL_STRING *)arg[0]).slen;
-    strncpy(PATH, (*(IDL_STRING *)arg[0]).s, PATHLEN); /* Copy path to the Hydrogen line data files */
-    PATH[PATHLEN] = '\0';
-    change_byte_order = 1;
-    change_byte_order = (*((char *)(&change_byte_order))) ? 0 : 1; /* Check if big-endian than need to change byte order */
-    return &OK_response;
-  }
-  strcpy(result, "No path was specified");
-  return result;
+  // OBSOLETE File positions are fixed on compile time
+  return &OK_response;
 }
 
 extern "C" char const *SME_DLL InputWaveRange(int n, void *arg[]) /* Read in Wavelength range */
@@ -3837,15 +3836,12 @@ double FE1OP_new(int J) /* Cross-sections of Fe 1 photoionization time        */
 
   if (first)
   {
-    char path[512];
     int headlen;
     char head[2048];
     float delta;
     FILE *fe1op_data;
 
-    strncpy(path, PATH, PATHLEN + 1);
-    strcat(path, "Fe1_Bautista2017.dat.INTEL");
-    fe1op_data = fopen(path, "rb");
+    fe1op_data = fopen(DATAFILE_FE, "rb");
 
     i = fread(&headlen, sizeof(int), 1, fe1op_data);
     if (change_byte_order)
@@ -4150,15 +4146,12 @@ double NHOP(int J) /* Cross-sections of Fe 1 photoionization time               
 
   if (first)
   {
-    char path[512];
     FILE *NHop_data;
     int headlen, n_etrans, ii;
     char head[2048];
     float gauss_fwhm;
 
-    strncpy(path, PATH, PATHLEN + 1);
-    strcat(path, "NH_Stancil2018.dat.INTEL");
-    NHop_data = fopen(path, "rb");
+    NHop_data = fopen(DATAFILE_NH, "rb");
 
     i = fread(&headlen, sizeof(int), 1, NHop_data);
     if (change_byte_order)
@@ -5971,14 +5964,6 @@ extern "C" char const *SME_DLL Transf(int n, void *arg[])
     keep_lineop = *(short *)arg[10]; /* For several spectral segments there is no 
                                       point recomputing line opacities. This flag
                                       tells when recalculations are needed */
-    if (PATHLEN == 0 && n > 12)
-    {
-      PATHLEN = (*(IDL_STRING *)arg[12]).slen;
-      strncpy(PATH, (*(IDL_STRING *)arg[12]).s, PATHLEN); /* Copy path to the Hydrogen line data files */
-      PATH[PATHLEN] = '\0';
-      change_byte_order = 1;
-      change_byte_order = (*((char *)(&change_byte_order))) ? 0 : 1; /* Check if big-endian than need to change byte order */
-    }
   }
   else /* Old SME software */
   {

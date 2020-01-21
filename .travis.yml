@@ -8,8 +8,7 @@ jobs:
         - sudo apt-get install gfortran
     - os: osx
       before_install:
-        - brew reinstall libtool        
-        - brew install gcc
+        - brew reinstall libtool
     - os: windows
 
 install:

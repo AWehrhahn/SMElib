@@ -9,10 +9,10 @@ jobs:
     - os: osx
       before_install:
         - brew reinstall libtool
-        - brew install gcc
     - os: windows
       before_install:
-        - choco install -y mingw
+        - choco install cygwin
+        - C:\\tools\\cygwin\\cygwinsetup.exe -q -P make,unzip,automake,autoconf,zip,libtool
 
 install:
   - ./bootstrap

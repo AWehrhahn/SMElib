@@ -1,15 +1,39 @@
-language: c
+language: cpp
 compiler: gcc
 
 jobs:
   include:
     - os: linux
-      before_install:
-        - sudo apt-get install gfortran
+      addons:
+        apt:
+          packages:
+            - g++
+            - gfortran
+            - make
     - os: osx
-      before_install:
-        - brew reinstall libtool
+      addons:
+          homebrew:
+            update: true
+            packages:
+              - make
+              - automake
+              - libtool
+      before_cache:
+        - brew cleanup
     - os: windows
+      env:
+        global:
+        # https://travis-ci.community/t/yarn-network-troubles/333/7
+        - >
+            DISABLE_WINDOWS_DEFENDER=`powershell -Command
+            Set-MpPreference -DisableArchiveScanning \\\$true`
+        - >
+            DISABLE_WINDOWS_DEFENDER=`powershell -Command
+            Set-MpPreference -DisableRealtimeMonitoring \\\$true`
+        - >
+            DISABLE_WINDOWS_DEFENDER=`powershell -Command
+            Set-MpPreference -DisableBehaviorMonitoring \\\$true`
+
       before_install:
       - |-
           case $TRAVIS_OS_NAME in
@@ -22,13 +46,12 @@ jobs:
               export msys2+='& C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start'
               export mingw64="$msys2 -mingw64 -full-path -here -c \$\* --"
               export msys2+=" -msys2 -c \$\* --"
-              $msys2 pacman --sync --noconfirm --needed mingw-w64-x86_64-toolchain
+              $msys2 pacman --sync --noconfirm --needed \
+                      autoconf \
+                      automake \
+                      mingw-w64-x86_64-libtool \
+                      mingw-w64-x86_64-toolchain
               ## Install more MSYS2 packages from https://packages.msys2.org/base here
-              $msys2 pacman --sync --noconfirm --needed gcc
-              $msys2 pacman --sync --noconfirm --needed gfortran
-              $msys2 pacman --sync --noconfirm --needed automake
-              $msys2 pacman --sync --noconfirm --needed autoconf
-              $msys2 pacman --sync --noconfirm --needed libtool
               taskkill //IM gpg-agent.exe //F  # https://travis-ci.community/t/4967
               export PATH=/C/tools/msys64/mingw64/bin:$PATH
               export MAKE=mingw32-make  # so that Autotools can find it
@@ -46,6 +69,12 @@ jobs:
         directories:
         - $HOME/AppData/Local/Temp/chocolatey
         - /C/tools/msys64
+      install:
+        - $msys2 ./bootstrap
+      script:
+        - $msys2 ./configure
+        - $msys2 make
+
 install:
   - ./bootstrap
 

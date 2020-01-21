@@ -9,7 +9,7 @@ jobs:
     - os: osx
       before_install:
         - brew reinstall libtool
-        - brew install gfortran
+        - brew cask install gfortran
 
 install:
   - ./bootstrap

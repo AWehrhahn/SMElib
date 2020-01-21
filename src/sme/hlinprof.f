@@ -343,7 +343,8 @@ C  Read line ID and construct line index
 C
         READ(1,ERR=9,END=10) (N1(LINE),M1(LINE),LINE=1,NLINE1)
         DO 1 LINE=1,NLINE1
-   1    LINDEX(N1(LINE),M1(LINE))=LINE
+        LINDEX(N1(LINE),M1(LINE))=LINE
+   1    CONTINUE
 C
 C  Read temperatures and electron densities
 C
@@ -366,8 +367,9 @@ C
         DO 2 L=1,NLINE1
         READ(1,ERR=9,END=10) (((ALPHA(K,I,J,L),K=1,NWL1),
      *                       I=1,NTEMP1),J=1,NNE1)
-   2    READ(1,ERR=9,END=10) (((SPROF(K,I,J,L),K=1,NWL1),
+        READ(1,ERR=9,END=10) (((SPROF(K,I,J,L),K=1,NWL1),
      *                       I=1,NTEMP1),J=1,NNE1)
+   2    CONTINUE
         CLOSE(1)
 C
 C Re-checking NALPHA
@@ -633,7 +635,8 @@ C  Read line ID and construct line index, read grid parameters
 C
         READ(1,ERR=9,END=10) (NL(LINE),NU(LINE),LINE=1,NLINE)
         DO 401 I=1,NLINE
- 401       LINDEX(NL(I),NU(I))=I
+           LINDEX(NL(I),NU(I))=I
+ 401    CONTINUE
         READ(1,ERR=9,END=10) NNH
         READ(1,ERR=9,END=10) (NH(I),I=1,NNH)
         READ(1,ERR=9,END=10) NTEMP
@@ -1228,10 +1231,11 @@ C     TO AVOID BAD EXTRAPOLATION AT LOW DENSITY
       INE=MAX(MIN(INE,16),1)
       WTXNE=BNE-INE                             
       DO 21 I=1,40                                                
-   21 PRALPH(I)=(1.-WTXNE)*(1.-WTTEMP)*SVCS(ITEMP  ,INE  ,I,LINE)+
+      PRALPH(I)=(1.-WTXNE)*(1.-WTTEMP)*SVCS(ITEMP  ,INE  ,I,LINE)+
      1               (1.-WTXNE)*WTTEMP*SVCS(ITEMP+1,INE  ,I,LINE)+           
      2               WTXNE*(1.-WTTEMP)*SVCS(ITEMP  ,INE+1,I,LINE)+
      3                    WTXNE*WTTEMP*SVCS(ITEMP+1,INE+1,I,LINE)
+   21 CONTINUE
 C     NOW ALPHA INTERPOLATION
       FO=1.25E-9*XNE**.66666667
 c      DO 50 I=1,II

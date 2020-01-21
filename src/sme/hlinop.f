@@ -70,7 +70,7 @@ C
       DATA CUTNEXT/.FALSE./
 C
 C  Set REFLECT true to reflect profiles off the cutoffs (following 
-C  Däppen et al 1987, ApJ 319, 195). The shape of the far wings should 
+C  Dï¿½ppen et al 1987, ApJ 319, 195). The shape of the far wings should 
 C  *not* be relied on in detail as state mixing in quasimolecular states
 C  will determine potentials and therefore line shape, the opacity 
 C  should perhaps be there somewhere (in the form of a satellite), and 
@@ -99,9 +99,11 @@ C
         EHYD(7) = 107440.444D0
         EHYD(8) = 107965.051D0
         DO 1 I = 9, 100
- 1      EHYD(I) = 109678.764D0 - 109677.576D0/I**2
+        EHYD(I) = 109678.764D0 - 109677.576D0/I**2
+ 1      CONTINUE
         DO 2 I = 1, 100
- 2      CONTH(I) = 109678.764D0 - EHYD(I)
+        CONTH(I) = 109678.764D0 - EHYD(I)
+ 2      CONTINUE
 C
 C  Red cutoff wavelengths in Angstroms.
 C  Arbitrarily chosen to be the same energy below the upper state of the
@@ -119,8 +121,8 @@ C
         WCUT(1) = 3647.D0
         WCUT(2) = 8650.D0
         DO 3 I = 3, 98
- 3      WCUT(I) = 1.D8/((EHYD(I+1)-EHYD(I))-(EHYD(I+2)-EHYD(I+1)))
-C
+        WCUT(I) = 1.D8/((EHYD(I+1)-EHYD(I))-(EHYD(I+2)-EHYD(I+1)))
+ 3      CONTINUE
         FIRST = .FALSE.
       END IF
 C

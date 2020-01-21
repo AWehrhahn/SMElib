@@ -1106,7 +1106,8 @@ C
       call mparse(elemen,name,nel,charge,iel,nat,ELESIZ)
       llength=0
       do 1 i=1,nel
-   1  llength=llength+iel(i)*10+10000*nat(i)
+      llength=llength+iel(i)*10+10000*nat(i)
+   1  continue
       if(charge.gt.0) then
         llength=llength+charge
       else if(charge.lt.0) then
@@ -1273,7 +1274,8 @@ C
 
 
             do 3 k=j,nlist-1
-   3        list1(k)=list1(k+1)
+            list1(k)=list1(k+1)
+   3        continue
             nlist=nlist-1
             if(nlines.gt.0) then
               do 4 k=1,nlines
@@ -1493,7 +1495,8 @@ C
         CHARGE=1
         DO 3 IONN=1,IONSIZ-1
         IF(SPNAME(I1+IONN:I1+IONN).NE.'+') RETURN
-   3    CHARGE=CHARGE+1
+        CHARGE=CHARGE+1
+   3    CONTINUE
       END IF
 C
 C  Fall through if we didn't just find a charge state and return. Loop
@@ -1660,7 +1663,8 @@ C  electrons in denominator. NP 29-12-2006.
         AWT(ISPEC)=AWT(ISPEC)+NATM(IELM)*AMASS(ANUM(IELM))
         RATIOM=RATIOM+NATM(IELM)*LOG10(AMASS(ANUM(IELM)))
         CALL XSAHA(ANUM(IELM),T,XNELEC,XNATOM,IONSIZ,POTI,FRACT,3)
-   2    QPRD=QPRD+NATM(IELM)*LOG10(FRACT(1))
+        QPRD=QPRD+NATM(IELM)*LOG10(FRACT(1))
+   2    CONTINUE
         RATIOM=RATIOM-LOG10(AWT(ISPEC))+(NTOT(ISPEC)-1)*AMULOG
 C
 C  Now get the molecular constants from MOLCON.
@@ -1743,7 +1747,8 @@ C
       NCH(ISPEC)=NCHG
       DO 3 IELM=1,NELM
       ZAT(IELM,ISPEC)=ANUM(IELM)
-   3  NAT(IELM,ISPEC)=NATM(IELM)
+      NAT(IELM,ISPEC)=NATM(IELM)
+   3  CONTINUE
 C
 C  Go back for next species.
 C
@@ -1867,7 +1872,8 @@ C neutral, but at low electron pressures, this is a poor assumption for
 C species with low ionization potentials.
 C
       DO 1 I=1,ELEDIM
-   1  RNF(I)=1.0D0
+      RNF(I)=1.0D0
+   1  CONTINUE
 C
 C Total gas and electron pressure
 C
@@ -1989,7 +1995,8 @@ C  electrons in denominator. NP 29-12-2006.
         IF(SPLIST(ISPEC).EQ.'H2')  IIH2=ISPEC
         IF(SPLIST(ISPEC).EQ.'CO')  IICO=ISPEC
         IF(SPLIST(ISPEC).EQ.'H2O') IIH2O=ISPEC
-   2    QPRD=QPRD+NATM(IELM)*LOG10(FRACT(1))
+        QPRD=QPRD+NATM(IELM)*LOG10(FRACT(1))
+   2    CONTINUE
         RATIOM=RATIOM-LOG10(AWT(ISPEC))+(NTOT(ISPEC)-1)*AMULOG
 C
 C  Now get the molecular constants from MOLCON.
@@ -2078,7 +2085,8 @@ C
       NCH(ISPEC)=NCHG
       DO 3 IELM=1,NELM
       ZAT(IELM,ISPEC)=ANUM(IELM)
-   3  NAT(IELM,ISPEC)=NATM(IELM)
+      NAT(IELM,ISPEC)=NATM(IELM)
+   3  CONTINUE
 C
 C  Go back for next species.
 C
@@ -2265,7 +2273,8 @@ C================================================================
  201    FORMAT(4x,31(1x,a3,2x))
         DO 21 I=1,KK-1
         DO 20 J=1,KK-1
-  20    AL(J)=LOG10(ABS(A(J,I))+1.0D-50)
+        AL(J)=LOG10(ABS(A(J,I))+1.0D-50)
+  20    CONTINUE
         AL(KK)=LOG10(ABS(A(NEQ,I))+1.0D-50)
         AL(KK+1)=LOG10(ABS(B(I))+1.0D-50)
         NAMET=SPLIST(INDSP(I))
@@ -2287,7 +2296,8 @@ C
 C  Save a copy of the RHS for future step refinement
 C
       DO 23 I=1,NEQ
-  23  RHS(I)=B(I)
+      RHS(I)=B(I)
+  23  CONTINUE
       RHSTOT=myDASUM(NEQ,RHS,1)
 C
 C  Solve linear system for corrections
@@ -2608,7 +2618,8 @@ C neutral, but at low electron pressures, this is a poor assumption for
 C species with low ionization potentials.
 C
       DO 1 I=1,ELEDIM
-   1  RNF(I)=1.0D0
+      RNF(I)=1.0D0
+   1  CONTINUE
 C
 C Total gas and electron pressure
 C
@@ -2718,7 +2729,8 @@ C  electrons in denominator. NP 29-12-2006.
         IF(SPLIST(ISPEC).EQ.'H2')  IIH2=ISPEC
         IF(SPLIST(ISPEC).EQ.'CO')  IICO=ISPEC
         IF(SPLIST(ISPEC).EQ.'H2O') IIH2O=ISPEC
-   2    QPRD=QPRD+NATM(IELM)*LOG10(FRACT(1))
+        QPRD=QPRD+NATM(IELM)*LOG10(FRACT(1))
+   2    CONTINUE
         RATIOM=RATIOM-LOG10(AWT(ISPEC))+(NTOT(ISPEC)-1)*AMULOG
 C
 C  Now get the molecular constants from MOLCON.
@@ -2804,7 +2816,8 @@ C
       NCH(ISPEC)=NCHG
       DO 3 IELM=1,NELM
       ZAT(IELM,ISPEC)=ANUM(IELM)
-   3  NAT(IELM,ISPEC)=NATM(IELM)
+      NAT(IELM,ISPEC)=NATM(IELM)
+   3  CONTINUE
 C
 C  Go back for next species.
 C
@@ -3095,7 +3108,8 @@ C================================================================
         WRITE(*,FORMAT201) (SPLIST(INDSP(K)),K=1,KK-1),'e-','RHS'
         DO 21 I=1,KK-1
         DO 20 J=1,KK-1
-  20    AL(J)=LOG10(ABS(A(J,I))+1.0D-50)
+        AL(J)=LOG10(ABS(A(J,I))+1.0D-50)
+  20    CONTINUE
         AL(KK)=LOG10(ABS(A(NEQ,I))+1.0D-50)
         AL(KK+1)=LOG10(ABS(B(I))+1.0D-50)
         NAMET=SPLIST(INDSP(I))
@@ -3116,7 +3130,8 @@ C
 C  Save a copy of the RHS for future step refinement
 C
       DO 23 I=1,NEQ
-  23  RHS(I)=B(I)
+      RHS(I)=B(I)
+  23  CONTINUE
       RHSTOT=myDASUM(NEQ,RHS,1)
 C
 C  Solve linear system for corrections
@@ -4110,7 +4125,8 @@ C Construct partition function from polynomial coefficients.
 C
       PART=PCOEF(NPCOEF-1,J)
       DO 3 I=NPCOEF-2,1,-1
-    3 PART=LOGTH*PART+PCOEF(I,J)
+      PART=LOGTH*PART+PCOEF(I,J)
+    3 CONTINUE
 C
 C Copy ionization potential
 C
@@ -7173,7 +7189,8 @@ C  Natural upper boundary condition
 C
       Y2(N)=0.D0
       DO 2 I=N-1,1,-1
-  2   Y2(I)=Y2(I)*Y2(I+1)+U(I)
+      Y2(I)=Y2(I)*Y2(I+1)+U(I)
+  2   CONTINUE
 C
       RETURN
       END
@@ -8168,15 +8185,19 @@ C
 
    3    CONTINUE
         DO 4 IONN=NION2,2,-1
-   4    FFF(1)=1.+FFF(IONN)*FFF(1)
+        FFF(1)=1.+FFF(IONN)*FFF(1)
+   4    CONTINUE
         FFF(1)=1./FFF(1)
         DO 5 IONN=2,NION2
-   5    FFF(IONN)=FFF(IONN-1)*FFF(IONN)
+        FFF(IONN)=FFF(IONN-1)*FFF(IONN)
+   5    CONTINUE
         DO 6 IONN=1,MAXION
-   6    FRCT(IONN)=1.
+        FRCT(IONN)=1.
+   6    CONTINUE
       ELSE
         DO 7 IONN=1,MAXION
-   7    FRCT(IONN)=0.
+        FRCT(IONN)=0.
+   7    CONTINUE
       END IF
 C
 C  Formulate the answer according to MODE
@@ -8188,7 +8209,8 @@ C
         IF(NIONS.GT.1) THEN
           DO 8 IONN=2,NIONS
           POTI(IONN)=IP(IONN)
-   8      FRCT(IONN)=FFF(IONN)/PART(IONN)
+          FRCT(IONN)=FFF(IONN)/PART(IONN)
+   8      CONTINUE
         END IF
       ELSE IF(MODE.EQ.2) THEN
         FRCT(1)=FFF(1)
@@ -8196,7 +8218,8 @@ C
         IF(NIONS.GT.1) THEN
           DO 9 IONN=2,NIONS
           POTI(IONN)=IP(IONN)
-   9      FRCT(IONN)=FFF(IONN)
+          FRCT(IONN)=FFF(IONN)
+   9      CONTINUE
         END IF
       ELSE IF(MODE.EQ.3) THEN
         FRCT(1)=PART(1)
@@ -8204,7 +8227,8 @@ C
         IF(NIONS.GT.1) THEN
           DO 10 IONN=2,NIONS
           POTI(IONN)=IP(IONN)
-  10      FRCT(IONN)=PART(IONN)
+          FRCT(IONN)=PART(IONN)
+  10      CONTINUE
         END IF
       ELSE IF(MODE.EQ.4) THEN
         FRCT(1)=0
@@ -8212,7 +8236,8 @@ C
         IF(NIONS.GT.1) THEN
           DO 11 IONN=2,NIONS
           POTI(IONN)=IP(IONN)
-  11      FRCT(1)=FRCT(1)+FFF(IONN)*(IONN-1)
+          FRCT(1)=FRCT(1)+FFF(IONN)*(IONN-1)
+  11      CONTINUE
         END IF
       END IF
 C

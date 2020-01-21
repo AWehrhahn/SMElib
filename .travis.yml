@@ -11,8 +11,8 @@ jobs:
         - brew reinstall libtool
     - os: windows
       before_install:
-        - choco install cygwin
-        - C:\\tools\\cygwin\\cygwinsetup.exe -q -P make,unzip,automake,autoconf,zip,libtool
+        - choco install -y mingw
+        - apt-get install gfortran
 
 install:
   - ./bootstrap

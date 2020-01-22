@@ -75,8 +75,9 @@ before_deploy:
 
 deploy:
   provider: releases
+  skip_cleanup: true
+  file: smelib.tar.gz
   api_key:
     secure: mVOwSNIG/LXshCZD4YzVKLKelp0qqSOzvHME+4huKHqDces3CSUIPLThvxk1/Uk3foKn1IiIcAsZaQ+LGieGCqi204nDDsjuLxuqSqoO5P9Q+Hqs81pfHV8hSMKcEGmpmzmTQt+RDBuSXyoGx8YC3d65JKyOEpgbpzScnWo79LLEYXopUnq5p2jKG15AoVWQTDbm9OnoItfic1iFwEG2KlHLEx4MOhHtn79Yhuxkya9O452s7xJu2EoC7VsN0u66bhp+NQ8/J2qCDNATRfUMCT5FMBLdK6DX0aoD3wxdXkiVYUUoev3Qw0WaqYwZwDos/1T2ttn+PGEkYe6jTKlMyiH2J9jeWjaRdV0dIKVdxMyS0cJpf6n32Lb3HQ+g9RcEXeywC4ZV5SXHfYTv3WlJcAmKmCktPS9ErQ3FmttcKT6xO1C7S2IQViXE1Q/Ml7go9+hUzMNvJLxfW2O1TjmeS/uspK5a5Ln+/f4qQx70h87Cf25kNsFrLPxakgcV/I+giMALa2ilWODhbpGRC/PdO3M/LUxVtenz0jgczq//S9uvMLHt0qDP5IXVVQIUJ6tzT+UAyOCEh4HRYP5wIRpHwqA4xyWcAvgRXIGT1K/fLDuxl2VENmVY9H1H7Keh3kKdf77nA+T/6bIiig7+0jt9LVDKrTqKektGLghaahOQSTM=
-  file: smelib.tar.gz
   on:
     repo: AWehrhahn/SMElib

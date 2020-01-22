@@ -1,7 +1,5 @@
 language: cpp
 compiler: gcc
-env:
-- SHELL=
 jobs:
   include:
   - os: linux
@@ -60,17 +58,27 @@ jobs:
       directories:
       - "$HOME/AppData/Local/Temp/chocolatey"
       - "/C/tools/msys64"
+    install:
+    - $msys2 mkdir m4
+    - $msys2 ./bootstrap
+    script:
+    - $msys2 ./configure --prefix=$PWD
+    - $msys2 make install
+    - $msys2 tar -czvf smelib.tar.gz lib share
+
 install:
-- "$SHELL mkdir m4"
-- "$SHELL ./bootstrap"
+- mkdir m4
+- ./bootstrap
+
 script:
-- "$SHELL ./configure --prefix=$PWD"
-- "$SHELL make install"
-- "$SHELL tar -czvf smelib.tar.gz lib share"
+- ./configure --prefix=$PWD
+- make install
+- tar -czvf smelib.tar.gz lib share
+
 before_deploy:
 - git config --local user.name "AWehrhahn"
 - git config --local user.email "ansgar.wehrhahn@physics.uu.se"
-- export TRAVIS_TAG=${TRAVIS_TAG:-$TRAVIS_OS_NAME}
+- export TRAVIS_TAG=$TRAVIS_OS_NAME-$TRAVIS_TAG
 - export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
 - git tag $TRAVIS_TAG
 

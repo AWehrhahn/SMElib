@@ -1,5 +1,7 @@
 language: cpp
 compiler: gcc
+env:
+- SHELL=
 jobs:
   include:
   - os: linux
@@ -20,6 +22,8 @@ jobs:
     before_cache:
     - brew cleanup
   - os: windows
+    env:
+    - SHELL=$msys2
     before_install:
     - |-
       case $TRAVIS_OS_NAME in
@@ -56,28 +60,25 @@ jobs:
       directories:
       - "$HOME/AppData/Local/Temp/chocolatey"
       - "/C/tools/msys64"
-    install:
-    - "$msys2 mkdir m4"
-    - "$msys2 ./bootstrap"
-    script:
-    - "$msys2 ./configure --prefix=$PWD"
-    - "$msys2 make install"
-    - $msys2 tar -czvf smelib.tar.gz lib share
-
 install:
-  - "./bootstrap"
-
+- "$SHELL mkdir m4"
+- "$SHELL ./bootstrap"
 script:
-  - "./configure --prefix=$PWD"
-  - make install
-  - tar -czvf smelib.tar.gz lib share
+- "$SHELL ./configure --prefix=$PWD"
+- "$SHELL make install"
+- "$SHELL tar -czvf smelib.tar.gz lib share"
+
+before_deploy:
+  # Set up git user name and tag this commit
+  - git config --local user.name "AWehrhahn"
+  - git config --local user.email "ansgar.wehrhahn@physics.uu.se"
+  - export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
+  - git tag $TRAVIS_TAG
 
 deploy:
   provider: releases
   api_key:
-    secure: 1ltFP4R4QN/XXEuTR2Z+0N3sAP1xmX1FnWXvYuewWMxdATwf/EezqgDn7wDYYOa7f+v8/BHWx0PZYqgDDLelTyrcEffUJRpqzU6x5KJTOIya/KkXALU41m/Gfqi9o/X5N5QUi2SAgvhFFIvihNxNRLm0Ztkcw7KmYeLouk5YwYa0263jcoysshaZ3oetXkaR6f1EQ4ux+DpoJ7x52MFBiLxYqienSJB9/SunJFNlW9oraNnbRXjDKiSErY2ja9MKucollIuue95CfMuSucZMn+cGzsjloxba5AWzdtBzQtFa1Bbm74uglP/HTXT89wzzTAadRGzYEXh5Y8x3TzVrDtqmnWy24CunfZtDzsYsEGIw5MUL4ZUHuZ3FKsf2y/OHGxa+ZKDki5z+fU1hZlSIKk1de0CdKZjcWo4B4MUf53MZF/4snhfTD1krwM31+3mgCK8st7EVd66KYE3eC+88Ykolz0ZfNsxspQ1IBEoayx1wKjNBBJyQH/6XHHlwoRiKoxfeU1u2iI7CW0CR7p4t1Npsuuoq4EsUUaNW6uG6NJ7TTVuPm14jEmHtRRUdVaO++l4xb1nNmuBMB0sNr0M+rWtls+ukRM50YSdeEupi3t3JQVKyYg+3rdFqK9YrTjr6Y2daTn4m3q4qqycHVxojVChlu2A/bHF1o2P1Mq5GHkA=
+    secure: wUapDibGNiNKwuHW3fDylBMsXzb2gmo9lXR7HvLNev1fT3mwF0FHU6FsG4FDuT/dcND26YkB+laKQHGlkgXuIIsiaKdEaGr7D8BXTk3gQywbYz7TGIR+n02aswXy93P276uky/2ZQ1fdyrv9YrIXIep5O8lDggSSo25PevcAtLKUTqAyFlSeaPqRQjLXSQZT66Kx4vdkNWgLYzNoHxCFBobRKqXG68AaCzPIfnwcsPau3lH4G75mvXZa+ESCZeble4JkSbB/rcJ5w88mfEYfvDhbT9H6gq4RJNsetjjJNJQq04FJkLfXOg2POpOMTnZP9v4i4P6gLrLyLlIfqfl00AxAGqsghDGV9/wpuvi3gw4+/HyRcuLse42JruKVbf2hb4OnoQCDB92nXcbQO4o2Bu256PkFbqsBEj0v9ja0O/ubPqXcm5Ph5+qvmP49LDC1qzJN0UyVwF6eu3IoFTWCbARlfQFs2fWmAKdpHiiO61lRD/hFLhn2ThRbYA/tnJfJKHgnkDdNNr9cSaLgKD0FQKugyg+T1eLa+k6FuGUJJxq2Wo28GBAYF+ihGwAMmCSpU3uH3+XE1ceqUQWxSw88GH6uKoAMlgaLgryMXDr5lLctE8LfiJyeKyZFrC21VbBmDzhjLWqai2ma1PL9w38OsFaHUzJiA9bJKLf/GOlK5Nk=
   file: smelib.tar.gz
   on:
     repo: AWehrhahn/SMElib
-  draft: true
-  overwrite: true

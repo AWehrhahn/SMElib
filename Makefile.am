@@ -31,6 +31,7 @@ CLEANFILES = src/sme/platform.h
 
 PLATFORM = $(shell uname -s)
 DATA_DIR = @datadir@/smelib/
+# DATA_DIR = "../share/smelib/"
 
 src/sme/platform.h:
 	echo '#define PLATFORM "$(PLATFORM)"' > src/sme/platform.h

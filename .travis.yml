@@ -1,85 +1,83 @@
 language: cpp
 compiler: gcc
-
 jobs:
   include:
-    - os: linux
-      addons:
-        apt:
-          packages:
-            - g++
-            - gfortran
-            - make
-    - os: osx
-      addons:
-          homebrew:
-            update: true
-            packages:
-              - make
-              - automake
-              - libtool
-      before_cache:
-        - brew cleanup
-    - os: windows
-      env:
-        global:
-        # https://travis-ci.community/t/yarn-network-troubles/333/7
-        - >
-            DISABLE_WINDOWS_DEFENDER=`powershell -Command
-            Set-MpPreference -DisableArchiveScanning \\\$true`
-        - >
-            DISABLE_WINDOWS_DEFENDER=`powershell -Command
-            Set-MpPreference -DisableRealtimeMonitoring \\\$true`
-        - >
-            DISABLE_WINDOWS_DEFENDER=`powershell -Command
-            Set-MpPreference -DisableBehaviorMonitoring \\\$true`
-
-      before_install:
-      - |-
-          case $TRAVIS_OS_NAME in
-            windows)
-              [[ ! -f C:/tools/msys64/msys2_shell.cmd ]] && rm -rf C:/tools/msys64
-              choco uninstall -y mingw
-              choco upgrade --no-progress -y msys2
-              export msys2='cmd //C RefreshEnv.cmd '
-              export msys2+='& set MSYS=winsymlinks:nativestrict '
-              export msys2+='& C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start'
-              export mingw64="$msys2 -mingw64 -full-path -here -c \$\* --"
-              export msys2+=" -msys2 -c \$\* --"
-              $msys2 pacman --sync --noconfirm --needed \
-                      autoconf \
-                      automake \
-                      libtool \
-                      mingw-w64-x86_64-libtool \
-                      mingw-w64-x86_64-toolchain
-              ## Install more MSYS2 packages from https://packages.msys2.org/base here
-              taskkill //IM gpg-agent.exe //F  # https://travis-ci.community/t/4967
-              export PATH=/C/tools/msys64/mingw64/bin:$PATH
-              export MAKE=mingw32-make  # so that Autotools can find it
-              ;;
-          esac
-      before_cache:
-      - |-
-          case $TRAVIS_OS_NAME in
-            windows)
-              # https://unix.stackexchange.com/a/137322/107554
-              $msys2 pacman --sync --clean --noconfirm
-              ;;
-          esac
-      cache:
-        directories:
-        - $HOME/AppData/Local/Temp/chocolatey
-        - /C/tools/msys64
-      install:
-        - $msys2 mkdir m4
-        - $msys2 ./bootstrap
-      script:
-        - $msys2 ./configure
-        - $msys2 make
+  - os: linux
+    addons:
+      apt:
+        packages:
+        - g++
+        - gfortran
+        - make
+  - os: osx
+    addons:
+      homebrew:
+        update: true
+        packages:
+        - make
+        - automake
+        - libtool
+    before_cache:
+    - brew cleanup
+  - os: windows
+    before_install:
+    - |-
+      case $TRAVIS_OS_NAME in
+        windows)
+          [[ ! -f C:/tools/msys64/msys2_shell.cmd ]] && rm -rf C:/tools/msys64
+          choco uninstall -y mingw
+          choco upgrade --no-progress -y msys2
+          export msys2='cmd //C RefreshEnv.cmd '
+          export msys2+='& set MSYS=winsymlinks:nativestrict '
+          export msys2+='& C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start'
+          export mingw64="$msys2 -mingw64 -full-path -here -c \$\* --"
+          export msys2+=" -msys2 -c \$\* --"
+          $msys2 pacman --sync --noconfirm --needed \
+                  autoconf \
+                  automake \
+                  libtool \
+                  mingw-w64-x86_64-libtool \
+                  mingw-w64-x86_64-toolchain
+          ## Install more MSYS2 packages from https://packages.msys2.org/base here
+          taskkill //IM gpg-agent.exe //F  # https://travis-ci.community/t/4967
+          export PATH=/C/tools/msys64/mingw64/bin:$PATH
+          export MAKE=mingw32-make  # so that Autotools can find it
+          ;;
+      esac
+    before_cache:
+    - |-
+      case $TRAVIS_OS_NAME in
+        windows)
+          # https://unix.stackexchange.com/a/137322/107554
+          $msys2 pacman --sync --clean --noconfirm
+          ;;
+      esac
+    cache:
+      directories:
+      - "$HOME/AppData/Local/Temp/chocolatey"
+      - "/C/tools/msys64"
+    install:
+    - "$msys2 mkdir m4"
+    - "$msys2 ./bootstrap"
+    script:
+    - "$msys2 ./configure --prefix=$PWD"
+    - "$msys2 make install"
+    - $msys2 tar -czvf smelib.tar.gz lib share
 
 install:
-  - ./bootstrap
+  - "./bootstrap"
 
 script:
-  - ./configure
-  - make
+  - "./configure --prefix=$PWD"
+  - make install
+  - tar -czvf smelib.tar.gz lib share
+
+deploy:
+  provider: releases
+  api_key:
+    secure: 1ltFP4R4QN/XXEuTR2Z+0N3sAP1xmX1FnWXvYuewWMxdATwf/EezqgDn7wDYYOa7f+v8/BHWx0PZYqgDDLelTyrcEffUJRpqzU6x5KJTOIya/KkXALU41m/Gfqi9o/X5N5QUi2SAgvhFFIvihNxNRLm0Ztkcw7KmYeLouk5YwYa0263jcoysshaZ3oetXkaR6f1EQ4ux+DpoJ7x52MFBiLxYqienSJB9/SunJFNlW9oraNnbRXjDKiSErY2ja9MKucollIuue95CfMuSucZMn+cGzsjloxba5AWzdtBzQtFa1Bbm74uglP/HTXT89wzzTAadRGzYEXh5Y8x3TzVrDtqmnWy24CunfZtDzsYsEGIw5MUL4ZUHuZ3FKsf2y/OHGxa+ZKDki5z+fU1hZlSIKk1de0CdKZjcWo4B4MUf53MZF/4snhfTD1krwM31+3mgCK8st7EVd66KYE3eC+88Ykolz0ZfNsxspQ1IBEoayx1wKjNBBJyQH/6XHHlwoRiKoxfeU1u2iI7CW0CR7p4t1Npsuuoq4EsUUaNW6uG6NJ7TTVuPm14jEmHtRRUdVaO++l4xb1nNmuBMB0sNr0M+rWtls+ukRM50YSdeEupi3t3JQVKyYg+3rdFqK9YrTjr6Y2daTn4m3q4qqycHVxojVChlu2A/bHF1o2P1Mq5GHkA=
+  file: smelib.tar.gz
+  on:
+    repo: AWehrhahn/SMElib
+  draft: true
+  overwrite: true

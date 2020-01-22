@@ -72,3 +72,7 @@ aclocal.m4
 
 src/sme/platform.h
 smelib-5.22.tar.gz
+share/
+lib/
+archive.tar.gz
+smelib.zip.gz

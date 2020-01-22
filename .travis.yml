@@ -70,6 +70,7 @@ script:
 before_deploy:
 - git config --local user.name "AWehrhahn"
 - git config --local user.email "ansgar.wehrhahn@physics.uu.se"
+- export TRAVIS_TAG=${TRAVIS_TAG:-$TRAVIS_OS_NAME}
 - export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
 - git tag $TRAVIS_TAG
 

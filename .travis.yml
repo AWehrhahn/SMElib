@@ -68,7 +68,7 @@ jobs:
     script:
     # - $msys2 ./configure --prefix=$PWD
     - $msys2 make install
-    - $msys2 tar -czvf smelib.tar.gz lib share
+    - $msys2 tar -czvf smelib.tar.gz lib
 
 install:
 - mkdir m4
@@ -77,7 +77,7 @@ install:
 script:
 # - ./configure --prefix=$PWD
 - make install
-- tar -czvf smelib.tar.gz lib share
+- tar -czvf smelib.tar.gz lib
 
 before_deploy:
 - git config --local user.name "AWehrhahn"

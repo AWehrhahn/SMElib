@@ -2,16 +2,21 @@ AUTOMAKE_OPTIONS = foreign
 
 ACLOCAL_AMFLAGS = -I m4
 
+CXXLD = $(F77)
+
 lib_LTLIBRARIES = libsme.la
-libsme_la_SOURCES = src/sme/hlinop.f \
-	src/sme/hlinprof.f \
+libsme_la_SOURCES = \
+	src/sme/platform.h \
+	src/sme/sme_synth_faster.cpp \
+	src/eos/eos.f \
 	src/eos/eos_eqns.f \
 	src/eos/eos_math_special.f \
-	src/eos/eos_math.f \
-	src/eos/eos.f \
-	src/sme/sme_synth_faster.cpp \
-	src/sme/platform.h
-libsme_la_LDFLAGS = -version-info 5:22:0 -shared -static -fexpensive-optimizations
+	src/sme/hlinop.f \
+	src/sme/hlinprof.f
+libsme_la_LDFLAGS = -fPIC -version-info 5:22:0 -shared -static-libgcc 
+libsme_la_CPPFLAGS = -m64 -fPIC -shared -static
+libsme_la_FFLAGS = -m64 -fPIC -shared -static -fexpensive-optimizations
+libsme_la_LIBADD = -lc -lm -lstdc++
 
 dist_pkgdata_DATA = src/data/bpo_self.grid.INTEL \
 	src/data/Fe1_Bautista2017.dat.INTEL \
@@ -29,11 +34,15 @@ BUILT_SOURCES = src/sme/platform.h
 
 CLEANFILES = src/sme/platform.h
 
-PLATFORM = $(shell uname -s)
+PLATFORM = $(shell uname -s | tr '[:upper:]' '[:lower:]')
+MACHINE = $(shell uname -m)
+BITS = 64
+
 DATA_DIR = @datadir@/smelib/
-# DATA_DIR = "../share/smelib/"
 
 src/sme/platform.h:
 	echo '#define PLATFORM "$(PLATFORM)"' > src/sme/platform.h
 	echo '#define DATA_DIR "$(DATA_DIR)"' >> src/sme/platform.h
 
+# Create a symlink to the traditional library name
+$(shell mkdir @libdir@; ln -s libsme.so @libdir@/sme_synth.so.$(PLATFORM).$(MACHINE).$(BITS))

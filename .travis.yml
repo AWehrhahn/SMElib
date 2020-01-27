@@ -5,11 +5,6 @@ branches:
   only:
   - master
 
-env:
-  - EXT_NAME = x86_64
-  - BITS = 64
-  - OS_NAME = $TRAVIS_OS_NAME
-
 jobs:
   include:
   - os: linux
@@ -20,8 +15,6 @@ jobs:
         - gfortran
         - make
   - os: osx
-    env:
-    - OS_NAME = darwin
     addons:
       homebrew:
         update: true
@@ -73,7 +66,7 @@ jobs:
     - $msys2 mkdir m4
     - $msys2 ./bootstrap
     script:
-    - $msys2 ./configure --prefix=$PWD
+    # - $msys2 ./configure --prefix=$PWD
     - $msys2 make install
     - $msys2 tar -czvf smelib.tar.gz lib share
 
@@ -82,9 +75,8 @@ install:
 - ./bootstrap
 
 script:
-- ./configure --prefix=$PWD
+# - ./configure --prefix=$PWD
 - make install
-- ln libsme.so lib/sme_synth.so.$OS_NAME.$EXT_NAME.$BITS
 - tar -czvf smelib.tar.gz lib share
 
 before_deploy:

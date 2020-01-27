@@ -57,7 +57,6 @@ autom4te.cache/
 config.status
 Makefile.in
 missing
-Makefile
 .libs/libsme.lai
 ltmain.sh
 libtool
@@ -77,3 +76,4 @@ lib/
 archive.tar.gz
 smelib.zip.gz
 smelib.tar.gz
+src/sme/.deps/

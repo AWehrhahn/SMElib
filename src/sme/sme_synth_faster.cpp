@@ -237,7 +237,8 @@ extern "C" void hlinprof_(double &, double &, float &, float &, int &, int &,
 
 /* IDL entry points */
 
-extern "C" char const *SME_DLL SMELibraryVersion(int n, void *arg[]); /* Retern SME library version */
+extern "C" char const *SME_DLL SMELibraryVersion(int n, void *arg[]); /* Return SME library version */
+extern "C" char const *SME_DLL SetLibraryPath(int n, void *arg[]);
 extern "C" char const *SME_DLL InputWaveRange(int n, void *arg[]);    /* Read in Wavelength range */
 extern "C" char const *SME_DLL SetVWscale(int n, void *arg[]);        /* Set van der Waals scaling factor */
 extern "C" char const *SME_DLL SetH2broad(int n, void *arg[]);        /* Set flag for H2 molecule */
@@ -320,7 +321,7 @@ int compress(char *target, char *source)
 
 extern "C" char const *SME_DLL SMELibraryVersion(int n, void *arg[]) /* Return SME library version */
 {
-  sprintf(result, "SME Library version: 5.10, September 2017, %s", PLATFORM);
+  sprintf(result, "SME Library version: 5.22, September 2017, %s", PLATFORM);
   return result;
 }
 

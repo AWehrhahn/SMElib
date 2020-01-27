@@ -10,6 +10,7 @@ F_LD_POST=
 F_LD_BLAS=
 SME_DIR = $(PWD)/src/sme
 EOS_DIR = $(PWD)/src/eos
+DATA_DIR = $(PWD)/src/data
 TARGET_DIR = $(PWD)/lib
 
 # The following is the default entry point. This section will determine 
@@ -208,10 +209,13 @@ all :
 
 # C Only libs
 
-all : sme_synth_faster.o eos.o eos_eqns.o eos_math.o hlinop.o \
-                  hlinprof.o smelib.so
+libs : sme_synth_faster.o eos.o eos_eqns.o eos_math.o hlinop.o \
+                  hlinprof.o smelib.so datafiles
 
 install : all
+
+datafiles :
+    $(shell cp $(DATA_DIR)/* $(TARGET_DIR))
 
 smelib.so:
 	$(shell mkdir $(TARGET_DIR))

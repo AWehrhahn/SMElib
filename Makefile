@@ -401,19 +401,13 @@ libsme_la_SOURCES = \
 libsme_la_LDFLAGS = -fPIC -version-info 5:22:0 -shared -static-libgcc
 libsme_la_CPPFLAGS = -m64 -fPIC -shared
 libsme_la_FFLAGS = -m64 -fPIC -shared -fexpensive-optimizations
-libsme_la_LIBADD = -lc -lm -lstdc++ -lgfortran 
+libsme_la_LIBADD = -lc -lm -lstdc++ -lgfortran
 dist_pkgdata_DATA = src/data/bpo_self.grid.INTEL \
 	src/data/Fe1_Bautista2017.dat.INTEL \
 	src/data/NH_Stancil2018.dat.INTEL \
 	src/data/stehle_long.dat.INTEL \
 	src/data/vcsbalmer.dat
 
-
-# EXTRA_DIST = src/data/bpo_self.grid.INTEL \
-# 	src/data/Fe1_Bautista2017.dat.INTEL \
-# 	src/data/NH_Stancil2018.dat.INTEL \
-# 	src/data/stehle_long.dat.INTEL \
-# 	vcsbalmer.dat
 BUILT_SOURCES = src/sme/platform.h
 CLEANFILES = src/sme/platform.h
 PLATFORM = $(shell uname -s | tr '[:upper:]' '[:lower:]')

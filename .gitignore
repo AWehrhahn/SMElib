@@ -76,3 +76,4 @@ lib/
 src/sme/.deps/
 .deps/
 Makefile copy
+build/

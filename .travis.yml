@@ -84,8 +84,6 @@ install:
 
 before_script:
 - source ~/.bashrc
-- python --version
-- python3 --version
 - pip3 install --upgrade pip
 - pip3 install -r test/requirements.txt
 

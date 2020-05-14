@@ -18,4 +18,4 @@ def test_simple_call(dll):
     assert isinstance(version, str)
 
 def test_call_with_input(dll):
-    dll.SetH2broad(False)
+    dll.InputWaveRange(5000, 6000)

@@ -13,10 +13,10 @@ libsme_la_SOURCES = \
 	src/eos/eos_math_special.f \
 	src/sme/hlinop.f \
 	src/sme/hlinprof.f
-libsme_la_LDFLAGS = -fPIC -version-info 5:22:0 -shared -static-libgcc 
-libsme_la_CPPFLAGS = -m64 -fPIC -shared -static
-libsme_la_FFLAGS = -m64 -fPIC -shared -static -fexpensive-optimizations
-libsme_la_LIBADD = -lc -lm -lstdc++
+libsme_la_LDFLAGS = -fPIC -version-info 5:22:0 -shared -static-libgcc
+libsme_la_CPPFLAGS = -m64 -fPIC -shared
+libsme_la_FFLAGS = -m64 -fPIC -shared -fexpensive-optimizations
+libsme_la_LIBADD = -lc -lm -lstdc++ -lgfortran 
 
 dist_pkgdata_DATA = src/data/bpo_self.grid.INTEL \
 	src/data/Fe1_Bautista2017.dat.INTEL \
@@ -37,6 +37,7 @@ CLEANFILES = src/sme/platform.h
 PLATFORM = $(shell uname -s | tr '[:upper:]' '[:lower:]')
 MACHINE = $(shell uname -m)
 BITS = 64
+SHL_EXT = "$(PLATFORM).$(MACHINE).$(BITS)"
 
 DATA_DIR = @datadir@/smelib/
 
@@ -45,4 +46,4 @@ src/sme/platform.h:
 	echo '#define DATA_DIR "$(DATA_DIR)"' >> src/sme/platform.h
 
 # Create a symlink to the traditional library name
-$(shell mkdir @libdir@; ln -s libsme.so @libdir@/sme_synth.so.$(PLATFORM).$(MACHINE).$(BITS))
+$(shell mkdir @libdir@; ln -s libsme.so @libdir@/sme_synth.so.$(SHL_EXT))

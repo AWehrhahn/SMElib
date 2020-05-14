@@ -72,8 +72,8 @@ jobs:
   #   - $msys2 tar -czvf smelib.tar.gz lib
 
 install:
-- ./bootstrap
-- ./configure --prefix=$PWD
+# - ./bootstrap
+# - ./configure --prefix=$PWD
 - make install
 
 before_script:

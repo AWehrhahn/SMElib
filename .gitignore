@@ -74,3 +74,5 @@ src/sme/platform.h
 share/
 lib/
 src/sme/.deps/
+.deps/
+Makefile copy

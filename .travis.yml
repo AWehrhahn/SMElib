@@ -16,6 +16,8 @@ jobs:
         - gfortran
         - make
         - python3.8
+        - python3-venv
+        - python3-pip
     before_deploy:
     - mkdir build
     - tar -czvf build/smelib.tar.gz lib share
@@ -84,8 +86,8 @@ before_script:
 - source ~/.bashrc
 - python --version
 - python3 --version
-- python3 -m pip install --upgrade pip
-- python3 -m pip install -r test/requirements.txt
+- pip3 install --upgrade pip
+- pip3 install -r test/requirements.txt
 
 script:
 - python3 -m pytest

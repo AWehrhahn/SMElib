@@ -81,6 +81,8 @@ install:
 - make install
 
 before_script:
+- source ~/.bashrc
+- python3 --version
 - pip3 install --upgrade pip
 - pip3 install -r test/requirements.txt
 

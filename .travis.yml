@@ -77,13 +77,13 @@ install:
 - make install
 
 before_script:
-- pip install --upgrade pip
-- pip install -r test/requirements.txt
+- pip3 install --upgrade pip
+- pip3 install -r test/requirements.txt
 
 script:
-- pytest
+- python3 -m pytest
 
-before-deploy:
+before_deploy:
 - tar -czvf smelib.tar.gz lib
 
 deploy:

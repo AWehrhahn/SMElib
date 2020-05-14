@@ -57,7 +57,8 @@ autom4te.cache/
 config.status
 Makefile.in
 missing
-.libs/libsme.lai
+.libs/
+.pytest-cache/
 ltmain.sh
 libtool
 install-sh
@@ -70,10 +71,6 @@ compile
 aclocal.m4
 
 src/sme/platform.h
-smelib-5.22.tar.gz
 share/
 lib/
-archive.tar.gz
-smelib.zip.gz
-smelib.tar.gz
 src/sme/.deps/

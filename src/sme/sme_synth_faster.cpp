@@ -20,6 +20,9 @@
 
 #define DATAFILE_FE "Fe1_Bautista2017.dat.INTEL"
 #define DATAFILE_NH "NH_Stancil2018.dat.INTEL"
+#define DATAFILE_STEHLE "stehle_long.dat.INTEL"
+#define DATAFILE_BPO "bpo_self.grid.INTEL"
+#define DATAFILE_VCS "vcsbalmer.dat"
 
 /* Constants */
 
@@ -238,7 +241,9 @@ extern "C" void hlinprof_(double &, double &, float &, float &, int &, int &,
 /* IDL entry points */
 
 extern "C" char const *SME_DLL SMELibraryVersion(int n, void *arg[]); /* Return SME library version */
-extern "C" char const *SME_DLL SetLibraryPath(int n, void *arg[]);
+extern "C" char const *SME_DLL GetDataFiles(int n, void *arg[]);      /* Return the required data files */
+extern "C" char const *SME_DLL GetLibraryPath(int n, void *arg[]);    /* Return the current data file directory */
+extern "C" char const *SME_DLL SetLibraryPath(int n, void *arg[]);    /* Set the data file directory */
 extern "C" char const *SME_DLL InputWaveRange(int n, void *arg[]);    /* Read in Wavelength range */
 extern "C" char const *SME_DLL SetVWscale(int n, void *arg[]);        /* Set van der Waals scaling factor */
 extern "C" char const *SME_DLL SetH2broad(int n, void *arg[]);        /* Set flag for H2 molecule */
@@ -324,6 +329,19 @@ extern "C" char const *SME_DLL SMELibraryVersion(int n, void *arg[]) /* Return S
   sprintf(result, "SME Library version: 5.22, September 2017, %s", PLATFORM);
   return result;
 }
+
+extern "C" char const *SME_DLL GetDataFiles(int n, void *arg[]) /* Return SME library version */
+{
+  sprintf(result, "%s;%s;%s;%s;%s", DATAFILE_FE, DATAFILE_NH, DATAFILE_STEHLE, DATAFILE_VCS, DATAFILE_BPO);
+  return result;
+}
+
+extern "C" char const *SME_DLL GetLibraryPath(int n, void *arg[])
+{
+  sprintf(result, "%s", PATH);
+  return result;
+}
+
 
 /*
   Set SME library datafile location

@@ -209,61 +209,50 @@ all :
 
 # C Only libs
 
+libs : sme_synth_faster.o eos.o eos_eqns.o eos_math.o hlinop.o \
+				  hlinprof.o Makefile
+	$(F_LD) $(F_LD_FLAGS) -fPIC -o $(TARGET_DIR)/sme_synth.$(SHL_EXT) $(SME_DIR)/sme_synth_faster.o \
+				$(EOS_DIR)/eos.o $(EOS_DIR)/eos_eqns.o $(SME_DIR)/hlinop.o $(SME_DIR)/hlinprof.o $(EOS_DIR)/eos_math.o \
+				$(F_LD_POST) $(F_LD_BLAS) ; cp $(DATA_DIR)/* $(TARGET_DIR)/
 
-DEPENDENCIES = src/sme/platform.h src/sme/sme_synth_faster.o src/eos/eos.o src/eos/eos_eqns.o src/eos/eos_math.o src/sme/hlinop.o src/sme/hlinprof.o
-
-TARGET = lib/smelib.so lib/datafiles
-
-libs : prepare depends targets
-
-install : all
-
-prepare:
-	$(shell mkdir $(TARGET_DIR))
-
-depends : $(DEPENDENCIES)
-
-targets : $(TARGET)
-
-lib/datafiles :
-	$(shell cp $(DATA_DIR)/* $(TARGET_DIR))
-
-
-lib/smelib.so:
-	$(F_LD) $(F_LD_FLAGS) -fPIC -o $(DEPENDENCIES)
-				$(F_LD_POST) $(F_LD_BLAS)
-	$(shell ln -s smelib.so $(TARGET_DIR)/sme_synth.so.${SHL_EXT})
-
-src/sme/platform.h:
+sme_synth_faster.o: $(SME_DIR)/sme_synth_faster.cpp Makefile
 	echo '#define PLATFORM "$(PLATFORM)"' > $(SME_DIR)/platform.h
 	echo '#define DATA_DIR "$(TARGET_DIR)"' >> $(SME_DIR)/platform.h
-
-src/sme/sme_synth_faster.o:
 	$(CC) $(CFLAGS) -o $(SME_DIR)/sme_synth_faster.o -c $(SME_DIR)/sme_synth_faster.cpp
 		
-src/eos/eos.o: $(EOS_DIR)/eos.f $(EOS_DIR)/SIZES.EOS $(EOS_DIR)/DEFAULT.EOS Makefile
-	$(F77) -c $(FFLAGS) -o $(EOS_DIR)/eos.o $(EOS_DIR)/eos.f
+sme_synth_fast.o: $(SME_DIR)/sme_synth_fast.c Makefile
+	$(CC) $(CFLAGS) -c $(SME_DIR)/sme_synth_fast.c
+		
+eos.o: $(EOS_DIR)/eos.f $(EOS_DIR)/SIZES.EOS $(EOS_DIR)/DEFAULT.EOS Makefile
+	$(F77) -c $(FFLAGS)  $(EOS_DIR)/eos.f -o $(EOS_DIR)/eos.o
 
-src/eos/eos_eqns.o: $(EOS_DIR)/eos_eqns.f $(EOS_DIR)/SIZES.EOS $(EOS_DIR)/DEFAULT.EOS Makefile
-	$(F77) -c $(FFLAGS) -o $(EOS_DIR)/eos_eqns.o $(EOS_DIR)/eos_eqns.f
+eos_eqns.o: $(EOS_DIR)/eos_eqns.f $(EOS_DIR)/SIZES.EOS $(EOS_DIR)/DEFAULT.EOS Makefile
+	$(F77) -c $(FFLAGS) $(EOS_DIR)/eos_eqns.f -o $(EOS_DIR)/eos_eqns.o
 
-src/eos/eos_math.o: $(EOS_DIR)/eos_math_special.f $(EOS_DIR)/SIZES.EOS $(EOS_DIR)/DEFAULT.EOS Makefile
-	$(F77) $(FF1) -o $(EOS_DIR)/eos_math.o -c $(EOS_DIR)/eos_math_special.f
+eos_math.o:  $(EOS_DIR)/eos_math_special.f $(EOS_DIR)/SIZES.EOS $(EOS_DIR)/DEFAULT.EOS Makefile
+	$(F77) $(FF1) -c $(EOS_DIR)/eos_math_special.f -o $(EOS_DIR)/eos_math.o
 
-src/sme/hlinop.o:
-	$(F77) $(FF2) -o $(SME_DIR)/hlinop.o -c $(SME_DIR)/hlinop.f
+hlinop.o: $(SME_DIR)/hlinop.f Makefile
+	$(F77) $(FF2) -c $(SME_DIR)/hlinop.f
 
-src/sme/hlinprof.o:
-	$(F77) $(FF2) -o $(SME_DIR)/hlinprof.o -c $(SME_DIR)/hlinprof.f
-
-
+hlinprof.o: $(SME_DIR)/hlinprof.f Makefile
+	$(F77) $(FF2) -c $(SME_DIR)/hlinprof.f
 
 # Cleanup
 
 tidy :
-	rm -f $(EOS_DIR)/*.o $(SME_DIR)/*.o *.heap cpu_profile* $(TARGET_DIR)/
+	rm -f *.o *.heap cpu_profile*
 
 clean :
-	rm -f *.heap cpu_profile*
-	rm -f $(SME_DIR)/*.o $(SME_DIR)/*.so $(SME_DIR)/*.sl $(SME_DIR)/*.a $(SME_DIR)/platform.h
-	rm -f $(EOS_DIR)/*.o $(EOS_DIR)/*.so $(EOS_DIR)/*.sl $(EOS_DIR)/*.a
+	rm -f *.o *.so *.sl *.a *.heap cpu_profile* platform.h
+
+
+#  Rules for building the object files.
+
+#.SUFFIXES: .c .o .f
+#
+#.f.o :
+#	$(F77) $(FFLAGS) -c $*.f
+#
+#.c.o :
+#	$(CC) $(CFLAGS) -c $*.c

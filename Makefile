@@ -398,10 +398,10 @@ libsme_la_SOURCES = \
 	src/sme/hlinop.f \
 	src/sme/hlinprof.f
 
-libsme_la_LDFLAGS = -fPIC -version-info 5:22:0 -shared -static-libgcc
-libsme_la_CPPFLAGS = -m64 -fPIC -shared
-libsme_la_FFLAGS = -m64 -fPIC -shared -fexpensive-optimizations
-libsme_la_LIBADD = -lc -lm -lstdc++ -lgfortran
+libsme_la_LDFLAGS = -fPIC -version-info 5:22:0 -shared -static-libgcc -static-libgfortran
+libsme_la_CPPFLAGS = -fPIC -shared
+libsme_la_FFLAGS = -fPIC -shared -fexpensive-optimizations
+libsme_la_LIBADD = -lc -lm -lstdc++
 dist_pkgdata_DATA = src/data/bpo_self.grid.INTEL \
 	src/data/Fe1_Bautista2017.dat.INTEL \
 	src/data/NH_Stancil2018.dat.INTEL \

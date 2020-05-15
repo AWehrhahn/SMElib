@@ -21,16 +21,17 @@ jobs:
     before_deploy:
     - mkdir build
     - tar -czvf build/smelib.tar.gz lib share
-  # - os: osx
-  #   addons:
-  #     homebrew:
-  #       update: true
-  #       packages:
-  #       - make
-  #       - automake
-  #       - libtool
-  #   before_cache:
-  #   - brew cleanup
+  - os: osx
+    addons:
+      homebrew:
+        update: true
+        packages:
+        - make
+        - automake
+        - libtool
+        - python
+    before_cache:
+    - brew cleanup
   # - os: windows
   #   before_install:
   #   - |-

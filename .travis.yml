@@ -31,10 +31,9 @@ jobs:
       - pip
       - directories:
         - $HOME/Library/Caches/Homebrew
+    before_install:
+    - brew cask install gfortran
   - os: windows
-
-before_install:
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew cask install gfortran; fi
 
 install:
 - ./bootstrap
@@ -43,6 +42,8 @@ install:
 
 before_script:
 - source ~/.bashrc
+- python --version
+- python3 --version
 - pip3 install --upgrade pip
 - pip3 install -r test/requirements.txt
 

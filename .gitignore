@@ -75,5 +75,5 @@ share/
 lib/
 src/sme/.deps/
 .deps/
-Makefile copy
 build/
+test/__pycache__/

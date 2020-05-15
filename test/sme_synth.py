@@ -50,6 +50,8 @@ class SME_DLL:
         self.ion = None
 
         self.lib = IDL_DLL(libfile)
+        if datadir is not None:
+            self.SetLibraryPath(datadir)
 
         self.check_data_files_exist()
 

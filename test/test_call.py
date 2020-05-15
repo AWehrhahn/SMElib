@@ -10,8 +10,14 @@ def libfile():
     return join(dirname(__file__), "../lib/", get_lib_name())
 
 @pytest.fixture
-def dll(libfile):
-    return SME_DLL(libfile)
+def datadir():
+    return join(dirname(__file__), "../share/smelib")
+
+@pytest.fixture
+def dll(libfile, datadir):
+    # We set the data directory explicitly in case
+    # the library file has been loaded from a different location
+    return SME_DLL(libfile, datadir)
 
 def test_simple_call(dll):
     version = dll.SMELibraryVersion()
@@ -19,3 +25,10 @@ def test_simple_call(dll):
 
 def test_call_with_input(dll):
     dll.InputWaveRange(5000, 6000)
+
+if __name__ == "__main__":
+    libfile = join(dirname(__file__), "../lib/", "libsme-5.dll")
+    datadir = join(dirname(__file__), "../share/smelib")
+    dll = SME_DLL(libfile, datadir)
+    version = dll.SMELibraryVersion()
+    print(version)

@@ -33,7 +33,7 @@ jobs:
       - pip
       - directories:
         - $HOME/Library/Caches/Homebrew
-  # - os: windows
+  - os: windows
 
 before_install:
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew cask install gfortran; fi

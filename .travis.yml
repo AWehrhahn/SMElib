@@ -1,10 +1,6 @@
 language: cpp
 compiler: gcc
 
-python: "3.6"
-cache:
-  - pip
-
 jobs:
   include:
   - os: linux
@@ -18,20 +14,24 @@ jobs:
         - python3.8
         - python3-venv
         - python3-pip
-    before_deploy:
-    - mkdir build
-    - tar -czvf build/smelib.tar.gz lib share
+    cache:
+    - pip
   - os: osx
     addons:
       homebrew:
         update: true
         packages:
+        - gfortran
         - make
         - automake
         - libtool
         - python
     before_cache:
     - brew cleanup
+    cache:
+      - pip
+      - directories:
+        - $HOME/Library/Caches/Homebrew
   # - os: windows
   #   before_install:
   #   - |-
@@ -90,6 +90,11 @@ before_script:
 
 script:
 - python3 -m pytest
+
+before_deploy:
+- mkdir build
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then tar -czvf build/smelib_linux.tar.gz lib share; fi
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then tar -czvf build/smelib_osx.tar.gz lib share; fi
 
 deploy:
   provider: releases

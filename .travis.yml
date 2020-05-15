@@ -93,7 +93,7 @@ script:
 
 before_deploy:
 - mkdir build
-- tar -czvf build/smelib_$(TARGET).tar.gz $(OUTPUT_DIRS)
+- tar -czvf build/smelib_$TARGET.tar.gz $OUTPUT_DIRS
 
 deploy:
   provider: releases

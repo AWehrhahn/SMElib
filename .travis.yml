@@ -7,7 +7,8 @@ jobs:
     dist: bionic
     name: Ubuntu 18.04
     env:
-    - TARGET=linux
+    - TARGET = linux
+    - OUTPUT_DIRS = lib share
     addons:
       apt:
         packages:
@@ -22,7 +23,8 @@ jobs:
   - os: osx
     name: OSX
     env:
-    - TARGET=osx
+    - TARGET = osx
+    - OUTPUT_DIRS = lib share
     addons:
       homebrew:
         update: true
@@ -43,8 +45,9 @@ jobs:
     dist: bionic
     name: Windows32
     env:
-    - TARGET=win32
+    - TARGET = win32
     - CONFIG_FLAGS = --host=i686-w64-mingw32
+    - OUTPUT_DIRS = bin 
     addons:
       apt:
         packages:
@@ -73,7 +76,7 @@ script:
 
 before_deploy:
 - mkdir build
-- tar -czvf build/smelib_$(TARGET).tar.gz lib share
+- tar -czvf build/smelib_$(TARGET).tar.gz $(OUTPUT_DIRS)
 
 
 deploy:

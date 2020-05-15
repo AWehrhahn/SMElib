@@ -43,7 +43,7 @@ jobs:
     before_install:
     - brew cask install gfortran
   - os: linux
-    dist: bionic
+    dist: xenial
     name: Windows32
     env:
     - TARGET=win32
@@ -56,7 +56,7 @@ jobs:
     before_script: skip
     script: skip
   - os: linux
-    dist: bionic
+    dist: xenial
     name: Windows64
     env:
     - TARGET=win64

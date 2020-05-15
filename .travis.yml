@@ -44,32 +44,14 @@ jobs:
     - brew cask install gfortran
   - os: linux
     dist: xenial
-    name: Windows32
-    env:
-    - TARGET=win32
-    - CONFIG_FLAGS="--host=i686-w64-mingw32"
-    - OUTPUT_DIRS="bin share"
-    before_install:
-    - sudo apt-get update
-    - sudo apt-get -y install --install-suggests g++ gfortran make mingw-w64 libgfortran-5-dev
-    # Skip testing for Windows target
-    before_script: skip
-    script: skip
-  - os: linux
-    dist: xenial
     name: Windows64
     env:
     - TARGET=win64
     - CONFIG_FLAGS="--host=x86_64-w64-mingw32"
     - OUTPUT_DIRS="bin share"
-    addons:
-      apt:
-        packages:
-        - g++
-        - libgfortran3
-        - gfortran
-        - make
-        - mingw-w64
+    before_install:
+    - sudo apt-get update
+    - sudo apt-get -y install --install-suggests g++ gfortran make mingw-w64 libgfortran-5-dev
     # Skip testing for Windows target
     before_script: skip
     script: skip

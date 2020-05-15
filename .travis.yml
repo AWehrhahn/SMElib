@@ -55,6 +55,12 @@ jobs:
         - gfortran
         - make
         - mingw-w64
+    # This should find the libgfortran file
+    before_install:
+      - ./bootstrap
+      - ./configure --prefix=$PWD
+      - make install
+      - make clean
     # Skip testing for Windows target
     before_script: skip
     script: skip
@@ -72,6 +78,12 @@ jobs:
         - gfortran
         - make
         - mingw-w64
+    # This should find the libgfortran file
+    before_install:
+      - ./bootstrap
+      - ./configure --prefix=$PWD
+      - make install
+      - make clean
     # Skip testing for Windows target
     before_script: skip
     script: skip

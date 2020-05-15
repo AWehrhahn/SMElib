@@ -5,6 +5,7 @@ jobs:
   include:
   - os: linux
     dist: bionic
+    name: Ubuntu 18.04
     env:
     - TARGET=linux
     addons:
@@ -19,6 +20,7 @@ jobs:
     cache:
     - pip
   - os: osx
+    name: OSX
     env:
     - TARGET=osx
     addons:
@@ -39,6 +41,7 @@ jobs:
     - brew cask install gfortran
   - os: linux
     dist: bionic
+    name: Windows32
     env:
     - TARGET=win32
     - CONFIG_FLAGS = --host=i686-w64-mingw32
@@ -49,6 +52,9 @@ jobs:
         - gfortran
         - make
         - mingw-w64
+    # Skip testing for Windows target
+    before_script: skip
+    script: skip
 
 install:
 - ./bootstrap

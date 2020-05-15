@@ -5,6 +5,8 @@ jobs:
   include:
   - os: linux
     dist: bionic
+    env:
+    - TARGET=linux
     addons:
       apt:
         packages:
@@ -17,6 +19,8 @@ jobs:
     cache:
     - pip
   - os: osx
+    env:
+    - TARGET=osx
     addons:
       homebrew:
         update: true
@@ -33,11 +37,22 @@ jobs:
         - $HOME/Library/Caches/Homebrew
     before_install:
     - brew cask install gfortran
-  - os: windows
+  - os: linux
+    dist: bionic
+    env:
+    - TARGET=win32
+    - CONFIG_FLAGS = --host=i686-w64-mingw32
+    addons:
+      apt:
+        packages:
+        - g++
+        - gfortran
+        - make
+        - mingw-w64
 
 install:
 - ./bootstrap
-- ./configure --prefix=$PWD
+- ./configure --prefix=$PWD $CONFIG_FLAGS
 - make install
 
 before_script:
@@ -52,9 +67,7 @@ script:
 
 before_deploy:
 - mkdir build
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then tar -czvf build/smelib_linux.tar.gz lib share; fi
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then tar -czvf build/smelib_osx.tar.gz lib share; fi
-- if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then $msys2 tar -czvf build/smelib_win.tar.gz lib share; fi
+- tar -czvf build/smelib_$(TARGET).tar.gz lib share
 
 
 deploy:

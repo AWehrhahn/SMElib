@@ -70,6 +70,7 @@ config.guess
 compile
 aclocal.m4
 
+Makefile
 src/sme/platform.h
 share/
 lib/

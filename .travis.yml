@@ -58,6 +58,23 @@ jobs:
     # Skip testing for Windows target
     before_script: skip
     script: skip
+  - os: linux
+    dist: bionic
+    name: Windows64
+    env:
+    - TARGET=win64
+    - CONFIG_FLAGS="--host=x86_64-w64-mingw32"
+    - OUTPUT_DIRS="bin share"
+    addons:
+      apt:
+        packages:
+        - g++
+        - gfortran
+        - make
+        - mingw-w64
+    # Skip testing for Windows target
+    before_script: skip
+    script: skip
 
 install:
 - ./bootstrap
@@ -77,7 +94,6 @@ script:
 before_deploy:
 - mkdir build
 - tar -czvf build/smelib_$(TARGET).tar.gz $(OUTPUT_DIRS)
-
 
 deploy:
   provider: releases

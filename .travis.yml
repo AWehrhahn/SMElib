@@ -62,11 +62,9 @@ jobs:
             - mingw-w64
             - mingw-w64-tools
             - mingw-w64-common
-            - mingw-w64-i686-dev
-            - mingw-w64-x86-64-dev
             - gfortran-mingw-w64
-            - gfortran-mingw-w64-i686
-            - gfortran-mingw-w64-x86-64
+            - gcc-mingw-w64
+            - g++-mingw-w64
     # Skip testing for Windows target
     before_script: skip
     script: skip

@@ -49,9 +49,14 @@ jobs:
     - TARGET=win64
     - CONFIG_FLAGS="--host=x86_64-w64-mingw32"
     - OUTPUT_DIRS="bin share"
-    before_install:
-    - sudo apt-get update
-    - sudo apt-get -y install --install-suggests g++ gfortran make mingw-w64 libgfortran-5-dev
+    addons:
+          apt:
+            packages:
+            - g++
+            - gfortran
+            - make
+            - mingw-w64
+            - mingw-w64-x86-64-dev
     # Skip testing for Windows target
     before_script: skip
     script: skip

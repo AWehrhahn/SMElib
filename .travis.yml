@@ -50,6 +50,8 @@ jobs:
     - TARGET=win64
     - FORTRAN_DIR="$(x86_64-w64-mingw32-gfortran --print-file-name=)"
     - LDFLAGS="-L$FORTRAN_DIR"
+    - CXX=x86_64-w64-mingw32-gcc
+    - F77=x86_64-w64-mingw32-gfortran
     - CONFIG_FLAGS="--build=x86_64-pc-linux-gnu --host=x86_64-w64-mingw32"
     - OUTPUT_DIRS="bin share"
     addons:

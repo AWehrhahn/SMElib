@@ -47,7 +47,7 @@ jobs:
     name: Windows64
     env:
     - TARGET=win64
-    - CONFIG_FLAGS="--host=x86_64-w64-mingw32  --with-sysroot=/usr/lib/gcc/x86_64-w64-mingw32/5.3-win32/"
+    - CONFIG_FLAGS="--host=x86_64-w64-mingw32  LDFLAGS=-L/usr/lib/gcc/x86_64-w64-mingw32/5.3-win32 -fPIC -shared -no-undefined"
     - OUTPUT_DIRS="bin share"
     addons:
           apt:
@@ -57,8 +57,7 @@ jobs:
             - make
             - mingw-w64
             - mingw-w64-x86-64-dev
-            - gfortran-mingw-w64
-            - locate
+            - gfortran-mingw-w64-x86-64
     before_install:
       - ls /usr/lib/gcc/x86_64-w64-mingw32/5.3-win32/
     # Skip testing for Windows target

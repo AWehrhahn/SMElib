@@ -49,7 +49,7 @@ jobs:
     env:
     - TARGET=win64
     - LDFLAGS="-L/usr/lib/gcc/x86_64-w64-mingw32/5.3-win32/"
-    - CONFIG_FLAGS="--build=x86_64-pc-linux-gnu --host=x86_64-w64-mingw32"
+    - CONFIG_FLAGS="--build=x86_64-pc-linux-gnu --host=x86_64-w64-mingw32 --with-gnu-ld"
     - OUTPUT_DIRS="bin share"
     addons:
           apt:

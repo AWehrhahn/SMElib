@@ -11,7 +11,7 @@ def libfile():
 
 @pytest.fixture
 def datadir():
-    return join(dirname(__file__), "../share/smelib")
+    return join(dirname(__file__), "../share/libsme")
 
 @pytest.fixture
 def dll(libfile, datadir):
@@ -28,7 +28,7 @@ def test_call_with_input(dll):
 
 if __name__ == "__main__":
     libfile = join(dirname(__file__), "../lib/", "libsme-5.dll")
-    datadir = join(dirname(__file__), "../share/smelib")
+    datadir = join(dirname(__file__), "../share/libsme")
     dll = SME_DLL(libfile, datadir)
     version = dll.SMELibraryVersion()
     print(version)

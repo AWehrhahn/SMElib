@@ -44,7 +44,7 @@ jobs:
     - brew cask install gfortran
     - gfortran -print-file-name=
   - os: linux
-    dist: xenial
+    dist: bionic
     name: Windows64
     env:
     - TARGET=win64
@@ -57,6 +57,7 @@ jobs:
             - g++
             - gfortran
             - make
+            - libtool
             - mingw-w64
             - mingw-w64-tools
             - mingw-w64-common

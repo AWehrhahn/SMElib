@@ -58,12 +58,14 @@ jobs:
             - mingw-w64
             - mingw-w64-x86-64-dev
             - gfortran-mingw-w64
+            - locate
+    before_install:
+      - locate libgfortran
     # Skip testing for Windows target
     before_script: skip
     script: skip
 
 install:
-- locate libgfortran
 - ./bootstrap
 - ./configure --prefix=$PWD $CONFIG_FLAGS
 - make install

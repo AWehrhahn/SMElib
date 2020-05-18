@@ -42,12 +42,14 @@ jobs:
         - $HOME/Library/Caches/Homebrew
     before_install:
     - brew cask install gfortran
+    - gfortran -print-file-name=
   - os: linux
     dist: xenial
     name: Windows64
     env:
     - TARGET=win64
-    - CONFIG_FLAGS="--host=x86_64-w64-mingw32  LDFLAGS=-L/usr/lib/gcc/x86_64-w64-mingw32/5.3-win32 -fPIC -shared -no-undefined"
+    - LDFLAGS="-L/usr/lib/gcc/x86_64-w64-mingw32/5.3-win32 -fPIC -shared -no-undefined"
+    - CONFIG_FLAGS="--host=x86_64-w64-mingw32"
     - OUTPUT_DIRS="bin share"
     addons:
           apt:

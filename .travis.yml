@@ -47,7 +47,7 @@ jobs:
     name: Windows64
     env:
     - TARGET=win64
-    - CONFIG_FLAGS="--host=x86_64-w64-mingw32 --with-sysroot=/usr/x86_64-w64-mingw32/lib"
+    - CONFIG_FLAGS="--host=x86_64-w64-mingw32 --with-sysroot=/usr/x86_64-w64-mingw32/"
     - OUTPUT_DIRS="bin share"
     addons:
           apt:

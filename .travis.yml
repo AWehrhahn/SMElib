@@ -57,6 +57,7 @@ jobs:
             - make
             - mingw-w64
             - mingw-w64-x86-64-dev
+            - gfortran-mingw-w64
     # Skip testing for Windows target
     before_script: skip
     script: skip

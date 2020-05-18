@@ -1,5 +1,5 @@
 # Metadata
-AC_INIT([SMElib], [5.22], [nikolai.piskunov@physics.uu.se])
+AC_INIT([libsme], [5.22], [nikolai.piskunov@physics.uu.se])
 
 # Use Automake
 AM_INIT_AUTOMAKE([subdir-objects])

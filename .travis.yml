@@ -25,6 +25,7 @@ jobs:
     name: manylinux2010
     services:
     - docker
+    sudo: required
     env:
     - DOCKER_IMAGE=quay.io/pypa/manylinux2010_x86_64
     - PLAT=manylinux2010_x86_64
@@ -37,8 +38,6 @@ jobs:
     name: OSX
     env:
     - TARGET=osx
-    - FORTRAN_DIR="$(gfortran --print-file-name=)"
-    - LDFLAGS="-L$FORTRAN_DIR"
     - OUTPUT_DIRS="lib share"
     addons:
       homebrew:
@@ -56,6 +55,9 @@ jobs:
         - $HOME/Library/Caches/Homebrew
     before_install:
     - brew cask install gfortran
+    - export FORTRAN_DIR="$(gfortran --print-file-name=)"
+    - export LDFLAGS="-L$FORTRAN_DIR"
+    - ls $FORTRAN_DIR
   - os: linux
     dist: bionic
     name: Windows64

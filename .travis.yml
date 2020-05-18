@@ -61,6 +61,8 @@ jobs:
             - mingw-w64-common
             - mingw-w64-i686-dev
             - mingw-w64-x86-64-dev
+            - gfortran-mingw-w64
+            - gfortran-mingw-w64-i686
             - gfortran-mingw-w64-x86-64
     before_install:
       - ls /usr/lib/gcc/x86_64-w64-mingw32/5.3-win32/

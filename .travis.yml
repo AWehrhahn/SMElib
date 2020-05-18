@@ -47,7 +47,7 @@ jobs:
     name: Windows64
     env:
     - TARGET=win64
-    - CONFIG_FLAGS="--host=x86_64-w64-mingw32"
+    - CONFIG_FLAGS="--host=x86_64-w64-mingw32  --with-sysroot=/usr/lib/gcc/x86_64-w64-mingw32/5.3-win32/"
     - OUTPUT_DIRS="bin share"
     addons:
           apt:
@@ -60,7 +60,7 @@ jobs:
             - gfortran-mingw-w64
             - locate
     before_install:
-      - locate libgfortran
+      - ls /usr/lib/gcc/x86_64-w64-mingw32/5.3-win32/
     # Skip testing for Windows target
     before_script: skip
     script: skip

@@ -48,7 +48,7 @@ jobs:
     name: Windows64
     env:
     - TARGET=win64
-    - LDFLAGS="-L/usr/lib/gcc/x86_64-w64-mingw32/5.3-win32/ -fPIC -shared -no-undefined"
+    - LDFLAGS="-L/usr/lib/gcc/x86_64-w64-mingw32/"
     - CONFIG_FLAGS="--host=x86_64-w64-mingw32"
     - OUTPUT_DIRS="bin share"
     addons:

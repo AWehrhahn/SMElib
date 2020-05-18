@@ -48,8 +48,8 @@ jobs:
     name: Windows64
     env:
     - TARGET=win64
-    - export FORTRAN_DIR="$(x86_64-w64-mingw32-gfortran --print-file-name=)"
-    - export LDFLAGS="-L$FORTRAN_DIR"
+    - FORTRAN_DIR="$(x86_64-w64-mingw32-gfortran --print-file-name=)"
+    - LDFLAGS="-L$FORTRAN_DIR"
     - CONFIG_FLAGS="--build=x86_64-pc-linux-gnu --host=x86_64-w64-mingw32"
     - OUTPUT_DIRS="bin share"
     addons:
@@ -63,8 +63,11 @@ jobs:
             - mingw-w64-tools
             - mingw-w64-common
             - gfortran-mingw-w64
+            - gfortran-mingw-w64-x86-64
             - gcc-mingw-w64
+            - gcc-mingw-w64-x86-64
             - g++-mingw-w64
+            - g++-mingw-w64-x86-64
     # Skip testing for Windows target
     before_script: skip
     script: skip

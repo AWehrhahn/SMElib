@@ -33,7 +33,7 @@ MACHINE = $(shell uname -m)
 BITS = 64
 SHL_EXT = "$(PLATFORM).$(MACHINE).$(BITS)"
 
-DATA_DIR = @datadir@/smelib/
+DATA_DIR = @datadir@/libsme/
 
 src/sme/platform.h:
 	echo '#define PLATFORM "$(PLATFORM)"' > src/sme/platform.h

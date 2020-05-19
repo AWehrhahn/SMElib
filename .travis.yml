@@ -52,12 +52,14 @@ jobs:
         - automake
         - autoconf
         - libtool
+        - ccache
         casks:
         - gfortran
     before_cache:
     - brew cleanup
     cache:
       - pip
+      - ccache
       - directories:
         - $HOME/Library/Caches/Homebrew
     before_install:

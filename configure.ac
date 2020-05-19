@@ -13,8 +13,8 @@ case $target_os in
     extension=.so
     outdir=libdir
     ;;
-    darwin)
-    target=osx
+    darwin*)
+    target=darwin
     extension=.dylib
     outdir=libdir
     ;;

@@ -39,6 +39,8 @@ jobs:
     name: OSX
     env:
     - TARGET=osx
+    - FORTRAN_DIR="/usr/local/gfortran/lib/"
+    - LDFLAGS="-L$FORTRAN_DIR"
     - OUTPUT_DIRS="lib share"
     addons:
       homebrew:
@@ -58,9 +60,8 @@ jobs:
         - $HOME/Library/Caches/Homebrew
     before_install:
     - brew cask install gfortran
-    - export FORTRAN_DIR="/usr/local/gfortran/lib/"
-    - export LDFLAGS="-L$FORTRAN_DIR"
     - ls $FORTRAN_DIR
+    - alias python3="python"
   - os: linux
     dist: bionic
     name: Windows64

@@ -46,12 +46,12 @@ jobs:
       homebrew:
         update: true
         packages:
+        - python@3.8
         - gcc
         - make
         - automake
         - autoconf
         - libtool
-        - python
     before_cache:
     - brew cleanup
     cache:
@@ -61,7 +61,8 @@ jobs:
     before_install:
     - brew cask install gfortran
     - ls $FORTRAN_DIR
-    - alias python3="python"
+    - alias python3="/usr/local/opt/python@3.8/bin/python3"
+    - alias pip3="/usr/local/opt/python@3.8/bin/pip3"
   - os: linux
     dist: bionic
     name: Windows64

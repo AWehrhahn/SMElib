@@ -24,7 +24,7 @@ dist_pkgdata_DATA = src/data/bpo_self.grid.INTEL \
 	src/data/stehle_long.dat.INTEL \
 	src/data/vcsbalmer.dat
 
-BUILT_SOURCES = src/sme/platform.h
+BUILT_SOURCES = src/sme/platform.h name.txt
 
 CLEANFILES = src/sme/platform.h
 
@@ -39,5 +39,5 @@ src/sme/platform.h:
 	echo '#define PLATFORM "$(PLATFORM)"' > src/sme/platform.h
 	echo '#define DATA_DIR "$(DATA_DIR)"' >> src/sme/platform.h
 
-# Create a symlink to the traditional library name
-$(shell mkdir @libdir@; ln -s libsme.so @libdir@/sme_synth.so.$(SHL_EXT))
+name.txt: libsme.la name.sed
+	ln -s $(sed -n -f name.sed libsme.la) @libdir@/sme_synth.so.$(SHL_EXT)

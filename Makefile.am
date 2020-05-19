@@ -24,12 +24,12 @@ dist_pkgdata_DATA = src/data/bpo_self.grid.INTEL \
 	src/data/stehle_long.dat.INTEL \
 	src/data/vcsbalmer.dat
 
-BUILT_SOURCES = src/sme/platform.h name.txt
+BUILT_SOURCES = src/sme/platform.h old_link
 
 CLEANFILES = src/sme/platform.h
 
-PLATFORM = $(shell uname -s | tr '[:upper:]' '[:lower:]')
-MACHINE = $(shell uname -m)
+PLATFORM = @TARGET@
+MACHINE = @TARGET_CPU@
 BITS = 64
 SHL_EXT = "$(PLATFORM).$(MACHINE).$(BITS)"
 
@@ -39,5 +39,5 @@ src/sme/platform.h:
 	echo '#define PLATFORM "$(PLATFORM)"' > src/sme/platform.h
 	echo '#define DATA_DIR "$(DATA_DIR)"' >> src/sme/platform.h
 
-name.txt: libsme.la name.sed
-	ln -s $(sed -n -f name.sed libsme.la) @libdir@/sme_synth.so.$(SHL_EXT)
+old_link: libsme.la
+	cd $(@OUTPUT_DIR@) && $(LN_S) -f libsme@EXTENSION@ sme_synth.so.$(SHL_EXT)

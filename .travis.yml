@@ -44,7 +44,6 @@ jobs:
     - OUTPUT_DIRS="lib share"
     addons:
       homebrew:
-        update: true
         packages:
         - python@3.8
         - gcc
@@ -52,14 +51,18 @@ jobs:
         - automake
         - autoconf
         - libtool
+        - ccache
+        casks:
+        - gfortran
     before_cache:
     - brew cleanup
     cache:
       - pip
+      - ccache
       - directories:
         - $HOME/Library/Caches/Homebrew
     before_install:
-    - brew cask install gfortran
+    - export PATH="/usr/local/opt/ccache/libexec:$PATH"
     - ls $FORTRAN_DIR
     - alias python3="/usr/local/opt/python@3.8/bin/python3"
     - alias pip3="/usr/local/opt/python@3.8/bin/pip3"

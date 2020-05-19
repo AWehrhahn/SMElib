@@ -40,4 +40,4 @@ src/sme/platform.h:
 	echo '#define DATA_DIR "$(DATA_DIR)"' >> src/sme/platform.h
 
 old_link: libsme.la
-	cd $(@OUTPUT_DIR@) && $(LN_S) -f libsme@EXTENSION@ sme_synth.so.$(SHL_EXT)
+	$(MKDIR_P) $(@OUTPUT_DIR@) && cd $(@OUTPUT_DIR@) && $(LN_S) -f libsme@EXTENSION@ sme_synth.so.$(SHL_EXT)

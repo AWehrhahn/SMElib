@@ -98,6 +98,7 @@ install:
 - ./bootstrap
 - ./configure --prefix=$PWD $CONFIG_FLAGS
 - make install
+- ls $OUTPUT_DIRS
 
 before_script:
 - source ~/.bashrc

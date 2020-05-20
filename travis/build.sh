@@ -9,7 +9,8 @@ cd /io
 
 make install
 
-for PYBIN in /opt/python/python3*/bin; do
+for PYBIN in /opt/python/*/bin; do
+    echo "${PYBIN}"
     "${PYBIN}/pip" install -r /io/test/requirements.txt
     "${PYBIN}/pytest"
 done

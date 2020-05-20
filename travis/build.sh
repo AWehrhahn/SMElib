@@ -16,5 +16,5 @@ for PYBIN in /opt/python/cp3*/bin; do
 done
 
 mkdir -p /io/build
-cp -R lib /io/build/
-cp -R share /io/build/
+cp -R ./lib /io/build/
+cp -R ./share /io/build/

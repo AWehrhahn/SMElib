@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/AWehrhahn/SMElib.svg?branch=master)](https://travis-ci.com/AWehrhahn/SMElib)
+
 # SMElib
 Spectroscopy Made Easy Source Library
 

@@ -2,10 +2,12 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+//#include "/usr/local/rsi/idl/external/export.h"
 #include "export.h"
 #include <ctype.h>
 #include <time.h>
 #include "platform.h"
+//#include <sys/resource.h>
 
 /* DLL export defintion */
 
@@ -29,9 +31,9 @@
 #define MAX_OUT_LEN 511
 static char result[MAX_OUT_LEN + 1]; /* leave a space for a '\0' */
 
-#define MAX_ELEM 100 // Maximum Number of elements
-#define MOSIZE 288   // Maximum Number of layers in the Model Atmosphere
-#define MUSIZE 77    // Maximum Number of mu angles
+#define MAX_ELEM 100
+#define MOSIZE 288
+#define MUSIZE 77
 
 #define PI 3.14159265358979e0
 #define SQRTPI 1.7724538509e0
@@ -43,9 +45,53 @@ static char result[MAX_OUT_LEN + 1]; /* leave a space for a '\0' */
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 #define round(x) (x >= 0) ? (int)(x + 0.5) : (int)(x - 0.5)
 
+//typedef int IDL_STRING_SLEN_T;
+//#define IDL_STRING_MAX_SLEN 2147483647
+
+//typedef short IDL_STRING_SLEN_T;
+//#define IDL_STRING_MAX_SLEN 65534
+
+//typedef struct {      /* Define string descriptor */
+//  IDL_STRING_SLEN_T slen; /* Length of string, 0 for null */
+//  short stype;            /* type of string, static or dynamic */
+//  char *s;            /* Addr of string */
+//} IDL_STRING;
+
 /* Useful data */
 
 float ABUND[MAX_ELEM];
+/* =
+{0,  0.911,-1.0506,-10.88,-10.89,-9.44, -3.48, -3.99, -3.11, -7.48, -3.95,
+     -5.71, -4.46, -5.57, -4.49, -6.59, -4.83, -6.54, -5.48, -6.82, -5.68,
+     -8.94, -7.05, -8.04, -6.37, -6.65, -4.37, -7.12, -5.79, -7.83, -7.44,
+     -9.16, -8.63, -9.67, -8.69, -9.41, -8.81, -9.44, -9.14, -9.80, -9.54,
+    -10.62,-10.12,-20.00,-10.20,-10.92,-10.35,-11.10,-10.18,-10.58,-10.04,
+    -11.04, -9.80,-10.53, -9.81,-10.92, -9.91,-10.82,-10.49,-11.33,-10.54,
+    -20.00,-11.04,-11.53,-10.92,-11.94,-10.94,-11.78,-11.11,-12.04,-10.96,
+    -11.28,-11.16,-11.91,-10.93,-11.77,-10.59,-10.69,-10.24,-11.03,-10.95,
+    -11.14,-10.19,-11.33,-20.00,-20.00,-20.00,-20.00,-20.00,-20.00,-11.92,
+    -20.00,-12.51,-20.00,-20.00,-20.00,-20.00,-20.00,-20.00,-20.00,-20.00};
+      "H",  "He",  "Li",  "Be",   "B",   "C",   "N",   "O",   "F",  "Ne",
+{0, 12.00, 10.99,  1.16,  1.15,  2.60,  8.55,  7.97,  8.87,  4.56,  8.08,
+     "Na",  "Mg",  "Al",  "Si",   "P",   "S",  "Cl",  "Ar",   "K",  "Ca",
+     6.33,  7.58,  6.47,  7.55,  5.45,  7.33,  5.50,  6.52,  5.12,  6.36,
+     "Sc",  "Ti",   "V",  "Cr",  "Mn",  "Fe",  "Co",  "Ni",  "Cu",  "Zn",
+     3.17,  5.02,  4.00,  5.67,  5.39,  7.50,  4.92,  6.25,  4.21,  4.60,
+     "Ga",  "Ge",  "As",  "Se",  "Br",  "Kr",  "Rb",  "Sr",   "Y",  "Zr",
+     2.88,  3.41,  2.37,  3.38,  2.63,  3.23,  2.60,  2.97,  2.24,  2.60,
+     "Nb",  "Mo",  "Tc",  "Ru",  "Rh",  "Pd",  "Ag",  "Cd",  "In",  "Sn",
+     1.42,  1.92, -8.00,  1.84,  1.12,  1.69,  0.94,  1.77,  1.66,  2.00,
+     "Sb",  "Te",   "I",  "Xe",  "Cs",  "Ba",  "La",  "Ce",  "Pr",  "Nd",
+     1.00,  2.24,  1.51,  2.23,  1.13,  2.13,  1.17,  1.58,  0.71,  1.50,
+     "Pm",  "Sm",  "Eu",  "Gd",  "Tb",  "Dy",  "Ho",  "Er",  "Tm",  "Yb",
+    -8.00,  1.01,  0.51,  1.12, -0.10,  1.14,  0.26,  0.93,  0.00,  1.08,
+     "Lu",  "Hf",  "Ta",   "W",  "Re",  "Os",  "Ir",  "Pt",  "Au",  "Hg",
+     0.76,  0.88, -0.13,  1.11,  0.28,  1.45,  1.35,  1.80,  1.01,  1.17,
+     "Tl",  "Pb",  "Bi",  "Po",  "At",  "Rn",  "Fr",  "Ra",  "Ac",  "Th",
+     0.09,  1.95,  0.71, -8.00, -8.00, -8.00, -8.00, -8.00, -8.00,  0.09,
+     "Pa",   "U",  "Np",  "Pu",  "Am",  "Cm",  "Bk",  "Cs",  "Es", "TiO"
+    -8.00, -0.47, -8.00, -8.00, -8.00, -8.00, -8.00, -8.00, -8.00, -8.00};
+*/
 float AMASS[MAX_ELEM] = {0.,
                          1.008, 4.003, 6.941, 9.012, 10.811, 12.011, 14.007, 15.999,
                          18.998, 20.179, 22.990, 24.305, 26.982, 28.086, 30.974, 32.060,
@@ -151,7 +197,7 @@ time_t t_op = 0, t_rt = 0, t_tot = 0;
    The second version below can be used to trace any attempts to
    to do such a terrible thing! */
 
-// #define CALLOC(ptr, varlen, vartype)                                                 \
+//#define CALLOC(ptr, varlen, vartype)                                                 \
 //  if(ptr!=NULL)                                                                      \
 //  {                                                                                  \
 //    printf("Attempt to re-allocate %s line #%d\n", #ptr, __LINE__);                  \
@@ -159,7 +205,7 @@ time_t t_op = 0, t_rt = 0, t_tot = 0;
 //  }                                                                                  \
 //  ptr=(vartype*)calloc(varlen, sizeof(vartype));
 
-// #define FREE(ptr)                                                                    \
+//#define FREE(ptr)                                                                    \
 //  if(ptr!=NULL)                                                                      \
 //  {                                                                                  \
 //    free((char *)ptr); ptr=NULL;                                                     \
@@ -186,12 +232,18 @@ void CONTOP(double, double *);
 void HOP(double *, int, int);
 void H2PLOP(double *, int, int);
 void HMINOP(double *, int, int);
+void HMINOP_old(double *, int, int);
 void HRAYOP(double *, int);
 void HE1OP(double *, int, int);
+void HE1OP_new(double *, int, int);
 void HE2OP(double *, int, int);
 void HEMIOP(double *, int);
 void HERAOP(double *, int);
 void COOLOP(double *);
+double C1OP(int), MG1OP(int), AL1OP(int), SI1OP(int), FE1OP(int);
+double C1OP_new(int), MG1OP_new(int);
+double N1OP(int), O1OP(int), MG2OP(int), SI2OP(int), CA2OP(int);
+
 void LUKEOP(double *);
 void HOTOP(double *);
 void ELECOP(double *);
@@ -255,16 +307,19 @@ extern "C" char const *SME_DLL InputModel(int n, void *arg[]);        /* Read in
 extern "C" char const *SME_DLL InputDepartureCoefficients(int n, void *arg[]);
 extern "C" char const *SME_DLL GetDepartureCoefficients(int n, void *arg[]);   /* Get NLTE b's for
                                                                                  specific line */
+extern "C" char const *SME_DLL GetNLTEflags(int n, void *arg[]);               /* Get line list NLTE flags */
 extern "C" char const *SME_DLL ResetDepartureCoefficients(int n, void *arg[]); /* Reset LTE */
 extern "C" char const *SME_DLL InputAbund(int n, void *arg[]);                 /* Read in abundances */
 extern "C" char const *SME_DLL Opacity(int n, void *arg[]);                    /* Calculate opacities */
 extern "C" char const *SME_DLL GetOpacity(int n, void *arg[]);                 /* Returns specific cont. opacity */
-extern "C" char const *SME_DLL Ionization(int n, void *arg[]);
-extern "C" char const *SME_DLL GetDensity(int n, void *arg[]);
-extern "C" char const *SME_DLL GetNatom(int n, void *arg[]);
-extern "C" char const *SME_DLL GetNelec(int n, void *arg[]);
-extern "C" char const *SME_DLL Transf(int n, void *arg[]);
-extern "C" char const *SME_DLL CentralDepth(int n, void *arg[]);
+extern "C" char const *SME_DLL Ionization(int n, void *arg[]);                 /* Perfrom EOS calculations */
+extern "C" char const *SME_DLL GetDensity(int n, void *arg[]);                 /* Returns density in g/cm^3 */
+extern "C" char const *SME_DLL GetNatom(int n, void *arg[]);                   /* Returns atomic number density */
+extern "C" char const *SME_DLL GetNelec(int n, void *arg[]);                   /* Returns electron number density */
+extern "C" char const *SME_DLL Transf(int n, void *arg[]);                     /* Computes spectral synthesis */
+extern "C" char const *SME_DLL CentralDepth(int n, void *arg[]);               /* Computes line central depths */
+extern "C" char const *SME_DLL GetLineOpacity(int n, void *arg[]);             /* Returns specific line opacity */
+extern "C" char const *SME_DLL GetLineRange(int n, void *arg[]);               /* Get validity range for every line */
 
 /* Code */
 
@@ -326,7 +381,7 @@ int compress(char *target, char *source)
 
 extern "C" char const *SME_DLL SMELibraryVersion(int n, void *arg[]) /* Return SME library version */
 {
-  sprintf(result, "SME Library version: 5.22, September 2017, %s", PLATFORM);
+  sprintf(result, "SME Library version: 6.03, July 2019, %s", PLATFORM);
   return result;
 }
 
@@ -366,24 +421,20 @@ extern "C" char const *SME_DLL SetLibraryPath(int n, void *arg[])
 extern "C" char const *SME_DLL InputWaveRange(int n, void *arg[]) /* Read in Wavelength range */
 {
   int i;
-  double wfirst, wlast;
 
   if (n < 2)
   {
     strcpy(result, "Only one argument found");
     return result;
   }
-  wfirst = *(double *)arg[0];
-  wlast = *(double *)arg[1];
-
   if (flagWLRANGE)
   {
-    if (fabs(WFIRST - wfirst) < 1.e-3 &&
-        fabs(WLAST - wlast) < 1.e-3)
+    if (fabs(WFIRST - *(double *)arg[0]) < 1.e-3 &&
+        fabs(WLAST - *(double *)arg[1]) < 1.e-3)
       return &OK_response;
   }
-  WFIRST = wfirst;
-  WLAST = wlast;
+  WFIRST = *(double *)arg[0];
+  WLAST = *(double *)arg[1];
   if (WFIRST >= WLAST || WFIRST <= 0.0 || WLAST <= 0.)
   {
     flagWLRANGE = 0;
@@ -606,7 +657,6 @@ extern "C" char const *SME_DLL InputLineList(int n, void *arg[]) /* Read in line
   /*  file11=fopen("lines.log","wt"); */
   for (LINE = 0; LINE < NLINES; LINE++)
   {
-
     /* spname will be passed to FORTRAN, so no trailing zero's, fixed length
    padded with spaces instead */
     memcpy(spname + 8 * LINE, a0[LINE].s, a0[LINE].slen);
@@ -614,11 +664,9 @@ extern "C" char const *SME_DLL InputLineList(int n, void *arg[]) /* Read in line
       for (l = a0[LINE].slen; l < 8; l++)
         spname[8 * LINE + l] = ' ';
     //    ION[LINE]   =(int)a2[LINE]; /* Ionization            */
-
     for (l = 0; l < a0[LINE].slen; l++)
       if (*(a0[LINE].s + l) == ' ')
         break;
-
     ION[LINE] = (l == a0[LINE].slen) ? 1 : atoi(a0[LINE].s + l + 1);
     WLCENT[LINE] = a3[LINE];               /* Central wavelength    */
     EXCIT[LINE] = a4[LINE];                /* Excitation            */
@@ -637,7 +685,6 @@ extern "C" char const *SME_DLL InputLineList(int n, void *arg[]) /* Read in line
     GRLG10 = 0.;
     if (GAMRAD[LINE] > 0.)
       GRLG10 = log10(GAMRAD[LINE]);
-
     if (strncmp(spname + 8 * LINE, "H 1", 3)) /* Non-Hydrogen line */
     {
       if (GAMQST[LINE] < 0.)
@@ -679,11 +726,9 @@ extern "C" char const *SME_DLL InputLineList(int n, void *arg[]) /* Read in line
     GFLOG,GRLG10,GSLG10,GWLG10,ION[LINE]);
 */
     GF[LINE] = pow10(GFLOG);
-
     //    ION[LINE]--; /* ION for neutrals should be 1 */
   }
   /*  fclose(file11); */
-
   flagLINELIST = 1;
   return &OK_response;
 }
@@ -862,8 +907,8 @@ extern "C" char const *SME_DLL UpdateLineList(int n, void *arg[]) /* Change line
 
 /*  TWO TYPES OF INTERPOLATION (SEE COMMENTS IN "RATIO") */
 
-#define XINTEF(UU, VV, WW) VV + (VV - UU) * DTAU1 + (WW - VV) * DTAU2
-#define XINTER(UU, VV, WW) UU + (VV - UU) * DTAU1 + (WW - VV) * DTAU2
+//#define XINTEF(UU,VV,WW) VV+(VV-UU)*DTAU1+(WW-VV)*DTAU2
+//#define XINTER(UU,VV,WW) UU+(VV-UU)*DTAU1+(WW-VV)*DTAU2
 
 extern "C" char const *SME_DLL InputModel(int n, void *arg[]) /* Read in model atmosphere */
 {
@@ -987,8 +1032,8 @@ extern "C" char const *SME_DLL InputModel(int n, void *arg[]) /* Read in model a
   return &OK_response;
 }
 
-#undef XINTEF
-#undef XINTER
+//#undef XINTEF
+//#undef XINTER
 
 extern "C" char const *SME_DLL InputDepartureCoefficients(int n, void *arg[])
 /* Reads in NLTE b's  for one transition at a time. The calling sequence
@@ -1012,8 +1057,8 @@ extern "C" char const *SME_DLL InputDepartureCoefficients(int n, void *arg[])
   int im, line;
   double *b;
 
-  if (n < 2) // We assume that the caller will provide 2*NRHOX element array,
-             // so careful on the IDL side. The other argument is the line number.
+  if (n < 2) // We assume that the caller will provide 2*NRHOX element array, so
+             // be careful on the IDL side. The other argument is the line number.
   {
     strcpy(result, "No arguments found");
     return result;
@@ -1102,16 +1147,56 @@ extern "C" char const *SME_DLL GetDepartureCoefficients(int n, void *arg[]) /* G
     return result;
   }
 
+  b = (double *)arg[0];
+  nrhox = *(int *)arg[1];
+
   if (flagNLTE[line])
   {
-    b = (double *)arg[0];
-    nrhox = *(int *)arg[1];
-
     for (im = 0; im < min(nrhox, NRHOX); im++)
     {
       *b++ = BNLTE_low[line][im];
       *b++ = BNLTE_upp[line][im];
     }
+  }
+  else
+  {
+    for (im = 0; im < min(nrhox, NRHOX); im++)
+    {
+      *b++ = 1.e0;
+      *b++ = 1.e0;
+    }
+  }
+
+  return &OK_response;
+}
+
+extern "C" char const *SME_DLL GetNLTEflags(int n, void *arg[]) /* Get NLTE flag for every line */
+{
+  int nlines, line;
+  short *b;
+
+  if (n < 2) // Check if arguments are present
+  {
+    strcpy(result, "GetNLTELines: Requires an array pointer and its length");
+    return result;
+  }
+
+  b = (short *)arg[0];
+  nlines = *(int *)arg[1];
+
+  if (!initNLTE)
+  {
+    for (line = 0; line < min(nlines, NLINES); line++)
+    {
+      b[line] = 0;
+    }
+    return &OK_response;
+    ;
+  }
+
+  for (line = 0; line < min(nlines, NLINES); line++)
+  {
+    b[line] = flagNLTE[line];
   }
 
   return &OK_response;
@@ -1267,7 +1352,7 @@ void CONTOP(double WLCONT, double *opacity)
   double FREQ15;
   int j;
 
-  FREQ = CLIGHT / WLCONT;
+  FREQ = 2.997925e18 / WLCONT;
   FREQLG = log(FREQ);
   for (j = 0; j < NRHOX; j++)
   {
@@ -1285,7 +1370,6 @@ void ALAM(double *opacity)
     KURUCZ's ATLAS-9 SUBROUTINES.
 */
   int J;
-  void HE1OP_new(double *, int, int);
 
   /*  CLEAR OPACITY ACCUMULATORS */
 
@@ -1333,6 +1417,23 @@ void ALAM(double *opacity)
   //  if(IFOP[12]==1) H2RAOP(SIGH2, IXH1);
   if (IFOP[12] == 1)
     H2RAOP(SIGH2, IXH2mol);
+
+  /*
+  if(IFOP[ 0]==1) HOP(AHYD, IXH1, IXH2);
+  if(IFOP[ 1]==1) H2PLOP(AH2P, IXH1, IXH2);
+  if(IFOP[ 2]==1) HMINOP_old(AHMIN, IXH1, IXHMIN);
+  if(IFOP[ 3]==1) HRAYOP(SIGH, IXH1);
+  if(IFOP[ 4]==1) HE1OP(AHE1, IXHE1, IXHE2);
+  if(IFOP[ 5]==1) HE2OP(AHE2, IXHE2, IXHE3);
+  if(IFOP[ 6]==1) HEMIOP(AHEMIN, IXHE1);
+  if(IFOP[ 7]==1) HERAOP(SIGHE, IXHE1);
+  if(IFOP[ 8]==1) COOLOP(ACOOL);
+  if(IFOP[ 9]==1) LUKEOP(ALUKE);
+  if(IFOP[10]==1) HOTOP(AHOT);
+  if(IFOP[11]==1) ELECOP(SIGEL);
+//  if(IFOP[12]==1) H2RAOP(SIGH2, IXH1);
+  if(IFOP[12]==1) H2RAOP(SIGH2, IXH2mol);
+*/
 
   /*  CALCULATE THE TOTAL CONTINUOUS OPACITY */
 
@@ -2463,7 +2564,8 @@ void HE1OP_new(double *ahe1, int iHe1, int iHe2)
     for (N = 3; N < 27; N++)
       BOLTN[N][J] = exp(-24.587 * (1. - 1. / (N * N)) / TKEV[J]) * 4. * N * N * FRACT[J][iHe1] / RHO[J];
     //  FREET[J]=XNE[J]*XNF(J,4)/RHO(J)/SQRT(T(J))
-    FREET[J] = XNE[J] * 1.e-10 * FRACT[J][iHe2] * 1.e-10 / RHO[J] / sqrt(T[J]) * 1.e-10;
+    FREET[J] = XNE[J] * 1.e-10 * FRACT[J][iHe2] * PARTITION_FUNCTIONS[J][iHe2] *
+               1.e-10 / RHO[J] / sqrt(T[J]) * 1.e-10;
     //  XR=XNFP(J,3)*(4./2./13.595)*TKEV(J)/RHO(J)
     XRLOG = log(FRACT[J][iHe1] * (2. / 13.595) * TKEV[J] / RHO[J]);
     BOLTEX[J] = exp(-23.730 / TKEV[J] + XRLOG);
@@ -2520,78 +2622,70 @@ void HE1OP_new(double *ahe1, int iHe1, int iHe2)
   }
   // HeII n=2
   ELIM = 527490.06e0;
-  while (1)
+  FREQHE = (ELIM - 171135.00e0) * CLIGHTcm;
+  if (FREQ >= FREQHE)
   {
-    FREQHE = (ELIM - 171135.00e0) * CLIGHTcm;
-    if (FREQ < FREQHE)
-      break;
-
     ZEFF2 = FREQHE / RYD;
     TRANS[4] += XKARZAS(FREQ, ZEFF2, 1, 0);
     FREQHE = (ELIM - 169087.e0) * CLIGHTcm;
-    if (FREQ < FREQHE)
-      break;
-
+  }
+  if (FREQ >= FREQHE)
+  {
     ZEFF2 = FREQHE / RYD;
     TRANS[3] += XKARZAS(FREQ, ZEFF2, 1, 0);
     FREQHE = (ELIM - 166277.546e0) * CLIGHTcm;
-    if (FREQ < FREQHE)
-      break;
-
+  }
+  if (FREQ >= FREQHE)
+  {
     ZEFF2 = FREQHE / RYD;
     TRANS[2] += XKARZAS(FREQ, ZEFF2, 1, 0);
     FREQHE = (ELIM - 159856.069e0) * CLIGHTcm;
-    if (FREQ < FREQHE)
-      break;
-
+  }
+  if (FREQ < FREQHE)
+  {
     ZEFF2 = FREQHE / RYD;
     TRANS[1] += XKARZAS(FREQ, ZEFF2, 1, 0);
-    break;
   }
 
   // HeII n=3
   ELIM = 588451.59e0;
-  while (1)
+  FREQHE = (ELIM - 186209.471e0) * CLIGHTcm;
+  if (FREQ >= FREQHE)
   {
-    FREQHE = (ELIM - 186209.471e0) * CLIGHTcm;
-    if (FREQ < FREQHE)
-      break;
-
     ZEFF2 = FREQHE / RYD;
     TRANS[9] += XKARZAS(FREQ, ZEFF2, 1, 0);
     FREQHE = (ELIM - 186101.e0) * CLIGHTcm;
-    if (FREQ < FREQHE)
-      break;
-
+  }
+  if (FREQ >= FREQHE)
+  {
     ZEFF2 = FREQHE / RYD;
     TRANS[8] += XKARZAS(FREQ, ZEFF2, 1, 0);
     FREQHE = (ELIM - 185564.e0) * CLIGHTcm;
-    if (FREQ < FREQHE)
-      break;
-
+  }
+  if (FREQ >= FREQHE)
+  {
     ZEFF2 = FREQHE / RYD;
     TRANS[7] += XKARZAS(FREQ, ZEFF2, 1, 0);
     FREQHE = (ELIM - 184864.e0) * CLIGHTcm;
-    if (FREQ < FREQHE)
-      break;
-
+  }
+  if (FREQ >= FREQHE)
+  {
     ZEFF2 = FREQHE / RYD;
     TRANS[6] += XKARZAS(FREQ, ZEFF2, 1, 0);
     FREQHE = (ELIM - 183236.e0) * CLIGHTcm;
-    if (FREQ < FREQHE)
-      break;
-
+  }
+  if (FREQ >= FREQHE)
+  {
     ZEFF2 = FREQHE / RYD;
     TRANS[5] += XKARZAS(FREQ, ZEFF2, 1, 0);
-    if (FREQ < 1.25408e16)
-      break;
-
-    for (N = 4; N < 28; N++)
+    if (FREQ >= 1.25408e16)
     {
-      ZEFF2 = 4.e0 - 3.e0 / (N * N);
-      TRANSN[N - 1] = XKARZAS(FREQ, ZEFF2, 1, 0);
+      for (N = 4; N < 28; N++)
+      {
+        ZEFF2 = 4.e0 - 3.e0 / (N * N);
+        TRANSN[N - 1] = XKARZAS(FREQ, ZEFF2, 1, 0);
+      }
     }
-    break;
   }
   //  printf("IMIN=%d, FREQ=%g\n",IMIN,FREQ);
   //  return;
@@ -2732,7 +2826,6 @@ double C1OP_new(int J) /* Cross-section                                */
     //  ELEV=79314.86
     if (WAVENO < ELIM - ELEV[0])
       break;
-
     //  GLEV=9.
     ZEFF2 = 9. / RYD * (ELIM - ELEV[0]);
     X[0] = XKARZAS(FREQ, ZEFF2, 3, 2);
@@ -3104,7 +3197,6 @@ double MG1OP(int J) // CROSS-SECTION TIMES THE PARTITION FUNCTION
 
 double MG1OP_new(int J) /* Cross-section                                */
 {                       /* This routine is based on R.L. Kurucz Atlas12 */
-  static int mion = 1006;
   static double ELEV[15] = {54676.710, 54676.438, 54192.284, 53134.642, 49346.729,
                             47957.034, 47847.797, 46403.065, 43503.333, 41197.043,
                             35051.264, 21919.178, 21870.464, 21850.405, 0.};
@@ -3128,6 +3220,7 @@ double MG1OP_new(int J) /* Cross-section                                */
   {
     H = FREQ3 * GFACTOR * 2. / 2. / (RYD * Z * Z * HCKT) *
         (exp(-max(ELIM - RYD * Z * Z / 25., ELIM - WAVENO) * HCKT) - exp(-ELIM * HCKT));
+    // Commented out because all X are zero.
     //    for(i=0; i<15; i++) H+=X[i]*BOLT[i];
     return H;
   }
@@ -3857,12 +3950,30 @@ double FE1OP(int J) /* Cross-section time partition functions */
   //  for(I=0; I<48; I++) FE1OPACITY+=XSECT[I]*BOLT[I];
   return FE1OPACITY;
 }
+/*
+      DO 10 I=1,48
+   10 BOLT(I)=G(I)*EXP(-E(I)*2.99792458E10*HKT(J))
+      WAVENO=FREQ/2.99792458E10
+      IF(WAVENO.LT.21000.)GO TO 30
+      DO 25 I=1,48
+      XSECT(I)=0.
+      IF(WNO(I).LT.WAVENO)
+     1XSECT(I)= 3.E-18/(1.+((WNO(I)+3000.-WAVENO)/WNO(I)/.1)**4)
+   25 CONTINUE
+   30 FE1OP=0.
+      IF(WAVENO.LT.21000.)RETURN
+      DO 35 I=1,48
+   35 FE1OP=FE1OP+XSECT(I)*BOLT(I,J)
+      RETURN
+      END
+*/
 
 double FE1OP_new(int J) /* Cross-sections of Fe 1 photoionization time        */
 {                       /* This routine is based on data provided by Bautista */
                         /* described in Bautista et al. 2017, A&A 606, 127    */
   static double WN0 = 10000.000, WNSTEP = 20.000;
   static int n_WN = 12001, n_Ebin = 78, first = 1;
+  //  static double Ebin[78], GCROSS[12001][78];
   static double Ebin[78], GCROSS[2401][78];
   double WAVENO, BOLT, FACTOR, kT_eV, fe1op;
   int i_wn, i_en, i;
@@ -4228,7 +4339,7 @@ double NHOP(int J) /* Cross-sections of Fe 1 photoionization time               
       for (i_temp = 0; i_temp < n_Temp; i_temp++)
         T_TBL[i_temp] = *(float *)ByteSwap((char *)(T_TBL + i_temp), 4);
     }
-    i = fread(GCROSS, sizeof(double), n_etrans * n_WL * n_Temp, NHop_data);
+    i = fread(GCROSS, sizeof(double), n_etrans * n_Temp * n_WL, NHop_data);
     if (change_byte_order)
     {
       ii = 0;
@@ -4568,6 +4679,7 @@ void COOLOP(double *acool) /* Si1, Mg1, Al1, C1, Fe1 */
   //  double C1OP_new(int), MG1OP_new(int);
   int J;
 
+  //printf("PATHLEN=%d\n",PATHLEN);
   if (PATHLEN > 0)
   {
     for (J = 0; J < NRHOX; J++)
@@ -4590,11 +4702,14 @@ void COOLOP(double *acool) /* Si1, Mg1, Al1, C1, Fe1 */
       acool[J] = (C1OP_new(J) * FRACT[J][IXC1] + MG1OP_new(J) * FRACT[J][IXMG1] + AL1OP_new(J) * FRACT[J][IXAL1] + SI1OP_new(J) * FRACT[J][IXSI1] + FE1OP(J) * FRACT[J][IXFE1] + CHOP(J) * FRACT[J][IXCH] + OHOP(J) * FRACT[J][IXOH]) * STIM[J] / RHO[J];
     }
   }
-  //printf("%2d:  C1OP old=%g, new=%g\n", J, C1OP(J), C1OP_new(J));
-  //printf("    MG1OP old=%g, new=%g\n", MG1OP(J),MG1OP_new(J));
-  //printf("    AL1OP old=%g, new=%g\n", AL1OP(J),AL1OP_new(J));
-  //printf("    SI1OP old=%g, new=%g\n", SI1OP(J),SI1OP_new(J));
-  //printf("%2d:  FE1OP old=%g, new=%g\n", J, FE1OP(J), FE1OP_new(J));
+  /* {
+  J=47;
+  printf("WL=%g C1OP old=%g, new=%g\n", CLIGHT/FREQ, C1OP(J), C1OP_new(J));
+  printf("     MG1OP old=%g, new=%g\n", MG1OP(J),MG1OP_new(J));
+  printf("     AL1OP old=%g, new=%g\n", AL1OP(J),AL1OP_new(J));
+  printf("     SI1OP old=%g, new=%g\n", SI1OP(J),SI1OP_new(J));
+  printf("     FE1OP old=%g, new=%g\n", FE1OP(J),FE1OP_new(J));
+} */
   return;
 }
 
@@ -5425,7 +5540,7 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[])
   CALLOC(SPLIST, N_SPLIST * 8, char);
   if (SPLIST == NULL)
   {
-    strcpy(result, "Not enough space in EOS_count_species");
+    strcpy(result, "No enough space in EOS_count_species");
     return result;
   }
 
@@ -5569,7 +5684,7 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[])
       IXHMIN = i;
     else if (!strncmp(SPLIST + 8 * i, "H2 ", 3))
       IXH2mol = i;
-    else if (!strncmp(SPLIST + 8 * i, "H2+", 3))
+    else if (!strncmp(SPLIST + 8 * i, "H2+ ", 4))
       IXH2pl = i;
     else if (!strncmp(SPLIST + 8 * i, "He ", 3))
       IXHE1 = i;
@@ -5712,14 +5827,14 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[])
              log10(FRACT[i][145] * PARTITION_FUNCTIONS[i][145] / RHO[i]));
     }
 
-    if (dump01 && i == 23)
+    if (dump01 && i == NRHOX - 1)
     {
       printf("Atmospheric layer #%d out of %d (%g %g %g)\n", i, NRHOX - 1, T[i], XNE[i], XNA[i]);
       for (j = 0; j < N_SPLIST; j++)
         printf("%d %s %f %10.4g %f\n", j, Terminator(SPLIST + 8 * j, 8),
                PARTITION_FUNCTIONS[i][j],
                FRACT[i][j],
-               log10(FRACT[i][j] / RHO[i]));
+               FRACT[i][j] / RHO[i]);
       //  for(j=0;j<NLINES;j++) printf("A:%d %d %s\n",j,SPINDEX[j],Terminator(SPLIST+8*(SPINDEX[0]-1),8));
       //  printf("B:%s\n",Terminator(SPLIST+8*(SPINDEX[0]-1),8));
       //  printf("B:%s\n",Terminator(SPLIST+8*(SPINDEX[1]-1),8));
@@ -6080,21 +6195,26 @@ extern "C" char const *SME_DLL Transf(int n, void *arg[])
     // Line contribution limits
     for (line = 0; line < NLINES; line++) // Check the line contribution at various detunings
     {
-      delta_lambda = 0.25;
+      delta_lambda = 0.2;
       WW = WLCENT[line];
       if (MARK[line] == -1)
       {
         MARK[line] = 0;
         do
         {
-          delta_lambda = delta_lambda * 2;
+          delta_lambda = delta_lambda * 1.5;
           OPMTRX(WW + delta_lambda, opacity_tot, opacity_cont,
-                 source, source_cont, line, line); // Assess line contribution at a give offset
-        } while (ALMAX[line] > EPS1 * 0.1);
+                 source, source_cont, line, line); // Assess line contribution at a given offset
+        } while (ALMAX[line] > EPS1);
         Wlim_left[line] = max(WW - delta_lambda, 0.);
         Wlim_right[line] = min(WW + delta_lambda, 2000000.);
       }
     }
+    //    for(line=0; line<NLINES; line++)
+    //    {
+    //      printf("Transf in: Line %d, mark=%d, Left:%10.8g, wlcent:%10.8g, Right:%10.8g, %d, %d\n",
+    //              line,MARK[line],Wlim_left[line],WLCENT[line],Wlim_right[line],mark_total,NLINES);
+    //    }
   }
 
   if (MOTYPE == 3) /* If things get spherical initialize a 2D array of MUs and do the RT */
@@ -6102,28 +6222,30 @@ extern "C" char const *SME_DLL Transf(int n, void *arg[])
     double sintheta, deltaR, meanR, meanZ, path;
     int nrhox, grazing[MUSIZE], NRHOXs[MUSIZE];
     /*
-      The main idea here is that we simply scale up delta m (or delta tau) by the ratio of
-      geometrical path along the ray and along the radius. Rays are characterized by the impact
-      parameter P that is derived from Mu at the outer surface. Z distance along the ray is
-      measured from the plane perpendicular to the line-of-sight and crossing the stellar center.
-      The main relation is: Z^2 = R^2 - P^2.
-              Z2 - Z1   (Z2^2 - Z1^2)   R2 + R1   R2 + R1
-      dZ/dR = ------- = ------------- * ------- = -------.
-              R2 - R1   (R2^2 - R1^2)   Z2 + Z1   Z2 + Z1
-      The corresponding change in dm is then:
-                        dZ            Rmean
-      dm_sph = dm_rad * -- = dm_rad * -----
-                        dR            Zmean
-    */
+   The main idea here is that we simply scale up delta m (or delta tau) by the ratio of
+   geometrical path along the ray and along the radius. Rays are characterized by the impact
+   parameter P that is derived from Mu at the outer surface. Z distance along the ray is
+   measured from the plane perpendicular to the line-of-sight and crossing the stellar center.
+   The main relation is: Z^2 = R^2 - P^2.
+           Z2 - Z1   (Z2^2 - Z1^2)   R2 + R1   R2 + R1
+   dZ/dR = ------- = ------------- * ------- = -------.
+           R2 - R1   (R2^2 - R1^2)   Z2 + Z1   Z2 + Z1
+   The corresponding change in dm is then:
+                     dZ            Rmean
+   dm_sph = dm_rad * -- = dm_rad * -----
+                     dR            Zmean
+*/
     for (imu = 0; imu < NMU; imu++)
     {
       P_impact = (RADIUS + RAD_ATMO[0]) * sqrt(1. - MU[imu] * MU[imu]);
       grazing[imu] = (P_impact > RADIUS + RAD_ATMO[NRHOX - 1]) ? 1 : 0;
+      //printf("imu=%d, Impact=%g, height=%g, grazing=%d, %g\n", imu, P_impact/RADIUS, RAD_ATMO[0], grazing[imu], 1.-MU[imu]*MU[imu]);
       if (grazing[imu]) /* Dealing with grazing rays that do not penetrate optically thick layers */
       {
         for (nrhox = 1; nrhox < NRHOX; nrhox++)
           if (P_impact >= RADIUS + RAD_ATMO[nrhox])
             break;
+        //printf("imu=%d, Impact=%g, nrhox=%d, NRHOX=%d, %g\n", imu, P_impact/RADIUS, nrhox, NRHOX, 1.-MU[imu]*MU[imu]);
         deltaR = RAD_ATMO[nrhox - 1] - RAD_ATMO[nrhox];      // The layer where we do not cross both
         path = RAD_ATMO[nrhox - 1] + RADIUS;                 // boundaries gets special treatment
         path = 2. * sqrt(path * path - P_impact * P_impact); // Geometrical path through the inner ring
@@ -6137,11 +6259,14 @@ extern "C" char const *SME_DLL Transf(int n, void *arg[])
         }
         rhox_sph[imu][nrhox] = rhox_sph[imu][nrhox - 1] + // Column mass across the deepest layer
                                path * (RHOX[nrhox] - RHOX[nrhox - 1]) / (RAD_ATMO[nrhox - 1] - RAD_ATMO[nrhox]);
+        //printf("path=%g, dm=%g\n",path, RHOX[nrhox]-RHOX[nrhox-1]);
         for (im = nrhox + 1; im < 2 * nrhox; im++) // The rest of the grazing ray back to the surface
         {                                          // We have column mass chunks stored in rhox_sph already
           rhox_sph[imu][im] = rhox_sph[imu][im - 1] + (rhox_sph[imu][2 * nrhox - im] - rhox_sph[imu][2 * nrhox - im - 1]);
         }
+        //for(im=0;im<2*nrhox;im++) printf("imu=%d, im=%d, rhox_sph=%g\n",imu,im,rhox_sph[imu][im]);
         NRHOXs[imu] = 2 * nrhox;
+        //for(im=0;im<2*nrhox; im++) printf("%g ", rhox_sph[imu][im]); printf("2*nrhox=%d\n",2*nrhox);
       }
       else /* Normal rays are treated as in plane parallel case except for variable Mu */
       {
@@ -6152,6 +6277,7 @@ extern "C" char const *SME_DLL Transf(int n, void *arg[])
           meanZ = sqrt((RAD_ATMO[im] + RADIUS) * (RAD_ATMO[im] + RADIUS) - P_impact * P_impact) +
                   sqrt((RAD_ATMO[im - 1] + RADIUS) * (RAD_ATMO[im - 1] + RADIUS) - P_impact * P_impact);
           rhox_sph[imu][im] = rhox_sph[imu][im - 1] + (RHOX[im] - RHOX[im - 1]) * meanR / meanZ;
+          //printf("im=%d, Rad=%g, P=%g, MU=%g\n", im, RAD_ATMO[im  ]+RADIUS, P_impact, MU[imu]);
         }
         NRHOXs[imu] = NRHOX;
       }
@@ -6167,9 +6293,20 @@ extern "C" char const *SME_DLL Transf(int n, void *arg[])
       for (im = 0; im < NRHOX; im++)
         rhox[imu * NRHOX + im] = RHOX[im] / MU[imu];
     }
+    //  printf("0) NWL=%d, NWSIZE=%d, keep_lineop=%d\n",NWL,NWSIZE,keep_lineop);
     iret = RKINTS(rhox, NMU, EPS1, EPS2, FCBLUE, FCRED, TABLE, NWSIZE, NWL,
                   WL, long_continuum);
+    //  printf("1) NWL=%d, NWSIZE=%d, keep_lineop=%d\n",NWL,NWSIZE,keep_lineop);
   }
+
+  //  for(line=0; line<NLINES; line++)
+  //  {
+  //    printf("Transf out: Line %d, mark=%d, Left:%10.8g, wlcent:%10.8g, Right:%10.8g %d\n",
+  //            line,MARK[line],Wlim_left[line],WLCENT[line],Wlim_right[line],keep_lineop);
+  //  }
+
+  //printf("New %g %g %g %g %g\n",TABLE[0],TABLE[1],TABLE[2],TABLE[3],TABLE[4]);
+
   *((int *)arg[5]) = NWL;
 
   //  getrusage(0, &r_usage);
@@ -6177,6 +6314,72 @@ extern "C" char const *SME_DLL Transf(int n, void *arg[])
   //  printf("Opacity time: %d, RT time: %d, Total:%d\n", t_op, t_rt, t_tot);
 
   return iret ? "Not enough array length to store all the points" : "";
+}
+
+extern "C" char const *SME_DLL GetLineRange(int n, void *arg[]) /* Get importance range for every line */
+{
+  int nlines, line;
+  double *b;
+
+  if (!flagMODEL)
+  {
+    strcpy(result, "No model atmosphere has been set");
+    return result;
+  }
+  if (!flagWLRANGE)
+  {
+    strcpy(result, "No wavelength range has been set");
+    return result;
+  }
+  if (!flagABUND)
+  {
+    strcpy(result, "No list of abundances has been set");
+    return result;
+  }
+  if (!flagLINELIST)
+  {
+    strcpy(result, "No line list has been set");
+    return result;
+  }
+  if (!flagIONIZ)
+  {
+    strcpy(result, "Molecular-ionization equilibrium was not computed");
+    return result;
+  }
+  if (!flagCONTIN)
+  {
+    strcpy(result, "No arrays have been allocated for continous opacity calculations");
+    return result;
+  }
+  if (!lineOPACITIES)
+  {
+    strcpy(result, "No memory has been allocated for storing line opacities");
+    return result;
+  }
+
+  if (n < 2) // Check if arguments are present
+  {
+    strcpy(result, "GetLineRange: Requires an double array pointer and its length");
+    return result;
+  }
+
+  b = (double *)arg[0];
+  nlines = *(int *)arg[1];
+
+  for (line = 0; line < min(nlines, NLINES); line++)
+  {
+    if (MARK[line])
+    {
+      b[2 * line] = b[2 * line + 1] = WLCENT[line];
+    }
+    else
+    {
+      b[2 * line] = Wlim_left[line];
+      b[2 * line + 1] = Wlim_right[line];
+    }
+  }
+
+  return &OK_response;
 }
 
 extern "C" char const *SME_DLL CentralDepth(int n, void *arg[])
@@ -6671,6 +6874,14 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
   double DWL_MIN;
   int line, line_first, line_last, i, IMU, IM, IWL, NNWL;
 
+  //  struct rusage r_usage;
+  //  time_t t1;
+  //  getrusage(0, &r_usage);
+  //  t1=r_usage.ru_utime.tv_sec;
+  //  t_rt=0;
+  //  t_op=0;
+  //  t_tot=0;
+
   if (NWL > 0 && NWL <= NWSIZE) // If the wavelength grid is preset, just do it
   {                             // No adaptive grid in this case
     if (!long_continuum)
@@ -6681,10 +6892,17 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
 
     line_first = 0;
     line_last = NLINES - 1;
+    while (Wlim_right[line_first] < WL[0] && line_first < line_last)
+      line_first++;
+    while (Wlim_left[line_last] > WL[NWL - 1] && line_first < line_last)
+      line_last--;
 
     NNWL = NWL;
     for (IWL = 0; IWL < NNWL; IWL++)
     {
+      //      line_last=NLINES-1;
+      //      while(Wlim_right[line_first]<WL[IWL] && line_first<line_last) line_first++;
+      //      while(Wlim_left [line_last] >WL[IWL] && line_first<line_last) line_last--;
       OPMTRX(WL[IWL], opacity_tot, opacity_cont, source, source_cont, line_first, line_last);
       TBINTG(NMU, rhox, opacity_tot, source, TABLE + IWL * NMU);
       if (long_continuum)
@@ -6694,11 +6912,49 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
     }
     OPMTRX(WLAST, opacity_tot, opacity_cont, source, source_cont, 0, NLINES - 1);
     TBINTG(NMU, rhox, opacity_cont, source_cont, FCRED);
+    //    getrusage(0, &r_usage);
+    //    t_tot+=r_usage.ru_utime.tv_sec-t1;
+    //    printf("Opacity time: %d, RT time: %d, Total:%d\n", t_op, t_rt, t_tot);
     return 0;
   }
 
+  /*
+{
+    FILE *fff; short *iptr; double *dptr, DUMMY[14];
+
+    OPMTRX(5000., opacity_tot, opacity_cont, source, source_cont, 0, NLINES-1);
+    TBINTG(NMU, rhox, opacity_cont, source_cont, DUMMY);
+
+    printf("Writing dump file\n");
+    fff=fopen("dump5000opac.dat","wb");
+    fwrite(&NRHOX, sizeof(short), 1, fff);
+    fwrite(RHOX, sizeof(double), NRHOX, fff);
+    fwrite(opacity_cont, sizeof(double), NRHOX, fff);
+    fwrite(opacity_tot, sizeof(double), NRHOX, fff);
+    fwrite(source, sizeof(double), NRHOX, fff);
+    fwrite(source_cont, sizeof(double), NRHOX, fff);
+    fwrite(DUMMY, sizeof(double), NMU, fff);
+    printf("Closing dump file\n");
+    fclose(fff);
+    exit(0);
+}
+*/
+
   /* CALCULATE CONTINUUM FLUX FOR BOTH ENDS OF THE INTERVAL
    FIRST WE CALCULATE FLUX AT THE BLUE END OF SPECTRAL INTERVAL */
+
+  //  OPMTRX(WLCENT[0], opacity_tot, opacity_cont, source, source_cont, 0, NLINES-1);
+  //  TBINTG(NMU, rhox, opacity_tot, source, TABLE);
+  //  for(IM=0; IM<NRHOX; IM++) printf("%d %10.4g %10.4g %10.4g\n",
+  //                            IM,opacity_tot[IM],opacity_cont[IM],source[IM]);
+  //  printf("LINE:%10.4g\n",*TABLE);
+  //  TBINTG(NMU, rhox, opacity_cont, source_cont, TABLE);
+  //  printf("CONT:%10.4g\n",*TABLE);
+
+  //  t1=r_usage.ru_utime.tv_sec;
+  //  t_rt=0;
+  //  t_op=0;
+  //  t_tot=0;
 
   WL[0] = WFIRST;
   OPMTRX(WFIRST, opacity_tot, opacity_cont, source, source_cont, 0, NLINES - 1);
@@ -6755,9 +7011,12 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
         debug_print = 0;
         FNORM = FCBLUE[IWL * NMU];
       }
+      //      exit(0);
 
       if (1. - TABLE[IWL * NMU] / FNORM < EPS2)
         MARK[line] = 2;
+      //      printf("RKINTS: Line %d, Left:%10.8g, wl:%10.8g, Right:%10.8g\n",
+      //              line,Wlim_left[line],WLCENT[line],Wlim_right[line]);
     }
   }
 
@@ -6770,12 +7029,6 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
     return 1;
   WL[IWL] = WLAST;
   OPMTRX(WL[IWL], opacity_tot, opacity_cont, source, source_cont, 0, NLINES - 1);
-  //  for(IMU=0; IMU<NMU; IMU++)
-  //  {
-  //    TBINTG(rhox+IMU*NRHOX, opacity_tot, source, TABLE+IWL*NMU+IMU);
-  //    TBINTG(rhox+IMU*NRHOX, opacity_cont, source_cont, FCRED+IMU);
-  //    if(long_continuum) FCBLUE[IWL*NMU+IMU]=FCRED[IMU];
-  //  }
   TBINTG(NMU, rhox, opacity_tot, source, TABLE + IWL * NMU);
   debug_print = 1;
   TBINTG(NMU, rhox, opacity_cont, source_cont, FCRED);
@@ -6791,8 +7044,8 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
   }
   NWL = IWL + 1;
 
-  /* Now we go one refining the wavelength grid based on comparing the actual value
-   disk center intensity with linear nterpolation between adjacent points */
+  /* Now we go on refining the wavelength grid based on comparing the actual value
+   disk center intensity with linear interpolation between adjacent points */
 
   IWL = 1;
   line_first = 0;
@@ -6887,6 +7140,9 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
   //    printf("RKINTS: Line %d, Left:%10.8g, wlcent:%10.8g, Right:%10.8g\n",
   //            line,Wlim_left[line],WLCENT[line],Wlim_right[line]);
   //  }
+  //  getrusage(0, &r_usage);
+  //  t_tot+=r_usage.ru_utime.tv_sec-t1;
+  //  printf("Opacity time (new wl grid): %d, RT time: %d, Total:%d\n", t_op, t_rt, t_tot);
   return 0;
 }
 
@@ -7589,7 +7845,7 @@ void LINEOPAC(int LINE)
    Line opacity is: ------ * gf * N_absorb * STIM
                      m*c
   
-   Two Hydrogen line profiles are computed externally by Kurucz
+   The Hydrogen line profiles are computed externally by Kurucz
    approximation (HLINOP) or by interpolation in Stehle's tables (HTABLE)
    and are area normalized!
 
@@ -7826,7 +8082,7 @@ void LINEOPAC(int LINE)
           /*
    This van der Waals part is written by Paul Barklem
    Compute the broadening by hydrogen from cross-section data which is in m^2
-   Unpack the temperature dependent van der Waals Parameters
+   Unpack the temperature dependent van der Waals parameters:
    integer part is SIGMA and decimal part is ALPHA.
 */
           SIGMA = ((int)GAMVW[LINE]) * A0 * A0;
@@ -8032,6 +8288,8 @@ void OPMTRX(double WAVE, double *XK, double *XC, double *source_line,
 
     /* Loop through spectral lines */
 
+    //    if(ITAU==0) printf("START:%d, END:%d\n", LINE_START,LINE_FINISH);
+
     ALINE = 0.;
     for (LINE = LINE_START; LINE <= LINE_FINISH; LINE++)
     {
@@ -8068,9 +8326,13 @@ void OPMTRX(double WAVE, double *XK, double *XC, double *source_line,
         dopl = VVOIGT[ITAU][LINE];
         hlinprof_(wave, wlcent, temper, xnelec, NBLO, NBUP,
                   h1frc, he1frc, dopl, aline1, PATH, &PATHLEN, &change_byte_order);
-        //        aline2=hlinop_(wave,NBLO,NBUP,wlcent,temper,xnelec,
+        //if(wave==wlcent) printf("Computing H line: %g %g %g %d %d %g %g %g %g\n",
+        //                         temper,xnelec,wlcent,NBLO,NBUP,h1frc,he1frc,dopl,aline1);
+        //        aline1=hlinop_(wave,NBLO,NBUP,wlcent,temper,xnelec,
         //                       h1frc,he1frc,dopl)*CLIGHTcm;
-        //printf("Computing H line: %d %d %d %d %g\n",ITAU,LINE,NBLO,NBUP,aline1);
+        //if(wave==wlcent) printf("Computing H line: %d %d %d %d %g\n",ITAU,LINE,NBLO,NBUP,aline1);
+        //if(wave==wlcent) printf("Computing H line: %g %g %g %d %d %g %g %g %g\n",
+        //                         temper,xnelec,wlcent,NBLO,NBUP,h1frc,he1frc,dopl,aline1);
         ALINE1 = aline1 * LINEOP[ITAU][LINE] * wave * wave;
         if (initNLTE)
         {
@@ -8083,7 +8345,7 @@ void OPMTRX(double WAVE, double *XK, double *XC, double *source_line,
         //                  ITAU,wave,aline1,aline2,xnelec,
         //                  h1frc,he1frc,dopl,ALINE1);
         //        }
-        ALMAX[LINE] = 1.e6;
+        ALMAX[LINE] = ALINE1 / OPCON;
       }
       else // Non-hydrogen line
       {

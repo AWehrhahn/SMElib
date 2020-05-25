@@ -142,11 +142,21 @@ C
             CALL VCS(HLIND,XNED,TD,DEL,1,NLOW,NUP,HVCSFILE)
             HLIN = HLIND
           ENDIF
+          IF (HLIN.LT.0.) THEN
+            HLIN = HLINOP(WAVE,NLOW,NUP,WAVE0,TEMP,XXNE,H1FRC,
+     ;                                            HE1FRC,DOP)
+            HLIN = HLIN * C/WAVE/WAVE
+          ENDIF
         END IF
         IF (ISTARK .EQ. 2) THEN
           CALL VCS(HLIND,XNED,TD,DEL,1,NLOW,NUP,HVCSFILE)
           HLIN = HLIND
         END IF
+        IF (HLIN.LT.0.) THEN
+          HLIN = HLINOP(WAVE,NLOW,NUP,WAVE0,TEMP,XXNE,H1FRC,
+     ;                                            HE1FRC,DOP)
+          HLIN = HLIN * C/WAVE/WAVE
+        ENDIF
         IF ((DEL .GT. .2d0) .AND. (H1FRC .GT. 0.)) THEN
           IF (ISELF .EQ. 1) THEN
              CALL HGRID(HSELFFILE,
@@ -387,8 +397,8 @@ C
             END DO
           END DO
         END DO
-        IF(LINDEX(NLOW,NUP).GT.0) WRITE(*,*) 
-     *    'Will use Stehle''s tables for Hydrogen line profiles'
+C        IF(LINDEX(NLOW,NUP).GT.0) WRITE(*,*) 
+C     *    'Will use Stehle''s tables for Hydrogen line profiles'
       END IF
 C
 C  Interpolation section
@@ -1213,7 +1223,7 @@ C
 c        DO I=1,II
 c          PR(I)=0.
 c        END DO
-         PR=0.
+         PR=-1.
         RETURN
       END IF                                  
 C     TEMPERATURE AND ELECTRON DENSITY INTERPOLATION        

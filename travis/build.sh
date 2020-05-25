@@ -14,3 +14,7 @@ for PYBIN in /opt/python/cp3*/bin; do
     "${PYBIN}/pip" install -r ./test/requirements.txt
     "${PYBIN}/pytest"
 done
+
+cp -R ./lib /io
+cp -R ./share /io
+ls /io

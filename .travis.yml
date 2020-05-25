@@ -115,7 +115,7 @@ script:
 - python3 -m pytest
 
 before_deploy:
-- mkdir build
+- mkdir -p build
 - tar -czvf build/smelib_$TARGET.tar.gz $OUTPUT_DIRS
 
 deploy:

@@ -34,7 +34,7 @@ def get_lib_name():
     arch = platform.machine()
     bits = platform.architecture()[0][:-3]
 
-    return f"sme_synth.so.{system}.{arch}.{bits}"
+    return "sme_synth.so.{system}.{arch}.{bits}".format(system=system, arch=arch, bits=bits)
 
 
 def get_typenames(arg):
@@ -57,7 +57,7 @@ def get_typenames(arg):
     ):
         return "int"
 
-    raise ValueError(f"argument datatype not understood")
+    raise ValueError("argument datatype not understood")
 
 
 def get_dtype(type):
@@ -86,7 +86,7 @@ def get_dtype(type):
     elif type in ["u", "unicode", "str", str]:
         return IDL_String
     else:
-        raise ValueError(f"Data type {type} not understood")
+        raise ValueError("Data type {type} not understood".format(type=type))
 
 
 def load_library(libfile=None):
@@ -231,7 +231,7 @@ def idl_call_external(funcname, *args, restype="str", type=None, lib=None):
                     original[i][:] = arr
                 except ValueError as ve:
                     print(
-                        f"WARNING: Array values changed, but could not be written back to the original array\n{str(ve)}"
+                        "WARNING: Array values changed, but could not be written back to the original array\n{ve}".format(ve=str(ve))
                     )
 
     return res
@@ -277,13 +277,13 @@ class IDL_DLL:
             error = idl_call_external(name, *args, lib=self.lib, **kwargs)
             error = error.decode()
         except AttributeError as ex:
-            error = f"Using obsolete SME Library; {ex}"
+            error = "Using obsolete SME Library; {ex}".format(ex=ex)
             raise_error = False
             raise_warning = True
 
         if error != "":
             if raise_error:
-                raise ValueError(f"{name} (call external): {error}")
+                raise ValueError("{name} (call external): {error}".format(name=name, error=error))
             if raise_warning:
-                warnings.warn(f"{name} (call external): {error}")
+                warnings.warn("{name} (call external): {error}".format(name=name, error=error))
         return error

@@ -58,14 +58,14 @@ class SME_DLL:
     @property
     def ndepth(self):
         """int: Number of depth layers in the atmosphere model"""
-        assert self.atmo is not None, f"No model atmosphere has been set"
+        assert self.atmo is not None, "No model atmosphere has been set"
         motype = self.atmo.depth
         return len(self.atmo[motype])
 
     @property
     def nlines(self):
         """int: number of lines in the linelist"""
-        assert self.linelist is not None, f"No line list has been set"
+        assert self.linelist is not None, "No line list has been set"
         return len(self.linelist)
 
     @property
@@ -89,7 +89,7 @@ class SME_DLL:
             n = os.path.join(directory, name)
             if not os.path.exists(n):
                 raise FileNotFoundError(
-                    f"Could not find required data file {name} in library directory {directory}"
+                    "Could not find required data file {name} in library directory {directory}".format(name=name, directory=directory)
                 )
 
     def SMELibraryVersion(self):
@@ -186,10 +186,10 @@ class SME_DLL:
 
         assert (
             atomic.shape[1] == nlines
-        ), f"Got wrong Linelist shape, expected ({nlines}, 8) but got {atomic.shape}"
+        ), "Got wrong Linelist shape, expected ({nlines}, 8) but got {atomic}".format(nlines=nlines, atomic=atomic.shape)
         assert (
             atomic.shape[0] == 8
-        ), f"Got wrong Linelist shape, expected ({nlines}, 8) but got {atomic.shape}"
+        ), "Got wrong Linelist shape, expected ({nlines}, 8) but got {atomic}".format(nlines=nlines, atomic=atomic.shape)
 
         self.lib.InputLineList(
             nlines, species, atomic, type=("int", "string", "double")
@@ -229,7 +229,7 @@ class SME_DLL:
         nlines = atomic.shape[0]
         assert (
             atomic.shape[1] == 8
-        ), f"Got wrong Linelist shape, expected ({nlines}, 8) but got {atomic.shape}"
+        ), "Got wrong Linelist shape, expected ({nlines}, 8) but got {atomic}".format(nlines=nlines, atomic=atomic.shape)
 
         assert (
             len(index) == nlines
@@ -298,7 +298,7 @@ class SME_DLL:
                 args = args[:5] + [radius] + args[5:] + [height]
                 type = type[:5] + "d" + type[5:] + "d"
         except AttributeError as ae:
-            raise TypeError(f"atmo has to be an Atmo type, {ae}")
+            raise TypeError("atmo has to be an Atmo type, {ae}".format(ae=ae))
 
         self.lib.InputModel(*args, type=type)
 
@@ -676,11 +676,11 @@ class SME_DLL:
         bmat = np.atleast_2d(bmat)
         if bmat.shape[0] != 2:
             raise ValueError(
-                f"Departure coefficient matrix has the wrong shape, expected (2, {ndepth}) but got {bmat.shape} instead"
+                "Departure coefficient matrix has the wrong shape, expected (2, {ndepth}) but got {bmat} instead".format(ndepth=ndepth, bmat=bmat.shape)
             )
         if bmat.shape[1] != ndepth:
             raise ValueError(
-                f"Departure coefficient matrix has the wrong shape, expected (2, {ndepth}) but got {bmat.shape} instead"
+                "Departure coefficient matrix has the wrong shape, expected (2, {ndepth}) but got {bmat} instead".format(ndepth=ndepth, bmat=bmat.shape)
             )
 
         if not isinstance(lineindex, (int, np.integer)):
@@ -688,7 +688,7 @@ class SME_DLL:
 
         if not 0 <= lineindex < nlines:
             raise ValueError(
-                f"Lineindex out of range, expected value between 0 and {nlines}, but got {lineindex} instead"
+                "Lineindex out of range, expected value between 0 and {nlines}, but got {lineindex} instead".format(nlines=nlines, lineindex=lineindex)
             )
 
         self.lib.InputDepartureCoefficients(bmat, lineindex, type=("double", "int"))

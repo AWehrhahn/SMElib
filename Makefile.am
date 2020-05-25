@@ -11,6 +11,7 @@ libsme_la_SOURCES = \
 	src/eos/eos.f \
 	src/eos/eos_eqns.f \
 	src/eos/eos_math_special.f \
+	src/eos/kp_q_spln.f \
 	src/sme/hlinop.f \
 	src/sme/hlinprof.f
 libsme_la_LDFLAGS = -fPIC -version-info 5:22:0 -shared -no-undefined

@@ -486,7 +486,7 @@ class SME_DLL:
         accwi,
         keep_lineop=False,
         long_continuum=True,
-        nwmax=400_000,
+        nwmax=400000,
         wave=None,
     ):
         """

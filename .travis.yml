@@ -4,10 +4,10 @@ compiler: gcc
 jobs:
   include:
   - os: linux
-    dist: bionic
-    name: Ubuntu 18.04
+    dist: xenial
+    name: Ubuntu 16.04
     env:
-    - TARGET=linux
+    - TARGET=linux-libgfortran3
     - OUTPUT_DIRS="lib share"
     addons:
       apt:

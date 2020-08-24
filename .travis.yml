@@ -39,7 +39,7 @@ jobs:
     name: OSX
     env:
     - TARGET=osx
-    - FORTRAN_DIR="/usr/local/gfortran/lib/"
+    - FORTRAN_DIR="/usr/local/bin/"
     - LDFLAGS="-L$FORTRAN_DIR"
     - OUTPUT_DIRS="lib share"
     addons:
@@ -53,8 +53,6 @@ jobs:
         - autoconf
         - libtool
         - ccache
-        casks:
-        - gfortran
     before_cache:
     - brew cleanup
     cache:

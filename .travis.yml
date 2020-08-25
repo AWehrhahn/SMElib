@@ -39,7 +39,7 @@ jobs:
     name: OSX
     env:
     - TARGET=osx
-    - FORTRAN_DIR="/usr/local/gfortran/lib/"
+    - FORTRAN_DIR="/usr/local/bin/"
     - LDFLAGS="-L$FORTRAN_DIR"
     - OUTPUT_DIRS="lib share"
     addons:
@@ -53,17 +53,9 @@ jobs:
         - autoconf
         - libtool
         - ccache
-        casks:
-        - gfortran
-    before_cache:
-    - brew cleanup
     cache:
       - pip
-      - ccache
-      - directories:
-        - $HOME/Library/Caches/Homebrew
     before_install:
-    - export PATH="/usr/local/opt/ccache/libexec:$PATH"
     - ls $FORTRAN_DIR
     - alias python3="/usr/local/opt/python@3.8/bin/python3"
     - alias pip3="/usr/local/opt/python@3.8/bin/pip3"

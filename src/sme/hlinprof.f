@@ -1201,7 +1201,7 @@ c      DIMENSION PR(40),DEL(40)
 C     DIMENSION ALPHA(40),PRALPH(40)                                  
       DIMENSION PRALPH(40)                                   
       DIMENSION SVCS(6,17,40,4),ALPHA0(4)  
-      CHARACTER*80 HVCSFILE                                
+      CHARACTER*(*) HVCSFILE                                
       DATA SVCS(1,1,1,1)/0./,ALPHA0/-3.,-3.,-3.,-3./   
       SAVE SVCS
 C

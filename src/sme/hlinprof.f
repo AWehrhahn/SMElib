@@ -83,14 +83,17 @@ C
       LOGICAL FIRST
       INCLUDE 'DATA.FILES'
 C
+      PARAMETER (C = 2.997925E+18, PI = 3.14159265)
+      COMMON /HSWITCH/ISTARK,ISELF,ICONV,IHE
+      
       SAVE FIRST 
 C
       DATA FIRST/.TRUE./
-      PARAMETER (C = 2.997925E+18, PI = 3.14159265)
+      
 C
 C  Set the switches here 
 C
-      COMMON /HSWITCH/ISTARK,ISELF,ICONV,IHE
+      
       ISTARK = 1
       ISELF = 2
       ICONV = 1
@@ -314,10 +317,12 @@ C
 C  Open file and process errors
 C
         IF(BYTE_SWAP.EQ.0) THEN
-          OPEN(1,file=HFILE,IOSTAT=IERR,FORM='UNFORMATTED',STATUS='OLD')
+        OPEN(1,file=HFILE,IOSTAT=IERR,FORM='UNFORMATTED',STATUS='OLD')
         ELSE
-          OPEN(1,file=HFILE,IOSTAT=IERR,FORM='UNFORMATTED',STATUS='OLD',
-     *         CONVERT='LITTLE_ENDIAN')
+          WRITE(*,*) 'ERROR: STEHLE File in Big Endian format'
+          STOP
+        !       OPEN(1,file=HFILE,IOSTAT=IERR,FORM='UNFORMATTED',STATUS='OLD',
+        !  *         CONVERT='LITTLE_ENDIAN')
         END IF
         IF(IERR.NE.0) THEN
           WRITE(*,*) 'ERROR: STEHLE did not find Hydrogen line file'
@@ -566,12 +571,11 @@ C  I/O error processing
 C
    9  I=INDEX(HFILE,' ')-1
       IF(I.LE.0) I=LEN(HFILE)
-      WRITE(*,*) 'ERROR reading binary file '//HFILE(1:I)//' in HTABLE'
+      WRITE(*,*) 'ERROR reading binary file in HTABLE'
       STOP
   10  I=INDEX(HFILE,' ')-1
       IF(I.LE.0) I=LEN(HFILE)
-      WRITE(*,*) 'EOF found while reading binary file '//HFILE(1:I)//
-     *           ' in HTABLE'
+      WRITE(*,*) 'EOF found while reading binary file in HTABLE'
       STOP
       END
 
@@ -613,10 +617,11 @@ C
       CHARACTER HFILE*(*)
       SAVE T,NH,F0,MALPHA,MSPROF,PALPHA,PSPROF,PNALPHA,MNALPHA,
      *     NPROFS,NTEMP,NNH,NLINE,FIRST,LINDEX
-      DATA FIRST/.TRUE./,LINDEX/10000*0/
-      PARAMETER (SQRTPI=1.77245385)
+      PARAMETER (SQRTPI=1.77245385)      
       REAL*8 DEXP10,X
       DEXP10(X)=EXP(2.30258509299405D0*X)
+      DATA FIRST/.TRUE./,LINDEX/10000*0/
+
 C
 C  Read in the table (this is done only once)
 C
@@ -626,10 +631,12 @@ C
 C  Open file and process errors
 C
         IF(BYTE_SWAP.EQ.0) THEN
-          OPEN(1,file=HFILE,IOSTAT=IERR,FORM='UNFORMATTED',STATUS='OLD')
+        OPEN(1,file=HFILE,IOSTAT=IERR,FORM='UNFORMATTED',STATUS='OLD')
         ELSE
-          OPEN(1,file=HFILE,IOSTAT=IERR,FORM='UNFORMATTED',STATUS='OLD',
-     *         CONVERT='LITTLE_ENDIAN')
+          WRITE(*,*) 'ERROR: HGRID File in Big Endian'
+          STOP
+    !       OPEN(1,file=HFILE,IOSTAT=IERR,FORM='UNFORMATTED',STATUS='OLD',
+    !  *         CONVERT='LITTLE_ENDIAN')
         END IF
         IF(IERR.NE.0) THEN
           WRITE(*,*) 'ERROR: HGRID did not find Hydrogen line file'
@@ -994,12 +1001,11 @@ C  I/O error processing
 C
    9  I=INDEX(HFILE,' ')-1
       IF(I.LE.0) I=LEN(HFILE)
-      WRITE(*,*) 'ERROR reading binary file '//HFILE(1:I)//' in HGRID'
+      WRITE(*,*) 'ERROR reading binary file in HGRID'
       STOP
   10  I=INDEX(HFILE,' ')-1
       IF(I.LE.0) I=LEN(HFILE)
-      WRITE(*,*) 'EOF found while reading binary file '//HFILE(1:I)//
-     *           ' in HGRID'
+      WRITE(*,*) 'EOF found while reading binary file in HGRID'
       STOP
       END
 

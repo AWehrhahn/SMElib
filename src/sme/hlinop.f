@@ -221,6 +221,18 @@ C
       REAL*8 CLIGHT
       LOGICAL LYMANALF
       SAVE
+
+C Define some constants
+      PARAMETER (PI = 3.14159265359, SQRTPI = 1.77245385)
+      PARAMETER (CLIGHT = 2.9979258E18)
+      PARAMETER (CLIGHTCM = 2.99792458E10)
+
+C
+C  Most model atmosphere codes include Rayleigh scattering by H atoms 
+C  elsewhere, eg. quantum mechanical calculations. This parameter cuts
+C  the Lyman alpha natural absorption at this chosen point.  
+C
+      PARAMETER (RAYLCUT = 1240.D0) ! in Angstroms
 C
 C  Einstein A-value sums for H lines
 C
@@ -328,6 +340,7 @@ C
 C     LYMAN ALPHA QUASI H2 PROFILE
 C     DELTA WAVENO = -22000+200*(N-1)  N=1,91  -4000
 C
+
       DATA LYMANH2/
      1 -13.43, -13.32, -13.21, -13.10, -12.98, -12.86, -12.79, -12.72,
      2 -12.65, -12.58, -12.51, -12.47, -12.45, -12.45, -12.48, -12.51,
@@ -341,16 +354,7 @@ C
      A -12.87, -12.86, -12.85, -12.84, -12.83, -12.81, -12.80, -12.79,
      1 -12.78, -12.76, -12.74, -12.72, -12.70, -12.68, -12.65, -12.62,
      2 -12.59, -12.56, -12.53/
-C
-      PARAMETER (PI = 3.14159265359, SQRTPI = 1.77245385)
-      PARAMETER (CLIGHT = 2.9979258E18)
-      PARAMETER (CLIGHTCM = 2.99792458E10)
-C
-C  Most model atmosphere codes include Rayleigh scattering by H atoms 
-C  elsewhere, eg. quantum mechanical calculations. This parameter cuts
-C  the Lyman alpha natural absorption at this chosen point.  
-C
-      PARAMETER (RAYLCUT = 1240.D0) ! in Angstroms
+
 C
 C  Data for self-broadening from calculations of Barklem, Piskunov and 
 C  O'Mara (2000, A&A 363, 1091).
@@ -704,6 +708,12 @@ C
       DIMENSION Y1WTM(2,2),XKNMTB(4,3)
       LOGICAL LYMANALF
       SAVE
+
+C
+      PARAMETER (CLIGHT = 2.9979258E18)
+      PARAMETER (PI = 3.14159265359, SQRTPI = 1.77245385)
+      PARAMETER (H = 6.62618E-27)  !Planck in cgs
+      PARAMETER (K = 1.38066E-16)  !Boltzmann in cgs
 C
 C  Knm constants as defined by Griem (1960, ApJ 132, 883) for the long 
 C  range Holtsmark profile (due to ions only). Lyman and Balmer series 
@@ -715,11 +725,7 @@ C
 C
       DATA Y1WTM/1.E18, 1.E17, 1.E16, 1.E14/
       DATA N1/0/, M1/0/
-C
-      PARAMETER (CLIGHT = 2.9979258E18)
-      PARAMETER (PI = 3.14159265359, SQRTPI = 1.77245385)
-      PARAMETER (H = 6.62618E-27)  !Planck in cgs
-      PARAMETER (K = 1.38066E-16)  !Boltzmann in cgs
+
 C
 C  Variables depending on conditions
 C

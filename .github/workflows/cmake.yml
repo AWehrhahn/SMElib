@@ -23,7 +23,12 @@ jobs:
     - name: Run F2C
       run: f2c -w -a -C++ -Nn1604 -Nq1200 -dsrc/eos/ src/eos/*.f & f2c -w -a -C++ -dsrc/sme/ src/sme/*.f
     
+    - name: Check the current directory
+      working-directory: .
+      run: ls -a
+    
     - name: Replace Makefile.am
+      working-directory: .
       run: rm makefile.am & mv makefile_f2c.am makefile.am
     
     - name: Run Bootstrap and Configure

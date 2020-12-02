@@ -2,11 +2,8 @@ AUTOMAKE_OPTIONS = foreign
 
 ACLOCAL_AMFLAGS = -I m4
 
-CXXLD = $(F77)
-
 lib_LTLIBRARIES = libsme.la
 libsme_la_SOURCES = \
-	/usr/include/f2c.h \
 	src/sme/platform.h \
 	src/sme/sme_synth_faster.cpp \
 	src/eos/eos.c \
@@ -17,7 +14,6 @@ libsme_la_SOURCES = \
 	src/sme/hlinprof.c
 libsme_la_LDFLAGS = -fPIC -version-info 5:22:0 -shared -no-undefined
 libsme_la_CPPFLAGS = -fPIC -shared
-libsme_la_FFLAGS = -fPIC -shared -fexpensive-optimizations
 libsme_la_LIBADD = -lc -l:libf2c.a -lm -lstdc++
 
 dist_pkgdata_DATA = src/data/bpo_self.grid.INTEL \

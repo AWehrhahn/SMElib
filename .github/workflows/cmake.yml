@@ -18,7 +18,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Install packages
-      run: apt-get install -y f2c
+      run: sudo apt-get install -y f2c
     
     - name: Run F2C
       run: f2c -w -a -C++ -Nn1604 -Nq1200 -dsrc/eos/ src/eos/*.f & f2c -w -a -c++ -dsrc/sme/ src/sme/*.f

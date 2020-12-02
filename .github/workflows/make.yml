@@ -66,6 +66,7 @@ jobs:
             packages: automake libtool
             cxx: gcc-9
             f77: gfortran-9
+            outouts: lib share
     # The CMake configure and build commands are platform agnostic and should work equally
     # well on Windows or Mac.  You can convert this to a matrix build if you need
     # cross-platform coverage.

@@ -21,7 +21,7 @@ jobs:
       run: sudo apt-get install -y f2c
     
     - name: Run F2C
-      run: f2c -w -a -C++ -Nn1604 -Nq1200 -dsrc/eos/ src/eos/*.f & f2c -w -a -c++ -dsrc/sme/ src/sme/*.f
+      run: f2c -w -a -C++ -Nn1604 -Nq1200 -dsrc/eos/ src/eos/*.f & f2c -w -a -C++ -dsrc/sme/ src/sme/*.f
     
     - name: Replace Makefile.am
       run: rm makefile.am & mv makefile_f2c.am makefile.am

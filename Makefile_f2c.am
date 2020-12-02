@@ -6,6 +6,7 @@ CXXLD = $(F77)
 
 lib_LTLIBRARIES = libsme.la
 libsme_la_SOURCES = \
+	/usr/include/f2c.h \
 	src/sme/platform.h \
 	src/sme/sme_synth_faster.cpp \
 	src/eos/eos.c \

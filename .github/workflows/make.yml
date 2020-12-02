@@ -63,7 +63,7 @@ jobs:
             outputs: bin share
           - name: macos-gfortran
             runs_on: macos-latest
-            packages: gcc automake libtool 
+            packages: automake libtool 
     # The CMake configure and build commands are platform agnostic and should work equally
     # well on Windows or Mac.  You can convert this to a matrix build if you need
     # cross-platform coverage.
@@ -79,7 +79,7 @@ jobs:
     
     - name: Install packages
       if: matrix.runs_on == 'macos-latest'
-      run: homebrew tap ${{ matrix.packages }}
+      run: brew tap ${{ matrix.packages }}
     
     - name: Run F2C
       if: matrix.name == 'ubuntu-f2c' || matrix.name == 'windows-f2c'

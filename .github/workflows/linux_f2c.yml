@@ -1,4 +1,4 @@
-name: CMake
+name: make
 
 on: [push]
 
@@ -8,23 +8,30 @@ env:
 
 jobs:
   build:
+    strategy:
+      matrix:
+        name: [ubuntu-gfortran, ubuntu-f2c]
+        runs_on: [ubuntu-latest, ubuntu-latest]
+        packages: [f2c, gfortran] 
+    
     # The CMake configure and build commands are platform agnostic and should work equally
     # well on Windows or Mac.  You can convert this to a matrix build if you need
     # cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runs_on }}
 
     steps:
     - uses: actions/checkout@v2
 
     - name: Install packages
-      run: sudo apt-get install -y f2c
+      run: sudo apt-get install -y ${{ matrix.packages }}
     
     - name: Run F2C
+      if: matrix.name == ubuntu-f2c
       run: f2c -w -a -C++ -Nn1604 -Nq1200 -dsrc/eos/ src/eos/*.f & f2c -w -a -C++ -dsrc/sme/ src/sme/*.f
     
     - name: Replace Makefile.am
-      working-directory: .
+      if: matrix.name == ubuntu-f2c
       run: rm Makefile.am && mv Makefile_f2c.am Makefile.am
     
     - name: Run Bootstrap and Configure
@@ -34,20 +41,17 @@ jobs:
     - name: Install
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: make install
-   
-    - name: Check the current directory
-      working-directory: .
-      run: ls -a 
       
     - name: Zip data # This would actually build your project, using zip for an example artifact
-      run: zip -r linux-f2c lib share
+      run: zip -r ${{ matrix.name }} lib share
     
-    - name: Archive code coverage results
+    - name: Archive compiled library
       uses: actions/upload-artifact@v2
       with:
         name: library
-        path: linux-f2c.zip
+        path: ${{ matrix.name }}.zip
 
+    # Do this only once!
     - name: GitHub Tag
       id: tag_release
       # You may pin to the exact commit or the version.
@@ -77,6 +81,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ./linux-f2c.zip
-        asset_name: linux-f2c.zip
+        asset_path: ./${{ matrix.name }}.zip
+        asset_name: ${{ matrix.name }}.zip
         asset_content_type: application/zip

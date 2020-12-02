@@ -57,10 +57,9 @@ jobs:
             outputs: bin share
           - name: windows-f2c
             runs_on: ubuntu-latest
-            packages: f2c mingw-w64 mingw-w64-tools mingw-w64-common gcc-mingw-w64 gcc-mingw-w64-x86-64 g++-mingw-w64 g++-mingw-w64-x86-64
+            packages: f2c mingw-w64 mingw-w64-tools mingw-w64-common mingw-w64-f2c gcc-mingw-w64 gcc-mingw-w64-x86-64 g++-mingw-w64 g++-mingw-w64-x86-64
             cxx: x86_64-w64-mingw32-gcc
             config_flags: --build=x86_64-pc-linux-gnu --host=x86_64-w64-mingw32
-            install_flags: -I/usr/include/
             outputs: bin share
     
     # The CMake configure and build commands are platform agnostic and should work equally
@@ -98,7 +97,7 @@ jobs:
       env:
         CXX: ${{ matrix.cxx }}
         F77: ${{ matrix.f77 }}
-      run: make install ${{ matrix.install_flags }}
+      run: make install
       
     - name: Zip data # This would actually build your project, using zip for an example artifact
       run: zip -r ${{ matrix.name }} ${{ matrix.outputs }}

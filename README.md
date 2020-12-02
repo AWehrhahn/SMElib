@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.com/AWehrhahn/SMElib.svg?branch=master)](https://travis-ci.com/AWehrhahn/SMElib)
-
+![CMake](https://github.com/AWehrhahn/SMElib/workflows/CMake/badge.svg)
 # SMElib
 Spectroscopy Made Easy Source Library
 

@@ -66,7 +66,13 @@ jobs:
             packages: automake libtool
             cxx: gcc-9
             f77: gfortran-9
-            outouts: lib share
+            outputs: lib share
+          - name: macos-f2c
+            runs_on: macos-latest
+            packages: automake libtool
+            cxx: gcc-9
+            outputs: lib share
+            
     # The CMake configure and build commands are platform agnostic and should work equally
     # well on Windows or Mac.  You can convert this to a matrix build if you need
     # cross-platform coverage.
@@ -84,20 +90,20 @@ jobs:
       if: matrix.runs_on == 'macos-latest'
       run: brew install ${{ matrix.packages }}
     
+    - name: Install F2C
+      if: matrix.name == 'macos-f2c'
+      run: brew tap opm/opm libf2c
+    
     - name: Run F2C
-      if: matrix.name == 'ubuntu-f2c' || matrix.name == 'windows-f2c'
+      if: matrix.name == 'ubuntu-f2c' || matrix.name == 'windows-f2c' || matrix.name == 'macos-f2c'
       run: f2c -w -a -C++ -Nn1604 -Nq1200 -dsrc/eos/ src/eos/*.f & f2c -w -a -C++ -dsrc/sme/ src/sme/*.f
     
     - name: Replace Makefile.am
-      if: matrix.name == 'ubuntu-f2c' || matrix.name == 'windows-f2c'
+      if: matrix.name == 'ubuntu-f2c' || matrix.name == 'windows-f2c' || matrix.name == 'macos-f2c'
       run: rm Makefile.am && mv Makefile_f2c.am Makefile.am
-   
-    - name: Echo site details
-      if: matrix.name == 'windows-gfortran'
-      run: export LDFLAGS=-L$(x86_64-w64-mingw32-gfortran --print-file-name=)
     
     - name: Copy F2C headers
-      if: matrix.name == 'windows-f2c'
+      if: matrix.name == 'windows-f2c' 
       run: cp	/usr/include/f2c.h src/eos/ & cp /usr/include/f2c.h src/sme/
 
     - name: Run Bootstrap and Configure

@@ -14,6 +14,7 @@ libsme_la_SOURCES = \
 	src/sme/hlinprof.c
 libsme_la_LDFLAGS = -fPIC -version-info 5:22:0 -shared -no-undefined
 libsme_la_CPPFLAGS = -fPIC -shared
+# Here we assume that f2c has been installed using homebrew, since the automatic detection seems to fail...
 libsme_la_LIBADD = -lc /usr/local/Cellar/f2c/HEAD/lib/libf2c.a -lm -lstdc++
 
 dist_pkgdata_DATA = src/data/bpo_self.grid.INTEL \

@@ -38,9 +38,13 @@ jobs:
     needs: create_release
     strategy:
       matrix:
-        name: [ubuntu-gfortran, ubuntu-f2c]
-        runs_on: [ubuntu-latest, ubuntu-latest]
-        packages: [f2c, gfortran] 
+        include:
+          - name: ubuntu-gfortran
+            runs_on: ubuntu-latest
+            packages: gfortran
+          - name: ubuntu-f2c
+            runs_on: ubuntu-latest
+            packages: f2c
     
     # The CMake configure and build commands are platform agnostic and should work equally
     # well on Windows or Mac.  You can convert this to a matrix build if you need

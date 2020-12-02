@@ -70,7 +70,7 @@ jobs:
           - name: macos-f2c
             runs_on: macos-latest
             taps: FranklinChen/tap
-            packages: automake libtool f2c
+            packages: automake libtool
             cxx: gcc-9
             outputs: lib share
             
@@ -90,6 +90,10 @@ jobs:
     - name: Install packages
       if: matrix.runs_on == 'macos-latest'
       run: brew tap ${{ matrix.taps }} && brew install ${{ matrix.packages }}
+    
+    - name: Install F2C
+      if: matrix.name == 'macos-f2c'
+      run: brew install --HEAD franklinchen/tap/f2c
     
     - name: Run F2C
       if: matrix.name == 'ubuntu-f2c' || matrix.name == 'windows-f2c' || matrix.name == 'macos-f2c'

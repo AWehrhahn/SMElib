@@ -9,6 +9,8 @@ env:
 jobs:
   create_release:
     runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
     - name: GitHub Tag
       id: tag_release
@@ -31,8 +33,6 @@ jobs:
         release_name: Release ${{ steps.tag_release.outputs.new_tag }}
         draft: false
         prerelease: false
-    outputs:
-      output_url: ${{ steps.create_release.outputs.upload_url }}
   
   build:
     needs: create_release

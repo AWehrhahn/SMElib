@@ -93,15 +93,19 @@ jobs:
     
     - name: Install F2C
       if: matrix.name == 'macos-f2c'
-      run: brew install --verbose --HEAD franklinchen/tap/f2c && export LDFLAGS=-L/usr/local/Cellar/f2c/HEAD/lib/
+      run: brew install --verbose --HEAD franklinchen/tap/f2c
     
     - name: Run F2C
       if: matrix.name == 'ubuntu-f2c' || matrix.name == 'windows-f2c' || matrix.name == 'macos-f2c'
       run: f2c -w -a -C++ -Nn1604 -Nq1200 -dsrc/eos/ src/eos/*.f & f2c -w -a -C++ -dsrc/sme/ src/sme/*.f
     
     - name: Replace Makefile.am
-      if: matrix.name == 'ubuntu-f2c' || matrix.name == 'windows-f2c' || matrix.name == 'macos-f2c'
+      if: matrix.name == 'ubuntu-f2c' || matrix.name == 'windows-f2c'
       run: rm Makefile.am && mv Makefile_f2c.am Makefile.am
+    
+    - name: Replace Makefile.am
+      if: matrix.name == 'macos-f2c'
+      run: rm Makefile.am && mv Makefile_mac.am Makefile.am
     
     - name: Copy F2C headers
       if: matrix.name == 'windows-f2c' 

@@ -42,9 +42,20 @@ jobs:
           - name: ubuntu-gfortran
             runs_on: ubuntu-latest
             packages: gfortran
+            outputs: lib share
           - name: ubuntu-f2c
             runs_on: ubuntu-latest
             packages: f2c
+            outputs: lib share
+          - name: windows-gfortran
+            runs_on: ubuntu-latest
+            packages: gfortran mingw-w64 mingw-w64-tools mingw-w64-common gcc-mingw-w64 gcc-mingw-w64-x86-64 g++-mingw-w64 g++-mingw-w64-x86-64
+            target: win64
+            ldflags: -L${{ x86_64-w64-mingw32-gfortran --print-file-name= }}
+            cxx: x86_64-w64-mingw32-gcc
+            f77: x86_64-w64-mingw32-gfortran
+            config_flags: --build=x86_64-pc-linux-gnu --host=x86_64-w64-mingw32
+            outputs: bin share
     
     # The CMake configure and build commands are platform agnostic and should work equally
     # well on Windows or Mac.  You can convert this to a matrix build if you need
@@ -56,6 +67,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Install packages
+      if: matrix.runs_on == 'ubuntu-latest'
       run: sudo apt-get install -y ${{ matrix.packages }}
     
     - name: Run F2C
@@ -67,15 +79,23 @@ jobs:
       run: rm Makefile.am && mv Makefile_f2c.am Makefile.am
     
     - name: Run Bootstrap and Configure
+      env:
+        CXX: ${{ matrix.cxx }}
+        F77: ${{ matrix.f77 }}
+        LDFLAGS: ${{ matrix.ldflags }}
       shell: bash
-      run: ./bootstrap && ./configure --prefix=$PWD
+      run: ./bootstrap && ./configure --prefix=$PWD ${{ matrix.config_flags }}
   
     - name: Install
       # Execute the build.  You can specify a specific target with "--target <NAME>"
+      env:
+        CXX: ${{ matrix.cxx }}
+        F77: ${{ matrix.f77 }}
+        LDFLAGS: ${{ matrix.ldflags }}
       run: make install
       
     - name: Zip data # This would actually build your project, using zip for an example artifact
-      run: zip -r ${{ matrix.name }} lib share
+      run: zip -r ${{ matrix.name }} ${{ matrix.outputs }}
     
     - name: Archive compiled library
       uses: actions/upload-artifact@v2

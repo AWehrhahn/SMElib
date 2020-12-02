@@ -38,6 +38,9 @@ jobs:
     - name: Check the current directory
       working-directory: .
       run: ls -a 
+      
+    - name: Zip data # This would actually build your project, using zip for an example artifact
+      run: zip linux-f2c lib share
     
     - name: Create Release
       id: create_release
@@ -49,3 +52,14 @@ jobs:
         release_name: Release ${{ github.ref }}
         draft: false
         prerelease: false
+
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ./linux-f2c.zip
+        asset_name: linux-f2c.zip
+        asset_content_type: application/zip

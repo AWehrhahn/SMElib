@@ -22,6 +22,27 @@ jobs:
     cache:
     - pip
   - os: linux
+    name: f2c
+    env:
+    - TARGET=linux-f2c
+    - OUTPUT_DIRS="lib share"
+    addons:
+      apt:
+        packages:
+        - g++
+        - f2c
+        - make
+        - python3.5
+        - python3-venv
+        - python3-pip
+    cache:
+    - pip
+    before_install:
+    - f2c -w -a -C++ -Nn1604 -Nq1200 -dsrc/eos/ src/eos/*.f
+    - f2c -w -a -c++ -dsrc/sme/ src/sme/*.f
+    - rm makefile.am
+    - mv makefile_f2c.am makefile.am
+  - os: linux
     name: manylinux2010
     services:
     - docker

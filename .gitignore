@@ -79,3 +79,9 @@ src/sme/.deps/
 build/
 test/__pycache__/
 dev/
+kp_q_spln.c
+src/eos/eos_eqns.c
+src/eos/eos_math_special.c
+src/eos/eos.c
+src/sme/hlinop.c
+src/sme/hlinprof.c

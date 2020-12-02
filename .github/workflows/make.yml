@@ -93,7 +93,7 @@ jobs:
     
     - name: Install F2C
       if: matrix.name == 'macos-f2c'
-      run: brew install --verbose --HEAD franklinchen/tap/f2c && export LDFLAGS=-L$(brew --prefix f2c)
+      run: brew install --verbose --HEAD franklinchen/tap/f2c && export LDFLAGS=-L/usr/local/Cellar/f2c/HEAD/lib/
     
     - name: Run F2C
       if: matrix.name == 'ubuntu-f2c' || matrix.name == 'windows-f2c' || matrix.name == 'macos-f2c'

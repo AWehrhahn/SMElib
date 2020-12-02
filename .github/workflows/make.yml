@@ -79,13 +79,13 @@ jobs:
       run: rm Makefile.am && mv Makefile_f2c.am Makefile.am
    
     - name: Echo site details
-        env:
+      env:
           CXX: ${{ matrix.cxx }}
           F77: ${{ matrix.f77 }}
           LDFLAGS: ${{ matrix.ldflags }}
-        run: echo $CXX $F77 $LDFLAGS
+      run: echo $CXX $F77 $LDFLAGS
    
-   - name: Run Bootstrap and Configure
+    - name: Run Bootstrap and Configure
       env:
         CXX: ${{ matrix.cxx }}
         F77: ${{ matrix.f77 }}

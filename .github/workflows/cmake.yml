@@ -25,11 +25,11 @@ jobs:
     
     - name: Replace Makefile.am
       working-directory: .
-      run: rm Makefile.am & mv Makefile_f2c.am Makefile.am
+      run: rm Makefile.am && mv Makefile_f2c.am Makefile.am
     
     - name: Run Bootstrap and Configure
       shell: bash
-      run: ./bootstrap & ./configure --prefix=$PWD
+      run: ./bootstrap && ./configure --prefix=$PWD
   
     - name: Install
       # Execute the build.  You can specify a specific target with "--target <NAME>"

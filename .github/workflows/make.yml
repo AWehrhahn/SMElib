@@ -49,7 +49,7 @@ jobs:
             outputs: lib share
           - name: windows-gfortran
             runs_on: ubuntu-latest
-            packages: gfortran mingw-w64 mingw-w64-tools mingw-w64-common gcc-mingw-w64 gcc-mingw-w64-x86-64 g++-mingw-w64 g++-mingw-w64-x86-64
+            packages: gfortran mingw-w64 mingw-w64-tools mingw-w64-common gfortran-mingw-w64 gfortran-mingw-w64-x86-64 gcc-mingw-w64 gcc-mingw-w64-x86-64 g++-mingw-w64 g++-mingw-w64-x86-64
             target: win64
             ldflags: -L$(x86_64-w64-mingw32-gfortran --print-file-name=)
             cxx: x86_64-w64-mingw32-gcc

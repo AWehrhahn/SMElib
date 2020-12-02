@@ -83,7 +83,7 @@ jobs:
           CXX: ${{ matrix.cxx }}
           F77: ${{ matrix.f77 }}
           LDFLAGS: ${{ matrix.ldflags }}
-      run: echo $CXX $F77 $LDFLAGS
+      run: echo $LDFLAGS -L$(x86_64-w64-mingw32-gfortran --print-file-name=)
    
     - name: Run Bootstrap and Configure
       env:

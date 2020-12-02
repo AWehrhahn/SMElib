@@ -79,7 +79,7 @@ jobs:
     
     - name: Install packages
       if: matrix.runs_on == 'macos-latest'
-      run: brew tap ${{ matrix.packages }}
+      run: brew install ${{ matrix.packages }}
     
     - name: Run F2C
       if: matrix.name == 'ubuntu-f2c' || matrix.name == 'windows-f2c'

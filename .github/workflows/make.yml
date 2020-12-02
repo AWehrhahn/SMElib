@@ -54,6 +54,12 @@ jobs:
             f77: x86_64-w64-mingw32-gfortran
             config_flags: --build=x86_64-pc-linux-gnu --host=x86_64-w64-mingw32
             outputs: bin share
+          - name: windows-f2c
+            runs_on: ubuntu-latest
+            packages: f2c mingw-w64 mingw-w64-tools mingw-w64-common gcc-mingw-w64 gcc-mingw-w64-x86-64 g++-mingw-w64 g++-mingw-w64-x86-64
+            cxx: x86_64-w64-mingw32-gcc
+            config_flags: --build=x86_64-pc-linux-gnu --host=x86_64-w64-mingw32
+            outputs: bin share
     
     # The CMake configure and build commands are platform agnostic and should work equally
     # well on Windows or Mac.  You can convert this to a matrix build if you need
@@ -69,11 +75,11 @@ jobs:
       run: sudo apt-get install -y ${{ matrix.packages }}
     
     - name: Run F2C
-      if: matrix.name == 'ubuntu-f2c'
+      if: matrix.name == 'ubuntu-f2c' || matrix.name == 'windows-f2c'
       run: f2c -w -a -C++ -Nn1604 -Nq1200 -dsrc/eos/ src/eos/*.f & f2c -w -a -C++ -dsrc/sme/ src/sme/*.f
     
     - name: Replace Makefile.am
-      if: matrix.name == 'ubuntu-f2c'
+      if: matrix.name == 'ubuntu-f2c' || matrix.name == 'windows-f2c'
       run: rm Makefile.am && mv Makefile_f2c.am Makefile.am
    
     - name: Echo site details

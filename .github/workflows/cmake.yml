@@ -47,6 +47,17 @@ jobs:
       with:
         name: library
         path: linux-f2c.zip
+
+    - name: GitHub Tag
+      id: tag_release
+      # You may pin to the exact commit or the version.
+      # uses: mathieudutour/github-tag-action@1bab3ab0712cafa42b54c512453487b89bb06504
+      uses: mathieudutour/github-tag-action@v5
+      with:
+        # Required for permission to tag the repo.
+        github_token: ${{ secrets.GITHUB_TOKEN }} 
+        # Which type of bump to use when none explicitly provided (default: `patch`).
+        # default_bump: # optional, default is patch
     
     - name: Create Release
       id: create_release
@@ -54,8 +65,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.run_id }}
+        tag_name: ${{ tag_release.new_tag }}
+        release_name: Release ${{ tag_release.new_tag }}
         draft: false
         prerelease: false
 

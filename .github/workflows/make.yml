@@ -61,7 +61,9 @@ jobs:
             cxx: x86_64-w64-mingw32-gcc
             config_flags: --build=x86_64-pc-linux-gnu --host=x86_64-w64-mingw32
             outputs: bin share
-    
+          - name: macos-gfortran
+            runs_on: macos-latest
+            packages: gcc automake libtool 
     # The CMake configure and build commands are platform agnostic and should work equally
     # well on Windows or Mac.  You can convert this to a matrix build if you need
     # cross-platform coverage.
@@ -75,6 +77,10 @@ jobs:
       if: matrix.runs_on == 'ubuntu-latest'
       run: sudo apt-get install -y ${{ matrix.packages }}
     
+    - name: Install packages
+      if: matrix.runs_on == 'macos-latest'
+      run: homebrew tap ${{ matrix.packages }}
+    
     - name: Run F2C
       if: matrix.name == 'ubuntu-f2c' || matrix.name == 'windows-f2c'
       run: f2c -w -a -C++ -Nn1604 -Nq1200 -dsrc/eos/ src/eos/*.f & f2c -w -a -C++ -dsrc/sme/ src/sme/*.f
@@ -86,7 +92,11 @@ jobs:
     - name: Echo site details
       if: matrix.name == 'windows-gfortran'
       run: export LDFLAGS=-L$(x86_64-w64-mingw32-gfortran --print-file-name=)
-   
+    
+    - name: Copy F2C headers
+      if: matrix.name == 'windows-f2c'
+      run: cp	/usr/include/f2c.h src/eos/ & cp /usr/include/f2c.h src/sme/
+
     - name: Run Bootstrap and Configure
       env:
         CXX: ${{ matrix.cxx }}

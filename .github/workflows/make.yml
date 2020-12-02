@@ -50,8 +50,6 @@ jobs:
           - name: windows-gfortran
             runs_on: ubuntu-latest
             packages: gfortran mingw-w64 mingw-w64-tools mingw-w64-common gfortran-mingw-w64 gfortran-mingw-w64-x86-64 gcc-mingw-w64 gcc-mingw-w64-x86-64 g++-mingw-w64 g++-mingw-w64-x86-64
-            target: win64
-            ldflags: -L$(x86_64-w64-mingw32-gfortran --print-file-name=)
             cxx: x86_64-w64-mingw32-gcc
             f77: x86_64-w64-mingw32-gfortran
             config_flags: --build=x86_64-pc-linux-gnu --host=x86_64-w64-mingw32
@@ -79,26 +77,19 @@ jobs:
       run: rm Makefile.am && mv Makefile_f2c.am Makefile.am
    
     - name: Echo site details
-      env:
-          CXX: ${{ matrix.cxx }}
-          F77: ${{ matrix.f77 }}
-          LDFLAGS: ${{ matrix.ldflags }}
-      run: echo $LDFLAGS -L$(x86_64-w64-mingw32-gfortran --print-file-name=)
+      if: matrix.name == 'windows-gfortran'
+      run: export LDFLAGS=-L$(x86_64-w64-mingw32-gfortran --print-file-name=)
    
     - name: Run Bootstrap and Configure
       env:
         CXX: ${{ matrix.cxx }}
         F77: ${{ matrix.f77 }}
-        LDFLAGS: ${{ matrix.ldflags }}
-      shell: bash
       run: ./bootstrap && ./configure --prefix=$PWD ${{ matrix.config_flags }}
   
     - name: Install
-      # Execute the build.  You can specify a specific target with "--target <NAME>"
       env:
         CXX: ${{ matrix.cxx }}
         F77: ${{ matrix.f77 }}
-        LDFLAGS: ${{ matrix.ldflags }}
       run: make install
       
     - name: Zip data # This would actually build your project, using zip for an example artifact

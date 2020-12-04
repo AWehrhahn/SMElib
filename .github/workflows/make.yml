@@ -1,7 +1,8 @@
 name: make
 
-on: [push]
-
+on:
+  push:
+    branches: [master]
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
@@ -35,7 +36,7 @@ jobs:
         prerelease: false
   
   build:
-    needs: create_release
+    needs: create_release 
     strategy:
       fail-fast: false
       matrix:
@@ -55,12 +56,14 @@ jobs:
             f77: x86_64-w64-mingw32-gfortran
             config_flags: --build=x86_64-pc-linux-gnu --host=x86_64-w64-mingw32
             outputs: bin share
-          - name: windows-f2c
-            runs_on: ubuntu-latest
-            packages: f2c mingw-w64 mingw-w64-tools mingw-w64-common gcc-mingw-w64 gcc-mingw-w64-x86-64 g++-mingw-w64 g++-mingw-w64-x86-64
-            cxx: x86_64-w64-mingw32-gcc
-            config_flags: --build=x86_64-pc-linux-gnu --host=x86_64-w64-mingw32
-            outputs: bin share
+#          F2C doesn't work for Windows, use gfortran instead
+#          will figure this out when possible
+#          - name: windows-f2c
+#            runs_on: ubuntu-latest
+#            packages: f2c mingw-w64 mingw-w64-tools mingw-w64-common gcc-mingw-w64 gcc-mingw-w64-x86-64 g++-mingw-w64 g++-mingw-w64-x86-64
+#            cxx: x86_64-w64-mingw32-gcc
+#            config_flags: --build=x86_64-pc-linux-gnu --host=x86_64-w64-mingw32
+#            outputs: bin share
           - name: macos-gfortran
             runs_on: macos-latest
             packages: automake libtool

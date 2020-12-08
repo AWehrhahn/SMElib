@@ -50,8 +50,9 @@ jobs:
   
     container: ${{ matrix.container }}
     steps:
-      - uses: actions/checkout@v2
+      # We need to install packages first, because the checkout needs gcc already
       - run: yum install -y gcc-gfortran f2c cmake autoconf automake libtool
+      - uses: actions/checkout@v2
       - name: Replace Makefile
         if: ${{ matrix.compiler }} == 'f2c'
         run: rm Makefile.am && mv Makefile_f2c.am Makefile.am

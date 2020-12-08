@@ -32,9 +32,11 @@ def get_lib_name():
     """ Get the name of the sme C library """
     system = platform.system().lower()
     arch = platform.machine()
-    bits = platform.architecture()[0][:-3]
+    bits = 64  # platform.architecture()[0][:-3]
 
-    return "sme_synth.so.{system}.{arch}.{bits}".format(system=system, arch=arch, bits=bits)
+    return "sme_synth.so.{system}.{arch}.{bits}".format(
+        system=system, arch=arch, bits=bits
+    )
 
 
 def get_typenames(arg):
@@ -231,7 +233,9 @@ def idl_call_external(funcname, *args, restype="str", type=None, lib=None):
                     original[i][:] = arr
                 except ValueError as ve:
                     print(
-                        "WARNING: Array values changed, but could not be written back to the original array\n{ve}".format(ve=str(ve))
+                        "WARNING: Array values changed, but could not be written back to the original array\n{ve}".format(
+                            ve=str(ve)
+                        )
                     )
 
     return res
@@ -283,7 +287,11 @@ class IDL_DLL:
 
         if error != "":
             if raise_error:
-                raise ValueError("{name} (call external): {error}".format(name=name, error=error))
+                raise ValueError(
+                    "{name} (call external): {error}".format(name=name, error=error)
+                )
             if raise_warning:
-                warnings.warn("{name} (call external): {error}".format(name=name, error=error))
+                warnings.warn(
+                    "{name} (call external): {error}".format(name=name, error=error)
+                )
         return error

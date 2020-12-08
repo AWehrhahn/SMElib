@@ -2,12 +2,10 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
-//#include "/usr/local/rsi/idl/external/export.h"
 #include "export.h"
 #include <ctype.h>
 #include <time.h>
 #include "platform.h"
-//#include <sys/resource.h>
 
 /* DLL export defintion */
 
@@ -45,53 +43,9 @@ static char result[MAX_OUT_LEN + 1]; /* leave a space for a '\0' */
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 #define round(x) (x >= 0) ? (int)(x + 0.5) : (int)(x - 0.5)
 
-//typedef int IDL_STRING_SLEN_T;
-//#define IDL_STRING_MAX_SLEN 2147483647
-
-//typedef short IDL_STRING_SLEN_T;
-//#define IDL_STRING_MAX_SLEN 65534
-
-//typedef struct {      /* Define string descriptor */
-//  IDL_STRING_SLEN_T slen; /* Length of string, 0 for null */
-//  short stype;            /* type of string, static or dynamic */
-//  char *s;            /* Addr of string */
-//} IDL_STRING;
-
 /* Useful data */
 
 float ABUND[MAX_ELEM];
-/* =
-{0,  0.911,-1.0506,-10.88,-10.89,-9.44, -3.48, -3.99, -3.11, -7.48, -3.95,
-     -5.71, -4.46, -5.57, -4.49, -6.59, -4.83, -6.54, -5.48, -6.82, -5.68,
-     -8.94, -7.05, -8.04, -6.37, -6.65, -4.37, -7.12, -5.79, -7.83, -7.44,
-     -9.16, -8.63, -9.67, -8.69, -9.41, -8.81, -9.44, -9.14, -9.80, -9.54,
-    -10.62,-10.12,-20.00,-10.20,-10.92,-10.35,-11.10,-10.18,-10.58,-10.04,
-    -11.04, -9.80,-10.53, -9.81,-10.92, -9.91,-10.82,-10.49,-11.33,-10.54,
-    -20.00,-11.04,-11.53,-10.92,-11.94,-10.94,-11.78,-11.11,-12.04,-10.96,
-    -11.28,-11.16,-11.91,-10.93,-11.77,-10.59,-10.69,-10.24,-11.03,-10.95,
-    -11.14,-10.19,-11.33,-20.00,-20.00,-20.00,-20.00,-20.00,-20.00,-11.92,
-    -20.00,-12.51,-20.00,-20.00,-20.00,-20.00,-20.00,-20.00,-20.00,-20.00};
-      "H",  "He",  "Li",  "Be",   "B",   "C",   "N",   "O",   "F",  "Ne",
-{0, 12.00, 10.99,  1.16,  1.15,  2.60,  8.55,  7.97,  8.87,  4.56,  8.08,
-     "Na",  "Mg",  "Al",  "Si",   "P",   "S",  "Cl",  "Ar",   "K",  "Ca",
-     6.33,  7.58,  6.47,  7.55,  5.45,  7.33,  5.50,  6.52,  5.12,  6.36,
-     "Sc",  "Ti",   "V",  "Cr",  "Mn",  "Fe",  "Co",  "Ni",  "Cu",  "Zn",
-     3.17,  5.02,  4.00,  5.67,  5.39,  7.50,  4.92,  6.25,  4.21,  4.60,
-     "Ga",  "Ge",  "As",  "Se",  "Br",  "Kr",  "Rb",  "Sr",   "Y",  "Zr",
-     2.88,  3.41,  2.37,  3.38,  2.63,  3.23,  2.60,  2.97,  2.24,  2.60,
-     "Nb",  "Mo",  "Tc",  "Ru",  "Rh",  "Pd",  "Ag",  "Cd",  "In",  "Sn",
-     1.42,  1.92, -8.00,  1.84,  1.12,  1.69,  0.94,  1.77,  1.66,  2.00,
-     "Sb",  "Te",   "I",  "Xe",  "Cs",  "Ba",  "La",  "Ce",  "Pr",  "Nd",
-     1.00,  2.24,  1.51,  2.23,  1.13,  2.13,  1.17,  1.58,  0.71,  1.50,
-     "Pm",  "Sm",  "Eu",  "Gd",  "Tb",  "Dy",  "Ho",  "Er",  "Tm",  "Yb",
-    -8.00,  1.01,  0.51,  1.12, -0.10,  1.14,  0.26,  0.93,  0.00,  1.08,
-     "Lu",  "Hf",  "Ta",   "W",  "Re",  "Os",  "Ir",  "Pt",  "Au",  "Hg",
-     0.76,  0.88, -0.13,  1.11,  0.28,  1.45,  1.35,  1.80,  1.01,  1.17,
-     "Tl",  "Pb",  "Bi",  "Po",  "At",  "Rn",  "Fr",  "Ra",  "Ac",  "Th",
-     0.09,  1.95,  0.71, -8.00, -8.00, -8.00, -8.00, -8.00, -8.00,  0.09,
-     "Pa",   "U",  "Np",  "Pu",  "Am",  "Cm",  "Bk",  "Cs",  "Es", "TiO"
-    -8.00, -0.47, -8.00, -8.00, -8.00, -8.00, -8.00, -8.00, -8.00, -8.00};
-*/
 float AMASS[MAX_ELEM] = {0.,
                          1.008, 4.003, 6.941, 9.012, 10.811, 12.011, 14.007, 15.999,
                          18.998, 20.179, 22.990, 24.305, 26.982, 28.086, 30.974, 32.060,
@@ -370,7 +324,7 @@ int compress(char *target, char *source)
 
    LAST UPDATE: October 24, 1994
    C++ Version: October 25, 1994
-*/
+  */
   int s = 0, t = 0;
   do
     if (!isspace(source[s]))
@@ -396,7 +350,6 @@ extern "C" char const *SME_DLL GetLibraryPath(int n, void *arg[])
   sprintf(result, "%s", PATH);
   return result;
 }
-
 
 /*
   Set SME library datafile location
@@ -480,7 +433,6 @@ extern "C" char const *SME_DLL InputLineList(int n, void *arg[]) /* Read in line
   IDL_STRING *a0;
   double GFLOG, GRLG10, GSLG10, GWLG10,
       *a1, *a2, *a3, *a4, *a5, *a6, *a7, *a8;
-  /*  FILE *file11; */
   /*
    NLINES - NUMBERS OF SPECTRAL LINES;
    For each line:
@@ -491,7 +443,7 @@ extern "C" char const *SME_DLL InputLineList(int n, void *arg[]) /* Read in line
    GAMRAD - RADIATION DAMPING (C1);
    GAMQST - QUADRATIC STARK DUMPING (C4);
    GAMVW  - VAN DER WAALS DUMPING (C6);
-*/
+  */
   if (n < 2)
   {
     strcpy(result, "Not enough arguments");
@@ -568,23 +520,6 @@ extern "C" char const *SME_DLL InputLineList(int n, void *arg[]) /* Read in line
     }
   }
 
-  //  spname=      (char  *)calloc(NLINES, 8);
-  //  SPINDEX=      (int  *)calloc(NLINES, sizeof(int));
-  //  ION=          (int  *)calloc(NLINES, sizeof(int));
-  //  MARK=       (short  *)calloc(NLINES, sizeof(short));
-  //  AUTOION=    (short  *)calloc(NLINES, sizeof(short));
-  //  WLCENT=    (double  *)calloc(NLINES, sizeof(double));
-  //  EXCIT=     (double  *)calloc(NLINES, sizeof(double));
-  //  GF=        (double  *)calloc(NLINES, sizeof(double));
-  //  GAMRAD=    (double  *)calloc(NLINES, sizeof(double));
-  //  GAMQST=    (double  *)calloc(NLINES, sizeof(double));
-  //  GAMVW=     (double  *)calloc(NLINES, sizeof(double));
-  //  ANSTEE=       (int  *)calloc(NLINES, sizeof(int));
-  //  IDHEL =    (short   *)calloc(NLINES, sizeof(short));
-  //  ALMAX=     (double  *)calloc(NLINES, sizeof(double));
-  //  Wlim_left =(double  *)calloc(NLINES, sizeof(double));
-  //  Wlim_right=(double  *)calloc(NLINES, sizeof(double));
-
   CALLOC(spname, NLINES * 8, char);
   CALLOC(SPINDEX, NLINES, int);
   CALLOC(ION, NLINES, int);
@@ -654,7 +589,6 @@ extern "C" char const *SME_DLL InputLineList(int n, void *arg[]) /* Read in line
   a8 = a7 + NLINES;
 
   VW_scale = 1;
-  /*  file11=fopen("lines.log","wt"); */
   for (LINE = 0; LINE < NLINES; LINE++)
   {
     /* spname will be passed to FORTRAN, so no trailing zero's, fixed length
@@ -720,15 +654,8 @@ extern "C" char const *SME_DLL InputLineList(int n, void *arg[]) /* Read in line
       }
     }
 
-    /*
-    printf("%10.4f, '%4s', %f, %f, %f, %f, %f %d\n",
-    WLCENT[LINE],Terminator(spname+8*LINE,8),EXCIT[LINE],
-    GFLOG,GRLG10,GSLG10,GWLG10,ION[LINE]);
-*/
     GF[LINE] = pow10(GFLOG);
-    //    ION[LINE]--; /* ION for neutrals should be 1 */
   }
-  /*  fclose(file11); */
   flagLINELIST = 1;
   return &OK_response;
 }
@@ -736,7 +663,6 @@ extern "C" char const *SME_DLL InputLineList(int n, void *arg[]) /* Read in line
 extern "C" char const *SME_DLL OutputLineList(int n, void *arg[]) /* Return line list */
 {
   int LINE, Nlines;
-  /*  double GRLG10, GSLG10, GWLG10; */
   double *a1;
   /*
    NLINES - NUMBERS OF SPECTRAL LINES;
@@ -905,11 +831,6 @@ extern "C" char const *SME_DLL UpdateLineList(int n, void *arg[]) /* Change line
   return &OK_response;
 }
 
-/*  TWO TYPES OF INTERPOLATION (SEE COMMENTS IN "RATIO") */
-
-//#define XINTEF(UU,VV,WW) VV+(VV-UU)*DTAU1+(WW-VV)*DTAU2
-//#define XINTER(UU,VV,WW) UU+(VV-UU)*DTAU1+(WW-VV)*DTAU2
-
 extern "C" char const *SME_DLL InputModel(int n, void *arg[]) /* Read in model atmosphere */
 {
   int IM, im, i, arg_offset;
@@ -1014,10 +935,6 @@ extern "C" char const *SME_DLL InputModel(int n, void *arg[]) /* Read in model a
     VTURB[IM] = a6[im];
     if (MOTYPE == 3)
       RAD_ATMO[IM] = a7[im];
-    /*
-    printf("%14e %f %14e %14e %14e %f %f\n",
-           RHOX[IM],T[IM],XNE[IM],XNA[IM],RHO[IM],VTURB[IM],RAD_ATMO[IM]);
-*/
   }
 
   for (IM = 0; IM < NRHOX; IM++)
@@ -1032,11 +949,9 @@ extern "C" char const *SME_DLL InputModel(int n, void *arg[]) /* Read in model a
   return &OK_response;
 }
 
-//#undef XINTEF
-//#undef XINTER
-
 extern "C" char const *SME_DLL InputDepartureCoefficients(int n, void *arg[])
-/* Reads in NLTE b's  for one transition at a time. The calling sequence
+{
+  /* Reads in NLTE b's  for one transition at a time. The calling sequence
    requires a pointer to a double array of the size 2*NRHOX and an integer
    with the transition number. The logic of handling NLTE is the following:
 
@@ -1052,8 +967,7 @@ extern "C" char const *SME_DLL InputDepartureCoefficients(int n, void *arg[])
       already existing once. In this case memory is reallocated to avoid leaks if
       NRHOX changes
    5) There no need to reset NLTE system in a given run, only in the end of calculations
-*/
-{
+  */
   int im, line;
   double *b;
 
@@ -1105,7 +1019,6 @@ extern "C" char const *SME_DLL InputDepartureCoefficients(int n, void *arg[])
   {
     FREE(BNLTE_low[line]);
     FREE(BNLTE_upp[line]);
-    //    flagNLTE[line]=0;
   }
 
   CALLOC(BNLTE_low[line], NRHOX, double); // Allocate departure coefficient arrays
@@ -1121,8 +1034,7 @@ extern "C" char const *SME_DLL InputDepartureCoefficients(int n, void *arg[])
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL GetDepartureCoefficients(int n, void *arg[]) /* Get NLTE b's for
-                                                                                specific line */
+extern "C" char const *SME_DLL GetDepartureCoefficients(int n, void *arg[]) /* Get NLTE b's for specific line */
 {
   int im;
   int nrhox, line;
@@ -1240,21 +1152,8 @@ extern "C" char const *SME_DLL InputAbund(int n, void *arg[]) /* Read in abundan
   for (i = 1; i < MAX_ELEM; i++)
   {
     ABUND[i] = (a[i - 1] >= 0.) ? a[i - 1] : pow10(a[i - 1]);
-    //    ABUND[i]=(ABUND[i]>1.)?1.:ABUND[i];
-    //    ABUND[i]=(ABUND[i]<0.)?0.:ABUND[i];
   }
   flagABUND = 1;
-  /*  
-  if(flagIONIZ && flagMODEL)
-  {
-    short I, K;
-    for(I=1; I<MAX_ELEM; I++)
-    {
-      if(FRACT[I]!=NULL) for(K=0; K<NRHOX; K++) FREE(FRACT[I][K]);
-      FREE(FRACT[I]);
-    }
-  }
-*/
   flagCONTIN = 0;
   return &OK_response;
 }
@@ -1263,10 +1162,6 @@ extern "C" char const *SME_DLL Opacity(int n, void *arg[]) /* Calculate opacitie
 {
   short i, nrhox;
   double *a1, *a2, *a3;
-  /*
-  double *opac_c[1000], wave_c[1000], wc, maxerr, meano;
-  int indx_c[1000], n_cont, i_cont;
-*/
 
   if (n > 0)
   {
@@ -1306,8 +1201,6 @@ extern "C" char const *SME_DLL Opacity(int n, void *arg[]) /* Calculate opacitie
 
   if (MOTYPE == 0)
     CONTOP(WLSTD, COPSTD); // Compute special opacity vector
-
-  //  printf("Wfirst=%g, Wlast=%g, N_wave=%d\n", WFIRST, WLAST, NWAVE_C);
 
   // Continuous opacity at the blue edge
 
@@ -1368,7 +1261,7 @@ void ALAM(double *opacity)
 {
   /*  THIS SUBROUTINE COMPUTES CONTINUOUS OPACITY USING
     KURUCZ's ATLAS-9 SUBROUTINES.
-*/
+  */
   int J;
 
   /*  CLEAR OPACITY ACCUMULATORS */
@@ -1414,26 +1307,8 @@ void ALAM(double *opacity)
     HOTOP(AHOT);
   if (IFOP[11] == 1)
     ELECOP(SIGEL);
-  //  if(IFOP[12]==1) H2RAOP(SIGH2, IXH1);
   if (IFOP[12] == 1)
     H2RAOP(SIGH2, IXH2mol);
-
-  /*
-  if(IFOP[ 0]==1) HOP(AHYD, IXH1, IXH2);
-  if(IFOP[ 1]==1) H2PLOP(AH2P, IXH1, IXH2);
-  if(IFOP[ 2]==1) HMINOP_old(AHMIN, IXH1, IXHMIN);
-  if(IFOP[ 3]==1) HRAYOP(SIGH, IXH1);
-  if(IFOP[ 4]==1) HE1OP(AHE1, IXHE1, IXHE2);
-  if(IFOP[ 5]==1) HE2OP(AHE2, IXHE2, IXHE3);
-  if(IFOP[ 6]==1) HEMIOP(AHEMIN, IXHE1);
-  if(IFOP[ 7]==1) HERAOP(SIGHE, IXHE1);
-  if(IFOP[ 8]==1) COOLOP(ACOOL);
-  if(IFOP[ 9]==1) LUKEOP(ALUKE);
-  if(IFOP[10]==1) HOTOP(AHOT);
-  if(IFOP[11]==1) ELECOP(SIGEL);
-//  if(IFOP[12]==1) H2RAOP(SIGH2, IXH1);
-  if(IFOP[12]==1) H2RAOP(SIGH2, IXH2mol);
-*/
 
   /*  CALCULATE THE TOTAL CONTINUOUS OPACITY */
 
@@ -1442,18 +1317,6 @@ void ALAM(double *opacity)
     opacity[J] = AHYD[J] + AH2P[J] + AHMIN[J] + SIGH[J] + AHE1[J] + AHE2[J] +
                  AHEMIN[J] + SIGHE[J] + ACOOL[J] + ALUKE[J] + AHOT[J] + SIGEL[J] +
                  SIGH2[J];
-
-    /*
-printf("%10.1f %11.4e %11.4e %11.4e %11.4e %11.4e %11.4e\n",
-      T[J],FRACT[J][IXH1],FRACT[J][IXH2],FRACT[J][IXHMIN],FRACT[J][IXHE1],
-      FRACT[J][IXHE2],FRACT[J][IXHE3]);
-*/
-
-    /*
-printf("%2d %10.1f %11.4e %11.4e %11.4e %11.4e %11.4e %11.4e %11.4e %11.4e %11.4e %11.4e %11.4e %11.4e %11.4e\n",
-       J,T[J],opacity[J],AHYD[J],AHMIN[J],AH2P[J],AHE1[J],AHE2[J],AHEMIN[J],
-       ACOOL[J],ALUKE[J],AHOT[J],SIGH[J],SIGEL[J],SIGH2[J]);
-*/
   }
   return;
 }
@@ -2032,14 +1895,10 @@ double COULFF(int J, int NZ)
   double GAMLOG, HVKTLG, P, Q, CLFF;
   int IGAM, IHVKT;
 
-  /*  GAMLOG=log10(158000*Z*Z/T)*2 */
-
   GAMLOG = 10.39638 - TLOG[J] / 1.15129 + Z4LOG[NZ - 1];
   IGAM = min((int)(GAMLOG + 7.), 10);
   if (IGAM < 1)
     IGAM = 1;
-
-  /*  HVKTLG=2*log10(HVKT) */
 
   HVKTLG = (FREQLG - TLOG[J]) / 1.15129 - 20.63764;
   IHVKT = min((int)(HVKTLG + 9.), 11);
@@ -2065,19 +1924,12 @@ void HOP(double *ahyd, int iH1, int iH2) /* REQUIRES FUNCTIONS COULX AND COULFF 
       BOLT[J][N] = exp(-13.595 * (1. - 1. / (N + 1) / (N + 1)) / TKEV[J]) *
                    2. * (N + 1) * (N + 1) * nH1 / RHO[J];
     FREET[J] = XNE[J] * FRACT[J][iH2] / (sqrt(T[J]) * RHO[J]);
-    //  XR=FRACT[J][iH1]*(2/2/13.595)*TKEV[J]/RHO[J];
-    //  XR=FRACT[J][iH1]/13.595*TKEV[J]/RHO[J];
     XR = nH1 / 13.595 * TKEV[J] / RHO[J];
     BOLTEX[J] = exp(-13.427 / TKEV[J]) * XR;
     EXLIM[J] = exp(-13.595 / TKEV[J]) * XR;
   }
   for (N = 0; N < 8; N++)
     CONT[N] = COULX(N, FREQ, 1.);
-  /*
-    FREQ3=FREQ**3
-    CFREE=3.6919E8/FREQ3
-    C=2.815E29/FREQ3
-*/
   CFREE = 3.6919e8 / (FREQ * FREQ);
   C = ((2.815e29 / FREQ) / FREQ) / FREQ;
   for (J = 0; J < NRHOX; J++)
@@ -3906,8 +3758,12 @@ double SI1OP_new(int J) /* Cross-section                                */
   return aSi1op;
 }
 
-double FE1OP(int J) /* Cross-section time partition functions */
-{                   /* This routine is based on R.L. Kurucz Atlas12 */
+double FE1OP(int J)
+{
+  /* 
+  Cross-section time partition functions 
+  This routine is based on R.L. Kurucz Atlas12 
+  */
   static double G[48] = {25., 35., 21., 15., 9., 35., 33., 21., 27., 49., 9., 21.,
                          27., 9., 9., 25., 33., 15., 35., 3., 5., 11., 15., 13.,
                          15., 9., 21., 15., 21., 25., 35., 9., 5., 45., 27., 21.,
@@ -3926,7 +3782,6 @@ double FE1OP(int J) /* Cross-section time partition functions */
                            32500., 32500., 32000., 29500., 29500., 31000., 30500.,
                            29000., 27000., 54000., 27500., 24000., 47000., 23000.,
                            44000., 42000., 42000., 21000., 42000., 42000.};
-  //  double BOLT[48], XSECT[48], WAVENO, FE1OPACITY, XXX;
   double BOLT, XSECT, WAVENO, FE1OPACITY, XXX;
   int I;
 
@@ -3934,7 +3789,6 @@ double FE1OP(int J) /* Cross-section time partition functions */
   if (WAVENO < 21000.)
     return 0.;
   FE1OPACITY = 0.;
-  //  for(I=0; I<48; I++) BOLT[I]=G[I]*exp(-E[I]*CLIGHTcm*HKT[J]);
   for (I = 0; I < 48; I++)
   {
     BOLT = G[I] * exp(-E[I] * CLIGHTcm * HKT[J]);
@@ -3947,33 +3801,18 @@ double FE1OP(int J) /* Cross-section time partition functions */
       XSECT = 0.;
     FE1OPACITY += XSECT * BOLT;
   }
-  //  for(I=0; I<48; I++) FE1OPACITY+=XSECT[I]*BOLT[I];
   return FE1OPACITY;
 }
-/*
-      DO 10 I=1,48
-   10 BOLT(I)=G(I)*EXP(-E(I)*2.99792458E10*HKT(J))
-      WAVENO=FREQ/2.99792458E10
-      IF(WAVENO.LT.21000.)GO TO 30
-      DO 25 I=1,48
-      XSECT(I)=0.
-      IF(WNO(I).LT.WAVENO)
-     1XSECT(I)= 3.E-18/(1.+((WNO(I)+3000.-WAVENO)/WNO(I)/.1)**4)
-   25 CONTINUE
-   30 FE1OP=0.
-      IF(WAVENO.LT.21000.)RETURN
-      DO 35 I=1,48
-   35 FE1OP=FE1OP+XSECT(I)*BOLT(I,J)
-      RETURN
-      END
-*/
 
-double FE1OP_new(int J) /* Cross-sections of Fe 1 photoionization time        */
-{                       /* This routine is based on data provided by Bautista */
-                        /* described in Bautista et al. 2017, A&A 606, 127    */
+double FE1OP_new(int J)
+{
+  /*
+  Cross-sections of Fe 1 photoionization time
+  This routine is based on data provided by Bautista
+  described in Bautista et al. 2017, A&A 606, 127
+  */
   static double WN0 = 10000.000, WNSTEP = 20.000;
   static int n_WN = 12001, n_Ebin = 78, first = 1;
-  //  static double Ebin[78], GCROSS[12001][78];
   static double Ebin[78], GCROSS[2401][78];
   double WAVENO, BOLT, FACTOR, kT_eV, fe1op;
   int i_wn, i_en, i;
@@ -4282,8 +4121,12 @@ double CHOP(int J) /* Cross-section for CH molecule */
   return CHop * PARTITION_FUNCTIONS[J][IXCH];
 }
 
-double NHOP(int J) /* Cross-sections of Fe 1 photoionization time               */
-{                  /* This routine is based on data provided by Phillip Stancil */
+double NHOP(int J)
+{
+  /*
+  Cross-sections of Fe 1 photoionization time
+  This routine is based on data provided by Phillip Stancil
+  */
   static double WL0, WLSTEP;
   static int n_WL = 4701, n_Temp = 15, first = 1;
   static float T_TBL[15];
@@ -4672,26 +4515,12 @@ double OHOP(int J)
 
 void COOLOP(double *acool) /* Si1, Mg1, Al1, C1, Fe1 */
 {
-  /*
-  double *XNFPC, *XNFPMG, *XNFPAL, *XNFPSI, *XNFPFE;
-*/
-  //  double C1OP(int), MG1OP(int), AL1OP(int), SI1OP(int), FE1OP(int);
-  //  double C1OP_new(int), MG1OP_new(int);
   int J;
 
-  //printf("PATHLEN=%d\n",PATHLEN);
   if (PATHLEN > 0)
   {
     for (J = 0; J < NRHOX; J++)
     {
-      /*
-      acool[J]=( C1OP(J)*FRACT[J][IXC1 ]
-               +MG1OP(J)*FRACT[J][IXMG1]
-               +AL1OP(J)*FRACT[J][IXAL1]
-               +SI1OP(J)*FRACT[J][IXSI1]
-               +FE1OP(J)*FRACT[J][IXFE1])
-               *STIM[J]/RHO[J];
-*/
       acool[J] = (C1OP_new(J) * FRACT[J][IXC1] + MG1OP_new(J) * FRACT[J][IXMG1] + AL1OP_new(J) * FRACT[J][IXAL1] + SI1OP_new(J) * FRACT[J][IXSI1] + FE1OP_new(J) * FRACT[J][IXFE1] + CHOP(J) * FRACT[J][IXCH] + NHOP(J) * FRACT[J][IXNH] + OHOP(J) * FRACT[J][IXOH]) * STIM[J] / RHO[J];
     }
   }
@@ -4702,14 +4531,6 @@ void COOLOP(double *acool) /* Si1, Mg1, Al1, C1, Fe1 */
       acool[J] = (C1OP_new(J) * FRACT[J][IXC1] + MG1OP_new(J) * FRACT[J][IXMG1] + AL1OP_new(J) * FRACT[J][IXAL1] + SI1OP_new(J) * FRACT[J][IXSI1] + FE1OP(J) * FRACT[J][IXFE1] + CHOP(J) * FRACT[J][IXCH] + OHOP(J) * FRACT[J][IXOH]) * STIM[J] / RHO[J];
     }
   }
-  /* {
-  J=47;
-  printf("WL=%g C1OP old=%g, new=%g\n", CLIGHT/FREQ, C1OP(J), C1OP_new(J));
-  printf("     MG1OP old=%g, new=%g\n", MG1OP(J),MG1OP_new(J));
-  printf("     AL1OP old=%g, new=%g\n", AL1OP(J),AL1OP_new(J));
-  printf("     SI1OP old=%g, new=%g\n", SI1OP(J),SI1OP_new(J));
-  printf("     FE1OP old=%g, new=%g\n", FE1OP(J),FE1OP_new(J));
-} */
   return;
 }
 
@@ -4828,7 +4649,6 @@ double CA2OP(int J) /* CROSS-SECTION TIMES THE PARTITION FUNCTION */
 
 void LUKEOP(double *aluke) /*  SI2,MG2,CA2,N1,O1 */
 {
-  //  double N1OP(int), O1OP(int), MG2OP(int), SI2OP(int), CA2OP(int);
   int J;
 
   for (J = 0; J < NRHOX; J++)
@@ -5002,25 +4822,6 @@ void ELECOP(double *sigel)
     sigel[J] = 0.6653e-24 * XNE[J] / RHO[J];
 }
 
-/*
-void H2RAOP(double *sigh2, int iH1)
-{
-  double WAVE, WW, SIG, ARG, H1;
-  int J;
-
-  WAVE=2.997925e18/min(FREQ,2.922e15);
-  WW=WAVE*WAVE;
-  SIG=(8.14e-13+1.28e-6/WW+1.61/(WW*WW))/(WW*WW);
-  for(J=0; J<NRHOX; J++)
-  {
-    ARG=4.477/TKEV[J]-4.6628e1+(1.8031e-3+(-5.0239e-7+(8.1424e-11-
-        5.0501e-15*T[J])*T[J])*T[J])*T[J]-1.5*TLOG[J];
-    H1=FRACT[J][iH1]*2.;
-    sigh2[J]=(ARG < -80.)? 0.:exp(ARG)/RHO[J]*H1*H1*SIG;
-  }
-}
-*/
-
 void H2RAOP(double *sigh2, int iH2mol)
 {
   double WAVE, WW, SIG, ARG;
@@ -5040,9 +4841,6 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[]) /* Returns specifi
   short i, j, nrhox, key;
   double *a1;
   IDL_STRING *species, *a4;
-  //  double C1OP(int), MG1OP(int), AL1OP(int), SI1OP(int), FE1OP(int);
-  //  double C1OP_new(int), MG1OP_new(int);
-  //  double N1OP(int), O1OP(int), MG2OP(int), SI2OP(int), CA2OP(int);
 
   if (n < 3)
   {
@@ -5384,12 +5182,6 @@ void AutoIonization()
     MARK[LINE] = 0;
     AUTOION[LINE] = 0;
     EXUP = EXCIT[LINE] + 1. / (WLCENT[LINE] * 8065.544e-8);
-    //if(!strncmp(spname+8*LINE, "MgH ", 4))
-    //{
-    //  printf("%s Line %d, g_st:%g, E_up=%g, Pot_ion=%g\n",
-    //        Terminator(spname+8*LINE,4),
-    //        LINE,GAMQST[LINE],EXUP,POTION[SPINDEX[LINE]]);
-    //}
     if (EXUP >= POTION[SPINDEX[LINE]])
     {
       if (!OPEN)
@@ -5433,7 +5225,7 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[])
    different species N_SPLIST including the basic set defined in eosmag.
    ESO_count_species then allocates the arrays SPLIST[N_SPLIST] and
    SPINDEX[NLINES]
-*/
+  */
 
   int LINE;
   char *species_list;
@@ -5465,7 +5257,6 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[])
     FREE(SPLIST);
 
   species_list = NULL;
-  //  species_list=(char *)calloc(NLINES, 8);
   CALLOC(species_list, NLINES * 8, char);
   if (species_list == NULL)
   {
@@ -5485,9 +5276,6 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[])
     dump01 = (switches & 0x08);
     dump02 = (switches & 0x10);
     return_pfs = (switches & 0x20);
-    //    return1                      =(switches&0x20);
-    //    return2                      =(switches&0x40);
-    //    return3                      =(switches&0x80);
   }
   else
   {
@@ -5497,9 +5285,6 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[])
     dump01 = 0;
     dump02 = 0;
     return_pfs = 0;
-    //    return1                      =0;
-    //    return2                      =0;
-    //    return3                      =0;
   }
 
   for (LINE = 0; LINE < NLINES; LINE++)
@@ -5546,7 +5331,6 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[])
 
   /* Construct a complete list of species */
 
-  //printf("%s\n", Terminator(species_list, 8));
   i = 0;
   switch (eqlist_(ABUND, ELEMEN + 1, species_list, ION, SPINDEX, SPLIST,
                   NLINES, i, N_SPLIST, nelem, 3, 8, 8))
@@ -5582,10 +5366,6 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[])
   FREE(species_list);
   N_SPLIST = i;
 
-  //for(j=0; j<N_SPLIST; j++) printf("%d %d %s\n", i, j, Terminator(SPLIST+8*j, 8));
-  //for(j=0;j<NLINES;j++) printf("%d %d %s\n",j,ION[j],Terminator(SPLIST+8*(SPINDEX[j]-1),8));
-  //j=65; printf("%d %d %d %s\n", i, j, SPINDEX[10]-1, Terminator(SPLIST+8*j, 8));
-
   /* Now call the solver for molecular equilibrium eqstat. Parameters are:
    T         - temperature (var)
    XNA       - atomic number density (var)
@@ -5605,14 +5385,10 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[])
    N_SPLIST  - the total number of species (var)
    xne       - number density of electrons computed by EOS
    xna       - number density of particles computed by EOS
-*/
+  */
 
-  //for(j=0;j<NLINES;j++) printf("%d %d %s\n",j,SPINDEX[j],Terminator(SPLIST+8*(SPINDEX[j]-1),8));
   if (FRACT != NULL)
   {
-    //    i=NRHOX_allocated;
-    //    printf("NRHOX_allocated=%d, NRHOX=%d, FRACT[%d]=%p, PARTITION_FUNCTIONS[%d]=%p\n",
-    //            i,NRHOX,i-1,FRACT[i-1],i-1,PARTITION_FUNCTIONS[i-1]);
     for (i = 0; i < NRHOX_allocated; i++)
       FREE(FRACT[i]);
     FREE(FRACT);
@@ -5630,11 +5406,9 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[])
   if (MOLWEIGHT != NULL)
     FREE(MOLWEIGHT);
 
-  //  FRACT=(float **)calloc(NRHOX, sizeof(float *));
   CALLOC(FRACT, NRHOX, float *);
   for (i = 0; i < NRHOX; i++)
   {
-    //    FRACT[i]=(float *)calloc(N_SPLIST, sizeof(float));
     CALLOC(FRACT[i], N_SPLIST, float);
     if (FRACT[i] == NULL)
     {
@@ -5642,11 +5416,9 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[])
       return result;
     }
   }
-  //  PARTITION_FUNCTIONS=(float **)calloc(NRHOX, sizeof(float *));
   CALLOC(PARTITION_FUNCTIONS, NRHOX, float *);
   for (i = 0; i < NRHOX; i++)
   {
-    //    PARTITION_FUNCTIONS[i]=(float *)calloc(N_SPLIST, sizeof(float));
     CALLOC(PARTITION_FUNCTIONS[i], N_SPLIST, float);
     if (PARTITION_FUNCTIONS[i] == NULL)
     {
@@ -5656,7 +5428,6 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[])
   }
   NRHOX_allocated = NRHOX;
 
-  //  POTION=(float *)calloc(N_SPLIST, sizeof(float));
   CALLOC(POTION, N_SPLIST, float);
   if (POTION == NULL)
   {
@@ -5664,7 +5435,6 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[])
     return result;
   }
 
-  //  MOLWEIGHT=(float *)calloc(N_SPLIST, sizeof(float));
   CALLOC(MOLWEIGHT, N_SPLIST, float);
   if (MOLWEIGHT == NULL)
   {
@@ -5723,11 +5493,7 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[])
     POTION[i] = -1.;
     MOLWEIGHT[i] = -1.;
   }
-  //for(j=0;j<NLINES;j++) printf("%d %d %s\n",j,SPINDEX[j],Terminator(SPLIST+8*(SPINDEX[j]-1),8));
   eos_mode = (use_electron_density_from_EOS) ? 0 : 10;
-  //  pf_mode=2;
-  //      strcpy(result, "Ionization: debug return0");
-  //    return result;
   if (return_pfs)
   {
     for (i = 0; i < NRHOX; i++)
@@ -5758,64 +5524,15 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[])
       i_max_Ne_err = i;
       max_Ne_err = fabs(XNE[i] - XNE_estim) / XNE[i];
     }
-    //    if(i==NRHOX-19 && return1)
-    //    {
-    //      strcpy(result, "Ionization: debug return1");
-    //      return result;
-    //    }
-    //    if(i==NRHOX-18 && return2)
-    //    {
-    //      strcpy(result, "Ionization: debug return2");
-    //      return result;
-    //    }
-    //    if(i==NRHOX-17 && return3)
-    //    {
-    //      strcpy(result, "Ionization: debug return3");
-    //      return result;
-    //    }
     H1FRACT[i] = FRACT[i][IXH1] * PARTITION_FUNCTIONS[i][IXH1];
     HE1FRACT[i] = FRACT[i][IXHE1] * PARTITION_FUNCTIONS[i][IXHE1];
     H2molFRACT[i] = FRACT[i][IXH2mol] * PARTITION_FUNCTIONS[i][IXH2mol];
-    //    eqstat_(pf_mode, TEMP, Pgas, Pelec, ABUND+1, ELEMEN+1, AMASS+1,
-    //            nelem, SPINDEX, SPLIST, PARTITION_FUNCTIONS[i], POTION, MOLWEIGHT,
-    //            H1FRACT[i], HE1FRACT[i], NLINES, N_SPLIST,
-    //            XNE_estim, XNA_estim, RHO_estim, NITER, 3, 8);
-    //    printf("T, Hpf= %12g %12g\n", TEMP, PARTITION_FUNCTIONS[i][0]);
-    //    eqstat_(eos_mode, TEMP, Pgas, Pelec, ABUND+1, ELEMEN+1, AMASS+1,
-    //            nelem, SPINDEX, SPLIST, FRACT[i], POTION, MOLWEIGHT,
-    //            H1FRACT[i], HE1FRACT[i], NLINES, N_SPLIST,
-    //            XNE_estim, XNA_estim, RHO_estim, NITER, 3, 8);
-    //    TEMP=T[i]; XNELEC=XNE[i]; XNATOM=XNA[i];
-    //    eqstat_(pf_mode, TEMP, XNATOM, XNELEC, ABUND+1, ELEMEN+1, AMASS+1,
-    //            nelem, SPINDEX, SPLIST, PARTITION_FUNCTIONS[i], POTION, MOLWEIGHT,
-    //            H1FRACT[i], HE1FRACT[i], NLINES, N_SPLIST,
-    //            XNE_estim, XNA_estim, RHO_estim, NITER, 3, 8);
-    //    eqstat_(eos_mode, TEMP, XNATOM, XNELEC, ABUND+1, ELEMEN+1, AMASS+1,
-    //            nelem, SPINDEX, SPLIST, FRACT[i], POTION, MOLWEIGHT,
-    //            H1FRACT[i], HE1FRACT[i], NLINES, N_SPLIST,
-    //            XNE_estim, XNA_estim, RHO_estim, NITER, 3, 8);
     XNE_eos[i] = XNE_estim;
     XNA_eos[i] = XNA_estim;
     RHO_eos[i] = RHO_estim;
 
-    //if(dump01) printf("%d %g %g %g %g %g %d %d\n",i,TEMP,XNA[i],H1FRACT[i],HE1FRACT[i],
-    //                                    FRACT[i][3],IXH1,IXHE1);
-    //  printf("%d %g %g %g %g %s\n",i,TEMP,ABUND[26],POTION[SPINDEX[10]-1],
-    //                FRACT[i][SPINDEX[0]-1],Terminator(SPLIST+8*(SPINDEX[0]-1),8));
-    //if(dump01) printf("%d %g %g %g %g %g %g %g %g %d\n",i,TEMP,XNA[i],XNE[i],RHO[i],
-    //                    XNE_estim,XNA_estim,RHO_estim,FRACT[i][SPINDEX[1]-1],NITER);
-
     if (dump02)
     {
-      //  printf("%d %d %s %f %f\n",i,38,Terminator(SPLIST+8*38,8),
-      //                                             PARTITION_FUNCTIONS[i][38], // Mg
-      //                                             log10(FRACT[i][38]/RHO[i]));
-      //  printf("%d %d %s %f %f\n",i,39,Terminator(SPLIST+8*39,8),
-      //                                             PARTITION_FUNCTIONS[i][39], // Mg+
-      //                                             log10(FRACT[i][39]/RHO[i]));
-      //  printf("%d %d %s %f %f\n",i,51,Terminator(SPLIST+8*51,8),
-      //                                             PARTITION_FUNCTIONS[i][51], // S
-      //                                             FRACT[i][51]);
       printf("%f %d %d %s %f %f\n", TEMP, i, 79, Terminator(SPLIST + 8 * 79, 8),
              PARTITION_FUNCTIONS[i][79], // Fe
              log10(FRACT[i][79] * PARTITION_FUNCTIONS[i][79] / RHO[i]));
@@ -5835,13 +5552,6 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[])
                PARTITION_FUNCTIONS[i][j],
                FRACT[i][j],
                FRACT[i][j] / RHO[i]);
-      //  for(j=0;j<NLINES;j++) printf("A:%d %d %s\n",j,SPINDEX[j],Terminator(SPLIST+8*(SPINDEX[0]-1),8));
-      //  printf("B:%s\n",Terminator(SPLIST+8*(SPINDEX[0]-1),8));
-      //  printf("B:%s\n",Terminator(SPLIST+8*(SPINDEX[1]-1),8));
-      //  printf("C:\"%s\"%s\"\n",Terminator(SPLIST+8*(SPINDEX[0]-1),8),Terminator(SPLIST+8*(SPINDEX[1]-1),8));
-      //  printf("%s %g %s %g\n",Terminator(SPLIST+8*(SPINDEX[0]-1),8),POTION[SPINDEX[0]-1],
-      //         Terminator(SPLIST+8*(SPINDEX[1]-1),8),POTION[SPINDEX[1]-1]);
-      //  printf("%d %g %g\n",i, POTION[SPINDEX[0]-1],POTION[SPINDEX[1]-1]);
     }
     FRACT[i][N_SPLIST - 1] = XNE_estim;
     if (use_electron_density_from_EOS)
@@ -5853,13 +5563,6 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[])
   }
   for (i = 0; i < NLINES; i++)
     SPINDEX[i]--; /* Index in FORTRAN is 1-based */
-                  //for(i=0; i<NLINES; i++)
-                  //  printf("%s Ion pot: %g\n",Terminator(SPLIST+8*SPINDEX[i],4),POTION[SPINDEX[i]]);
-                  //printf("Ion pot: %g\n",POTION[SPINDEX[0]]);
-                  //printf("Ion pot: %g\n",POTION[SPINDEX[1]]);
-
-  //  for(i=0; i<NRHOX; i=i+10) printf("%d %d %g %s\n",i,IXH2,
-  //                FRACT[i][IXH2],Terminator(SPLIST+8*IXH2,8));
 
   flagIONIZ = 1;
   if (max_Ne_err > 0.5)
@@ -6041,7 +5744,7 @@ extern "C" char const *SME_DLL Transf(int n, void *arg[])
 
     LAST UPDATE: September 13, 1993.
     C++ Version: October 26, 1994
-*/
+  */
 
   double *TABLE, *WL, *FCBLUE, *FCRED, *MU, EPS1, EPS2;
   int NWSIZE, NWL;
@@ -6052,11 +5755,6 @@ extern "C" char const *SME_DLL Transf(int n, void *arg[])
       source_cont[MOSIZE];
   short NMU, iret, keep_lineop, long_continuum;
   int line;
-
-  //  struct rusage r_usage;
-  //  time_t t1;
-  //  getrusage(0, &r_usage);
-  //  t1=r_usage.ru_utime.tv_sec;
 
   /* Check if everything is set and pre-calculated */
 
@@ -6150,19 +5848,11 @@ extern "C" char const *SME_DLL Transf(int n, void *arg[])
   if (!keep_lineop)
   {
     /* Allocate temporary arrays */
-
-    //    YABUND=(double *)calloc(NLINES, sizeof(double));
-    //    XMASS =(double *)calloc(NLINES, sizeof(double));
-    //    EXCUP =(double *)calloc(NLINES, sizeof(double));
-    //    ENU4  =(double *)calloc(NLINES, sizeof(double));
-    //    ENL4  =(double *)calloc(NLINES, sizeof(double));
-
     CALLOC(YABUND, NLINES, double);
     CALLOC(XMASS, NLINES, double);
     CALLOC(EXCUP, NLINES, double);
     CALLOC(ENU4, NLINES, double);
     CALLOC(ENL4, NLINES, double);
-    //for(im=NRHOX-2; im<NRHOX; im++) printf("AVOIGT[%d]=%p, VVOIGT[%d]=%p, LINEOP[%d]=%p\n",im,AVOIGT[im],im,VVOIGT[im],im,LINEOP[im]);
     if (ENL4 == NULL)
     {
       strcpy(result, "Not enough memory");
@@ -6210,11 +5900,6 @@ extern "C" char const *SME_DLL Transf(int n, void *arg[])
         Wlim_right[line] = min(WW + delta_lambda, 2000000.);
       }
     }
-    //    for(line=0; line<NLINES; line++)
-    //    {
-    //      printf("Transf in: Line %d, mark=%d, Left:%10.8g, wlcent:%10.8g, Right:%10.8g, %d, %d\n",
-    //              line,MARK[line],Wlim_left[line],WLCENT[line],Wlim_right[line],mark_total,NLINES);
-    //    }
   }
 
   if (MOTYPE == 3) /* If things get spherical initialize a 2D array of MUs and do the RT */
@@ -6222,30 +5907,28 @@ extern "C" char const *SME_DLL Transf(int n, void *arg[])
     double sintheta, deltaR, meanR, meanZ, path;
     int nrhox, grazing[MUSIZE], NRHOXs[MUSIZE];
     /*
-   The main idea here is that we simply scale up delta m (or delta tau) by the ratio of
-   geometrical path along the ray and along the radius. Rays are characterized by the impact
-   parameter P that is derived from Mu at the outer surface. Z distance along the ray is
-   measured from the plane perpendicular to the line-of-sight and crossing the stellar center.
-   The main relation is: Z^2 = R^2 - P^2.
-           Z2 - Z1   (Z2^2 - Z1^2)   R2 + R1   R2 + R1
-   dZ/dR = ------- = ------------- * ------- = -------.
-           R2 - R1   (R2^2 - R1^2)   Z2 + Z1   Z2 + Z1
-   The corresponding change in dm is then:
-                     dZ            Rmean
-   dm_sph = dm_rad * -- = dm_rad * -----
-                     dR            Zmean
-*/
+    The main idea here is that we simply scale up delta m (or delta tau) by the ratio of
+    geometrical path along the ray and along the radius. Rays are characterized by the impact
+    parameter P that is derived from Mu at the outer surface. Z distance along the ray is
+    measured from the plane perpendicular to the line-of-sight and crossing the stellar center.
+    The main relation is: Z^2 = R^2 - P^2.
+            Z2 - Z1   (Z2^2 - Z1^2)   R2 + R1   R2 + R1
+    dZ/dR = ------- = ------------- * ------- = -------.
+            R2 - R1   (R2^2 - R1^2)   Z2 + Z1   Z2 + Z1
+    The corresponding change in dm is then:
+                      dZ            Rmean
+    dm_sph = dm_rad * -- = dm_rad * -----
+                      dR            Zmean
+    */
     for (imu = 0; imu < NMU; imu++)
     {
       P_impact = (RADIUS + RAD_ATMO[0]) * sqrt(1. - MU[imu] * MU[imu]);
       grazing[imu] = (P_impact > RADIUS + RAD_ATMO[NRHOX - 1]) ? 1 : 0;
-      //printf("imu=%d, Impact=%g, height=%g, grazing=%d, %g\n", imu, P_impact/RADIUS, RAD_ATMO[0], grazing[imu], 1.-MU[imu]*MU[imu]);
       if (grazing[imu]) /* Dealing with grazing rays that do not penetrate optically thick layers */
       {
         for (nrhox = 1; nrhox < NRHOX; nrhox++)
           if (P_impact >= RADIUS + RAD_ATMO[nrhox])
             break;
-        //printf("imu=%d, Impact=%g, nrhox=%d, NRHOX=%d, %g\n", imu, P_impact/RADIUS, nrhox, NRHOX, 1.-MU[imu]*MU[imu]);
         deltaR = RAD_ATMO[nrhox - 1] - RAD_ATMO[nrhox];      // The layer where we do not cross both
         path = RAD_ATMO[nrhox - 1] + RADIUS;                 // boundaries gets special treatment
         path = 2. * sqrt(path * path - P_impact * P_impact); // Geometrical path through the inner ring
@@ -6259,14 +5942,11 @@ extern "C" char const *SME_DLL Transf(int n, void *arg[])
         }
         rhox_sph[imu][nrhox] = rhox_sph[imu][nrhox - 1] + // Column mass across the deepest layer
                                path * (RHOX[nrhox] - RHOX[nrhox - 1]) / (RAD_ATMO[nrhox - 1] - RAD_ATMO[nrhox]);
-        //printf("path=%g, dm=%g\n",path, RHOX[nrhox]-RHOX[nrhox-1]);
         for (im = nrhox + 1; im < 2 * nrhox; im++) // The rest of the grazing ray back to the surface
         {                                          // We have column mass chunks stored in rhox_sph already
           rhox_sph[imu][im] = rhox_sph[imu][im - 1] + (rhox_sph[imu][2 * nrhox - im] - rhox_sph[imu][2 * nrhox - im - 1]);
         }
-        //for(im=0;im<2*nrhox;im++) printf("imu=%d, im=%d, rhox_sph=%g\n",imu,im,rhox_sph[imu][im]);
         NRHOXs[imu] = 2 * nrhox;
-        //for(im=0;im<2*nrhox; im++) printf("%g ", rhox_sph[imu][im]); printf("2*nrhox=%d\n",2*nrhox);
       }
       else /* Normal rays are treated as in plane parallel case except for variable Mu */
       {
@@ -6277,7 +5957,6 @@ extern "C" char const *SME_DLL Transf(int n, void *arg[])
           meanZ = sqrt((RAD_ATMO[im] + RADIUS) * (RAD_ATMO[im] + RADIUS) - P_impact * P_impact) +
                   sqrt((RAD_ATMO[im - 1] + RADIUS) * (RAD_ATMO[im - 1] + RADIUS) - P_impact * P_impact);
           rhox_sph[imu][im] = rhox_sph[imu][im - 1] + (RHOX[im] - RHOX[im - 1]) * meanR / meanZ;
-          //printf("im=%d, Rad=%g, P=%g, MU=%g\n", im, RAD_ATMO[im  ]+RADIUS, P_impact, MU[imu]);
         }
         NRHOXs[imu] = NRHOX;
       }
@@ -6293,25 +5972,11 @@ extern "C" char const *SME_DLL Transf(int n, void *arg[])
       for (im = 0; im < NRHOX; im++)
         rhox[imu * NRHOX + im] = RHOX[im] / MU[imu];
     }
-    //  printf("0) NWL=%d, NWSIZE=%d, keep_lineop=%d\n",NWL,NWSIZE,keep_lineop);
     iret = RKINTS(rhox, NMU, EPS1, EPS2, FCBLUE, FCRED, TABLE, NWSIZE, NWL,
                   WL, long_continuum);
-    //  printf("1) NWL=%d, NWSIZE=%d, keep_lineop=%d\n",NWL,NWSIZE,keep_lineop);
   }
 
-  //  for(line=0; line<NLINES; line++)
-  //  {
-  //    printf("Transf out: Line %d, mark=%d, Left:%10.8g, wlcent:%10.8g, Right:%10.8g %d\n",
-  //            line,MARK[line],Wlim_left[line],WLCENT[line],Wlim_right[line],keep_lineop);
-  //  }
-
-  //printf("New %g %g %g %g %g\n",TABLE[0],TABLE[1],TABLE[2],TABLE[3],TABLE[4]);
-
   *((int *)arg[5]) = NWL;
-
-  //  getrusage(0, &r_usage);
-  //  t_tot+=r_usage.ru_utime.tv_sec-t1;
-  //  printf("Opacity time: %d, RT time: %d, Total:%d\n", t_op, t_rt, t_tot);
 
   return iret ? "Not enough array length to store all the points" : "";
 }
@@ -6384,15 +6049,16 @@ extern "C" char const *SME_DLL GetLineRange(int n, void *arg[]) /* Get importanc
 
 extern "C" char const *SME_DLL CentralDepth(int n, void *arg[])
 {
-  /*  THIS SUBROUTINE EXPLICITLY SOLVES THE TRANSFER EQUATION
-    FOR A SET OF NODES ON THE STAR DISK IN THE CENTERS OF SPETRAL
-    LINES. THE RESULTS ARE SPECIFIC INTENSITIES
+  /*
+  THIS SUBROUTINE EXPLICITLY SOLVES THE TRANSFER EQUATION
+  FOR A SET OF NODES ON THE STAR DISK IN THE CENTERS OF SPETRAL
+  LINES. THE RESULTS ARE SPECIFIC INTENSITIES
 
-    Author: N.Piskunov
+  Author: N.Piskunov
 
-    LAST UPDATE: September 13, 1993.
-    C++ Version: January 15, 1999
-*/
+  LAST UPDATE: September 13, 1993.
+  C++ Version: January 15, 1999
+  */
 
   double TBL[81], WEIGHTS[81], *MU, EPS1, FC, s0, s1, opacity[MOSIZE], wlstd;
   float *TABLE;
@@ -6459,20 +6125,6 @@ extern "C" char const *SME_DLL CentralDepth(int n, void *arg[])
     return result;
   }
 
-  /* Allocate temporary arrays */
-
-  //  YABUND=(double *)calloc(NLINES, sizeof(double));
-  //  XMASS =(double *)calloc(NLINES, sizeof(double));
-  //  EXCUP =(double *)calloc(NLINES, sizeof(double));
-  //  ENU4  =(double *)calloc(NLINES, sizeof(double));
-  //  ENL4  =(double *)calloc(NLINES, sizeof(double));
-  //  CALLOC(YABUND, NLINES, double);
-  //  CALLOC(XMASS,  NLINES, double);
-  //  CALLOC(EXCUP,  NLINES, double);
-  //  CALLOC(ENU4,   NLINES, double);
-  //  CALLOC(ENL4,   NLINES, double);
-  //  if(ENL4==NULL) {strcpy(result, "Not enough memory"); return result;}
-
   /* Check autoionization lines */
 
   AutoIonization();
@@ -6519,12 +6171,6 @@ extern "C" char const *SME_DLL CentralDepth(int n, void *arg[])
     TABLE[line] = (TABLE[line] < FC) ? 1.0 - TABLE[line] / FC : 0.0;
   }
 
-  //  FREE(YABUND);
-  //  FREE(XMASS);
-  //  FREE(EXCUP);
-  //  FREE(ENU4);
-  //  FREE(ENL4);
-
   return &OK_response;
 }
 
@@ -6536,19 +6182,20 @@ int RKINTS_sph(double rhox[][2 * MOSIZE], int NMU, int NRHOXs[], double EPS1, do
                double *FCBLUE, double *FCRED, double *TABLE, int NWSIZE, int &NWL,
                double *WL, short long_continuum, int grazing[])
 {
-  /*  THIS SUBROUTINE CALLS SUBROUTINE FCINTG TO INTEGRATE THE EMMERGING
-    SPECIFIC INTENSITIES FOR CONTINUUM AT THE EDGES OF SPECTRAL
-    INTERVAL (returned as "FC*") AND SUBROUTINE TBINTG FOR THE LINE
-    (returned as "TABLE").
+  /* 
+  THIS SUBROUTINE CALLS SUBROUTINE FCINTG TO INTEGRATE THE EMMERGING
+  SPECIFIC INTENSITIES FOR CONTINUUM AT THE EDGES OF SPECTRAL
+  INTERVAL (returned as "FC*") AND SUBROUTINE TBINTG FOR THE LINE
+  (returned as "TABLE").
 
-    Author: N.Piskunov
+  Author: N.Piskunov
 
-    UPDATES: 13-Sep-1993 written.
-             26-Oct-1994 C++ Version
-             25-Sep-2010 Modified to allow for spherical geometry in 1D models
-             12-Jan-2015 Modified the loop limits according to the new approximation
-                         for grazing rays
-*/
+  UPDATES: 13-Sep-1993 written.
+            26-Oct-1994 C++ Version
+            25-Sep-2010 Modified to allow for spherical geometry in 1D models
+            12-Jan-2015 Modified the loop limits according to the new approximation
+                        for grazing rays
+  */
   double WW, FCL, FNORM;
   double opacity_tot[2 * MOSIZE], opacity_cont[2 * MOSIZE],
       source[2 * MOSIZE], source_cont[2 * MOSIZE];
@@ -6621,12 +6268,6 @@ int RKINTS_sph(double rhox[][2 * MOSIZE], int NMU, int NRHOXs[], double EPS1, do
     if (IMU == 0)
       FNORM = FCBLUE[IMU];
   }
-
-  //  printf("Sph:%g, %g, %g %g %g %g %g\n",TABLE[0],TABLE[1],TABLE[2],TABLE[3],
-  //                                        TABLE[4],TABLE[5],TABLE[6]);
-  //  dTBINTG(MUs, NMU, WFIRST, TABLE);
-  //  printf("New:%g, %g, %g %g %g %g %g\n",TABLE[0],TABLE[1],TABLE[2],TABLE[3],
-  //                                        TABLE[4],TABLE[5],TABLE[6]);
 
   /* Now add one line point at each line center. Check line contribution. */
 
@@ -6801,11 +6442,13 @@ int RKINTS_sph(double rhox[][2 * MOSIZE], int NMU, int NRHOXs[], double EPS1, do
     DWL_MIN = WL[IWL - 1] * DVEL_MIN / CLIGHTcm;
     if (FCL < EPS2 || WL[IWL] - WL[IWL - 1] <= DWL_MIN) /* Check if linear approx. is OK */
     {
-      /*  Now we will move right of the WL(IWL) and will never come back, mark
-    permanently all weak lines left of this wavelength. Unmark all
-    temporary marked lines. */
+      /*
+      Now we will move right of the WL(IWL) and will never come back, mark
+      permanently all weak lines left of this wavelength. Unmark all
+      temporary marked lines.
+      */
 
-      /* Here is a new version that I hope is fiinally robust */
+      /* Here is a new version that I hope is finally robust */
 
       for (line = NLINES - 1; line >= line_last; line--)
       {
@@ -6828,7 +6471,7 @@ int RKINTS_sph(double rhox[][2 * MOSIZE], int NMU, int NRHOXs[], double EPS1, do
     else
     {
       /* At this point we are about to add more points to the left, so we can
-   ignore all weak lines to the right of this wavelength. */
+      ignore all weak lines to the right of this wavelength. */
 
       for (line = 0; line <= line_first; line++)
       {
@@ -6856,31 +6499,24 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
            int NWSIZE, int &NWL, double *WL,
            short long_continuum)
 {
-  /*  THIS SUBROUTINE CALLS SUBROUTINE FCINTG TO INTEGRATE THE EMERGING
-    SPECIFIC INTENSITIES FOR CONTINUUM AT THE EDGES OF SPECTRAL
-    INTERVAL (returned as "FC*") AND SUBROUTINE TBINTG FOR THE LINE
-    (returned as "TABLE").
+  /*
+  THIS SUBROUTINE CALLS SUBROUTINE FCINTG TO INTEGRATE THE EMERGING
+  SPECIFIC INTENSITIES FOR CONTINUUM AT THE EDGES OF SPECTRAL
+  INTERVAL (returned as "FC*") AND SUBROUTINE TBINTG FOR THE LINE
+  (returned as "TABLE").
 
-    Author: N.Piskunov
+  Author: N.Piskunov
 
-    UPDATES: 13-Sep-1993 written.
-             26-Oct-1994 C++ Version
-             25-Sep-2010 Modified to allow for spherical geometry in 1D models
-*/
+  UPDATES:  13-Sep-1993 written.
+            26-Oct-1994 C++ Version
+            25-Sep-2010 Modified to allow for spherical geometry in 1D models
+  */
   double WW, FCL, FNORM;
   double opacity_tot[MOSIZE], opacity_cont[MOSIZE], source[MOSIZE],
       source_cont[MOSIZE];
   double ddd, opacity_tot_n[MOSIZE], opacity_cont_n[MOSIZE];
   double DWL_MIN;
   int line, line_first, line_last, i, IMU, IM, IWL, NNWL;
-
-  //  struct rusage r_usage;
-  //  time_t t1;
-  //  getrusage(0, &r_usage);
-  //  t1=r_usage.ru_utime.tv_sec;
-  //  t_rt=0;
-  //  t_op=0;
-  //  t_tot=0;
 
   if (NWL > 0 && NWL <= NWSIZE) // If the wavelength grid is preset, just do it
   {                             // No adaptive grid in this case
@@ -6900,9 +6536,6 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
     NNWL = NWL;
     for (IWL = 0; IWL < NNWL; IWL++)
     {
-      //      line_last=NLINES-1;
-      //      while(Wlim_right[line_first]<WL[IWL] && line_first<line_last) line_first++;
-      //      while(Wlim_left [line_last] >WL[IWL] && line_first<line_last) line_last--;
       OPMTRX(WL[IWL], opacity_tot, opacity_cont, source, source_cont, line_first, line_last);
       TBINTG(NMU, rhox, opacity_tot, source, TABLE + IWL * NMU);
       if (long_continuum)
@@ -6912,49 +6545,11 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
     }
     OPMTRX(WLAST, opacity_tot, opacity_cont, source, source_cont, 0, NLINES - 1);
     TBINTG(NMU, rhox, opacity_cont, source_cont, FCRED);
-    //    getrusage(0, &r_usage);
-    //    t_tot+=r_usage.ru_utime.tv_sec-t1;
-    //    printf("Opacity time: %d, RT time: %d, Total:%d\n", t_op, t_rt, t_tot);
     return 0;
   }
 
-  /*
-{
-    FILE *fff; short *iptr; double *dptr, DUMMY[14];
-
-    OPMTRX(5000., opacity_tot, opacity_cont, source, source_cont, 0, NLINES-1);
-    TBINTG(NMU, rhox, opacity_cont, source_cont, DUMMY);
-
-    printf("Writing dump file\n");
-    fff=fopen("dump5000opac.dat","wb");
-    fwrite(&NRHOX, sizeof(short), 1, fff);
-    fwrite(RHOX, sizeof(double), NRHOX, fff);
-    fwrite(opacity_cont, sizeof(double), NRHOX, fff);
-    fwrite(opacity_tot, sizeof(double), NRHOX, fff);
-    fwrite(source, sizeof(double), NRHOX, fff);
-    fwrite(source_cont, sizeof(double), NRHOX, fff);
-    fwrite(DUMMY, sizeof(double), NMU, fff);
-    printf("Closing dump file\n");
-    fclose(fff);
-    exit(0);
-}
-*/
-
   /* CALCULATE CONTINUUM FLUX FOR BOTH ENDS OF THE INTERVAL
    FIRST WE CALCULATE FLUX AT THE BLUE END OF SPECTRAL INTERVAL */
-
-  //  OPMTRX(WLCENT[0], opacity_tot, opacity_cont, source, source_cont, 0, NLINES-1);
-  //  TBINTG(NMU, rhox, opacity_tot, source, TABLE);
-  //  for(IM=0; IM<NRHOX; IM++) printf("%d %10.4g %10.4g %10.4g\n",
-  //                            IM,opacity_tot[IM],opacity_cont[IM],source[IM]);
-  //  printf("LINE:%10.4g\n",*TABLE);
-  //  TBINTG(NMU, rhox, opacity_cont, source_cont, TABLE);
-  //  printf("CONT:%10.4g\n",*TABLE);
-
-  //  t1=r_usage.ru_utime.tv_sec;
-  //  t_rt=0;
-  //  t_op=0;
-  //  t_tot=0;
 
   WL[0] = WFIRST;
   OPMTRX(WFIRST, opacity_tot, opacity_cont, source, source_cont, 0, NLINES - 1);
@@ -7011,12 +6606,9 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
         debug_print = 0;
         FNORM = FCBLUE[IWL * NMU];
       }
-      //      exit(0);
 
       if (1. - TABLE[IWL * NMU] / FNORM < EPS2)
         MARK[line] = 2;
-      //      printf("RKINTS: Line %d, Left:%10.8g, wl:%10.8g, Right:%10.8g\n",
-      //              line,Wlim_left[line],WLCENT[line],Wlim_right[line]);
     }
   }
 
@@ -7088,8 +6680,8 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
     if (FCL < EPS2 || WL[IWL] - WL[IWL - 1] <= DWL_MIN) /* Check if linear approx. is OK */
     {
       /*  Now we will move right of the WL(IWL) and will never comeback, mark
-    permanently all weak lines left of this wavelength. Unmark all
-    temporary marked lines. Here is a new version that I hope is fiinally robust */
+      permanently all weak lines left of this wavelength. Unmark all
+      temporary marked lines. Here is a new version that I hope is fiinally robust */
 
       for (line = NLINES - 1; line >= line_last; line--)
       {
@@ -7108,13 +6700,12 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
         }
       }
 
-      //    printf("Moving right. New wavelength is % g, First:%d Last:%d\n",WL[IWL+2],line_first,line_last);
       IWL += 2; /* Advance to the next point */
     }
     else
     {
       /* At this point we are about to add more points to the left, so we can
-   ignore all weak lines to the right of this wavelength. */
+      ignore all weak lines to the right of this wavelength. */
 
       for (line = 0; line <= line_first; line++)
       {
@@ -7134,22 +6725,11 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
       }
     }
   }
-
-  //  for(line=0; line<NLINES; line++)
-  //  {
-  //    printf("RKINTS: Line %d, Left:%10.8g, wlcent:%10.8g, Right:%10.8g\n",
-  //            line,Wlim_left[line],WLCENT[line],Wlim_right[line]);
-  //  }
-  //  getrusage(0, &r_usage);
-  //  t_tot+=r_usage.ru_utime.tv_sec-t1;
-  //  printf("Opacity time (new wl grid): %d, RT time: %d, Total:%d\n", t_op, t_rt, t_tot);
   return 0;
 }
 
 #undef EPS3
 #undef DVEL_MIN
-
-/* FLUX_SCALE = exp(30.)*1.e-8 */
 
 #define FLUX_SCALE 1.0686475e5
 
@@ -7159,7 +6739,7 @@ double FCINTG(double MU, double WAVE, double *COPWL)
   Quadratic DELO with Bezier spline RT solver
   AUTHOR: N.Piskunov
   LAST UPDATE: May 4, 2009
-*/
+  */
   double OPC_A, OPC_B, OPC_C, SRC_A, SRC_B, SRC_C, INTENSITY;
   double CNTR_AB, CNTR_BC, SPRIME_A, SPRIME_B;
   double STEP_AB, STEP_BC, DER, DER1, DELTA, DELTA1;
@@ -7191,84 +6771,84 @@ double FCINTG(double MU, double WAVE, double *COPWL)
     SRC_C = CONWL5 / (exp(HNUK / T[IM - 1]) - 1.); // Downwind point
     OPC_C = (MOTYPE == 0) ? COPWL[IM - 1] / COPSTD[IM - 1] : COPWL[IM - 1];
     /*
-!:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-! New version based on monotoneous quadratic Bezier splines
-!
-! If we define for points A and B along a ray:
-!    u = (tau - tau_a)/(tau_b - tau_a)
-! then any function can be fit with a Bezier spline as
-!    f(u) = f(tau_a) * (1 - u)^2 + f(tau_b) * u^2 + 2*C*u*(1-u)
-! where C is the local control parameter.
-!
-! We solve RT using short characteristics method in order to get the intensity
-! propagating through point IM in the direction IM+1->IM->IM+1:
-! I_b = eps * I_a + b
-!  where: b       = alpha * S_a + beta * S_b + gamma * Cont_ab
-!         eps     = exp(-delta)
-!         delta   = tau_b - tau_a
-!         delta'  = tau_c - tau_b
-!         alpha   = (1 - 2/delta) + 2/delta^2 * (1- eps)
-!         beta    = 2/delta^2 * (1 - eps) - eps * (1 + 2/delta)
-!         gamma   = 2/delta * (1 + eps) - 4/delta^2 * (1 - eps)
-!         S_a     - source function in the upwind point A
-!         S_b     - source function in the central point B
-!         Cont_ab - local control parameter
-!
-!  Control parameter for interval [x_a, x_b] can be computed in two ways
-!    C' = f(x_a) + delta/2*S'_a
-!  and
-!    C" = f(x_b) - delta/2*S'_b
-!
-!  We take the mean for all intermediate steps: Cont_ab = (C' + C") / 2
-!  For the first step:                          Cont_ab = C"
-!  For the last step:                           Cont_ab = C'
-!
-!  If D(b-1/2)*D(b+1/2) > 0 then
-!    S'_b  = D(b-1/2)*D(b+1/2) / (lambda*D(b+1/2) + (1-lambda)*D(b-1/2))
-!  Else
-!    S'_b  = 0
-!
-!         D(b-1/2) = (S_b - S_a) / delta
-!         D(b+1/2) = (S_c - S_b) / delta'
-!         lambda   = [1 + delta'/(delta + delta')]/3
-!
-! A few additional notations:
-!         U_0   = 1 - eps
-!         U_1   = 2/delta
-!         U_2   = 2/delta^2 = U_1/delta
-!         U_3   = U_0 * U_1
-!         U_4   = U_3 / delta
-!         alpha = (1 - U_1) + U_4           = (delta^2 - 2*delta + 2 - 2*eps)/delta^2
-!         beta  = U_4 - eps * (1 + U_1)     = [2 - (2 + 2*delta + delta^2)*eps]/delta^2
-!         gamma = U_1 * (1 + eps) - 2 * U_4 = [2*delta - 4 + (2*delta + 4)*eps]/delta^2
-!
-! Special care must be take when delta is small.
-! In this case (using x instead of delta to make formulas shorter)
-!
-!         eps = exp(-x) = 1 - x + x^2/2 - x^3/6 + x^4/24 - x^5/120
-!         U_1 = 2/x
-!         1 - eps = 1 - exp(-x) = x - x^2/2 + x^3/6 - x^4/24 + x^5/120
-!         U_4 = (1 - eps)*2/x^2 = 2/x - 1 - x/3 - x^2/12 + x^3/60
-! and
-!         alpha = 1 -U_1 + U_4 = x/3 - x^2/12 + x^3/60
-!         beta  = U_4 - eps*(1 + U_1) = x/3 - x^2/4 + x^3/10
-!         gamma = U_1 * (1 + eps) - 2 * U_4 = x/3 -x^2/6 + x^3/20
-!
-! Note that we kept the 3rd order in x throughout the whole expansion.
-!
-! In order to compute delta and delta' we approximate the opacity between
-! points [A,B] and [B,C] with Bezier spline as explained above and integrate
-! the optical path analytically. Note that the control parameters are different
-! for [A,B] and [B,C]:
-!    delta   = L_ab/3*(k_a + k_b + C_ab)
-!    delta'  = L_bc/3*(k_b + k_c + C_bc)
-!
-!    C_ab = k_b - d_ab/2*S'_b
-!    C_bc = k_b + d_bc/2*S'_b
-!
-! Now to the the actual computing. delta and delta' first (assuming equispaced
-! geometrical grid lambda is 1/2):
-*/
+    !:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    ! New version based on monotoneous quadratic Bezier splines
+    !
+    ! If we define for points A and B along a ray:
+    !    u = (tau - tau_a)/(tau_b - tau_a)
+    ! then any function can be fit with a Bezier spline as
+    !    f(u) = f(tau_a) * (1 - u)^2 + f(tau_b) * u^2 + 2*C*u*(1-u)
+    ! where C is the local control parameter.
+    !
+    ! We solve RT using short characteristics method in order to get the intensity
+    ! propagating through point IM in the direction IM+1->IM->IM+1:
+    ! I_b = eps * I_a + b
+    !  where: b       = alpha * S_a + beta * S_b + gamma * Cont_ab
+    !         eps     = exp(-delta)
+    !         delta   = tau_b - tau_a
+    !         delta'  = tau_c - tau_b
+    !         alpha   = (1 - 2/delta) + 2/delta^2 * (1- eps)
+    !         beta    = 2/delta^2 * (1 - eps) - eps * (1 + 2/delta)
+    !         gamma   = 2/delta * (1 + eps) - 4/delta^2 * (1 - eps)
+    !         S_a     - source function in the upwind point A
+    !         S_b     - source function in the central point B
+    !         Cont_ab - local control parameter
+    !
+    !  Control parameter for interval [x_a, x_b] can be computed in two ways
+    !    C' = f(x_a) + delta/2*S'_a
+    !  and
+    !    C" = f(x_b) - delta/2*S'_b
+    !
+    !  We take the mean for all intermediate steps: Cont_ab = (C' + C") / 2
+    !  For the first step:                          Cont_ab = C"
+    !  For the last step:                           Cont_ab = C'
+    !
+    !  If D(b-1/2)*D(b+1/2) > 0 then
+    !    S'_b  = D(b-1/2)*D(b+1/2) / (lambda*D(b+1/2) + (1-lambda)*D(b-1/2))
+    !  Else
+    !    S'_b  = 0
+    !
+    !         D(b-1/2) = (S_b - S_a) / delta
+    !         D(b+1/2) = (S_c - S_b) / delta'
+    !         lambda   = [1 + delta'/(delta + delta')]/3
+    !
+    ! A few additional notations:
+    !         U_0   = 1 - eps
+    !         U_1   = 2/delta
+    !         U_2   = 2/delta^2 = U_1/delta
+    !         U_3   = U_0 * U_1
+    !         U_4   = U_3 / delta
+    !         alpha = (1 - U_1) + U_4           = (delta^2 - 2*delta + 2 - 2*eps)/delta^2
+    !         beta  = U_4 - eps * (1 + U_1)     = [2 - (2 + 2*delta + delta^2)*eps]/delta^2
+    !         gamma = U_1 * (1 + eps) - 2 * U_4 = [2*delta - 4 + (2*delta + 4)*eps]/delta^2
+    !
+    ! Special care must be take when delta is small.
+    ! In this case (using x instead of delta to make formulas shorter)
+    !
+    !         eps = exp(-x) = 1 - x + x^2/2 - x^3/6 + x^4/24 - x^5/120
+    !         U_1 = 2/x
+    !         1 - eps = 1 - exp(-x) = x - x^2/2 + x^3/6 - x^4/24 + x^5/120
+    !         U_4 = (1 - eps)*2/x^2 = 2/x - 1 - x/3 - x^2/12 + x^3/60
+    ! and
+    !         alpha = 1 -U_1 + U_4 = x/3 - x^2/12 + x^3/60
+    !         beta  = U_4 - eps*(1 + U_1) = x/3 - x^2/4 + x^3/10
+    !         gamma = U_1 * (1 + eps) - 2 * U_4 = x/3 -x^2/6 + x^3/20
+    !
+    ! Note that we kept the 3rd order in x throughout the whole expansion.
+    !
+    ! In order to compute delta and delta' we approximate the opacity between
+    ! points [A,B] and [B,C] with Bezier spline as explained above and integrate
+    ! the optical path analytically. Note that the control parameters are different
+    ! for [A,B] and [B,C]:
+    !    delta   = L_ab/3*(k_a + k_b + C_ab)
+    !    delta'  = L_bc/3*(k_b + k_c + C_bc)
+    !
+    !    C_ab = k_b - d_ab/2*S'_b
+    !    C_bc = k_b + d_bc/2*S'_b
+    !
+    ! Now to the the actual computing. delta and delta' first (assuming equispaced
+    ! geometrical grid lambda is 1/2):
+    */
     STEP_AB = (RHOX[IM + 1] - RHOX[IM]) / MU;
     STEP_BC = (RHOX[IM] - RHOX[IM - 1]) / MU;
     DER = (OPC_B - OPC_A) / STEP_AB;
@@ -7280,17 +6860,17 @@ double FCINTG(double MU, double WAVE, double *COPWL)
     DELTA = STEP_AB / 3.0 * (OPC_A + OPC_B + CNTR_AB);
     DELTA1 = STEP_BC / 3.0 * (OPC_B + OPC_C + CNTR_BC);
     /*
-  Next we switch to optical depth and compute the contribution
-  from the source function:
-*/
+    Next we switch to optical depth and compute the contribution
+    from the source function:
+    */
     EPS = (DELTA < 100.0) ? exp(-DELTA) : 0.0; // Avoiding underflow
-                                               /*
-  Calculate parabolic coefficients for the source function
-  Special provision is taken for the case of a very small
-  DELTA resulting in precision loss when evaluating EPS and differences.
-  Here we do Taylor expansion up to delta^3 for ALPHA, BETA and GAMMA.
-*/
-    if (DELTA < 1.e-3)                         // Use analytical expansion for small DELTA
+    /*
+    Calculate parabolic coefficients for the source function
+    Special provision is taken for the case of a very small
+    DELTA resulting in precision loss when evaluating EPS and differences.
+    Here we do Taylor expansion up to delta^3 for ALPHA, BETA and GAMMA.
+    */
+    if (DELTA < 1.e-3) // Use analytical expansion for small DELTA
     {
       ALPHA = DELTA / 3.0 - DELTA * DELTA / 12.0 + DELTA * DELTA * DELTA / 60.0;
       BETA = DELTA / 3.0 - DELTA * DELTA / 4.0 + DELTA * DELTA * DELTA / 10.0;
@@ -7303,8 +6883,8 @@ double FCINTG(double MU, double WAVE, double *COPWL)
       GAMMA = (2.0 * DELTA - 4.0 + (2.0 * DELTA + 4.0) * EPS) / (DELTA * DELTA);
     }
     /*
-  The last thing is the control parameter in optical path:
-*/
+    The last thing is the control parameter in optical path:
+    */
     DER = (SRC_B - SRC_A) / DELTA;
     DER1 = (SRC_C - SRC_B) / DELTA1;
     LAMBDA = (1.0 + DELTA1 / (DELTA + DELTA1)) / 3.0;
@@ -7320,8 +6900,8 @@ double FCINTG(double MU, double WAVE, double *COPWL)
       CNTR_AB = (SRC_A + DELTA * 0.5 * SPRIME_A + SRC_B - DELTA * 0.5 * SPRIME_B) * 0.5;
     }
     /*
-  Finally, we are ready to compute the intensity in point B
-*/
+    Finally, we are ready to compute the intensity in point B
+    */
     B = ALPHA * SRC_B + BETA * SRC_A + GAMMA * CNTR_AB;
     INTENSITY = EPS * INTENSITY + B;
   }
@@ -7341,7 +6921,7 @@ void TBINTG_sph(int NRHOX, double RHOX[], double opacity[], double source[],
             Sep 26, 2010 Simplified the structure by moving the opacity and the
                          source function calculations to RKINTS which is the
                          caller of TBINTG. This version is for spherical models
-*/
+  */
   double OPC_A, OPC_B, OPC_C, SRC_A, SRC_B, SRC_C, INTENSITY;
   double CNTR_AB, CNTR_BC, SPRIME_A, SPRIME_B;
   double STEP_AB, STEP_BC, DER, DER1, DELTA, DELTA1;
@@ -7368,8 +6948,8 @@ void TBINTG_sph(int NRHOX, double RHOX[], double opacity[], double source[],
     SRC_C = source[IM - 1]; // Downwind point
     OPC_C = opacity[IM - 1];
     /*
-  Steps in monochromatic optical depth
-*/
+    Steps in monochromatic optical depth
+    */
     STEP_AB = (RHOX[IM + 1] - RHOX[IM]);
     STEP_BC = (RHOX[IM] - RHOX[IM - 1]);
     DER = (OPC_B - OPC_A) / STEP_AB;
@@ -7381,17 +6961,17 @@ void TBINTG_sph(int NRHOX, double RHOX[], double opacity[], double source[],
     DELTA = STEP_AB / 3.0 * (OPC_A + OPC_B + CNTR_AB);
     DELTA1 = STEP_BC / 3.0 * (OPC_B + OPC_C + CNTR_BC);
     /*
-  Next we switch to optical depth and compute the contribution
-  from the source function:
-*/
+    Next we switch to optical depth and compute the contribution
+    from the source function:
+    */
     EPS = (DELTA < 100.0) ? exp(-DELTA) : 0.0; // Avoiding underflow
-                                               /*
-  Calculate parabolic coefficients for the source function
-  Special provision is taken for the case of a very small
-  DELTA resulting in precision loss when evaluating EPS and differences.
-  Here we do Taylor expansion up to delta^3 for ALPHA, BETA and GAMMA.
-*/
-    if (DELTA < 1.e-3)                         // Use analytical expansion for small DELTA
+    /*
+    Calculate parabolic coefficients for the source function
+    Special provision is taken for the case of a very small
+    DELTA resulting in precision loss when evaluating EPS and differences.
+    Here we do Taylor expansion up to delta^3 for ALPHA, BETA and GAMMA.
+    */
+    if (DELTA < 1.e-3) // Use analytical expansion for small DELTA
     {
       ALPHA = DELTA / 3.0 - DELTA * DELTA / 12.0 + DELTA * DELTA * DELTA / 60.0;
       BETA = DELTA / 3.0 - DELTA * DELTA / 4.0 + DELTA * DELTA * DELTA / 10.0;
@@ -7404,8 +6984,8 @@ void TBINTG_sph(int NRHOX, double RHOX[], double opacity[], double source[],
       GAMMA = (2.0 * DELTA - 4.0 + (2.0 * DELTA + 4.0) * EPS) / (DELTA * DELTA);
     }
     /*
-  The last thing is the control parameter in optical path:
-*/
+    The last thing is the control parameter in optical path:
+    */
     DER = (SRC_B - SRC_A) / DELTA;
     DER1 = (SRC_C - SRC_B) / DELTA1;
     LAMBDA = (1.0 + DELTA1 / (DELTA + DELTA1)) / 3.0;
@@ -7421,8 +7001,8 @@ void TBINTG_sph(int NRHOX, double RHOX[], double opacity[], double source[],
       CNTR_AB = (SRC_A + DELTA * 0.5 * SPRIME_A + SRC_B - DELTA * 0.5 * SPRIME_B) * 0.5;
     }
     /*
-  Finally, we are ready to compute the intensity in point B
-*/
+    Finally, we are ready to compute the intensity in point B
+    */
     B = ALPHA * SRC_B + BETA * SRC_A + GAMMA * CNTR_AB;
     INTENSITY = EPS * INTENSITY + B;
   }
@@ -7438,7 +7018,7 @@ void TBINTG1(double rhox[], double opacity[], double source[], double *RESULT)
             Sep 26, 2010 Simplified the structure by moving the opacity and the
                          source function calculations to RKINTS which is the
                          caller of TBINTG
-*/
+  */
   double OPC_A, OPC_B, OPC_C, SRC_A, SRC_B, SRC_C, INTENSITY;
   double CNTR_AB, CNTR_BC, SPRIME_A, SPRIME_B;
   double STEP_AB, STEP_BC, DER, DER1, DELTA, DELTA1;
@@ -7465,8 +7045,8 @@ void TBINTG1(double rhox[], double opacity[], double source[], double *RESULT)
     SRC_C = source[IM - 1]; // Downwind point
     OPC_C = opacity[IM - 1];
     /*
-  Steps in monochromatic optical depth
-*/
+    Steps in monochromatic optical depth
+    */
     STEP_AB = (rhox[IM + 1] - rhox[IM]);
     STEP_BC = (rhox[IM] - rhox[IM - 1]);
     DER = (OPC_B - OPC_A) / STEP_AB;
@@ -7478,17 +7058,17 @@ void TBINTG1(double rhox[], double opacity[], double source[], double *RESULT)
     DELTA = STEP_AB / 3.0 * (OPC_A + OPC_B + CNTR_AB);
     DELTA1 = STEP_BC / 3.0 * (OPC_B + OPC_C + CNTR_BC);
     /*
-  Next we switch to optical depth and compute the contribution
-  from the source function:
-*/
+    Next we switch to optical depth and compute the contribution
+    from the source function:
+    */
     EPS = (DELTA < 100.0) ? exp(-DELTA) : 0.0; // Avoiding underflow
-                                               /*
-  Calculate parabolic coefficients for the source function
-  Special provision is taken for the case of a very small
-  DELTA resulting in precision loss when evaluating EPS and differences.
-  Here we do Taylor expansion up to delta^3 for ALPHA, BETA and GAMMA.
-*/
-    if (DELTA < 1.e-3)                         // Use analytical expansion for small DELTA
+    /*
+    Calculate parabolic coefficients for the source function
+    Special provision is taken for the case of a very small
+    DELTA resulting in precision loss when evaluating EPS and differences.
+    Here we do Taylor expansion up to delta^3 for ALPHA, BETA and GAMMA.
+    */
+    if (DELTA < 1.e-3) // Use analytical expansion for small DELTA
     {
       ALPHA = DELTA / 3.0 - DELTA * DELTA / 12.0 + DELTA * DELTA * DELTA / 60.0;
       BETA = DELTA / 3.0 - DELTA * DELTA / 4.0 + DELTA * DELTA * DELTA / 10.0;
@@ -7501,8 +7081,8 @@ void TBINTG1(double rhox[], double opacity[], double source[], double *RESULT)
       GAMMA = (2.0 * DELTA - 4.0 + (2.0 * DELTA + 4.0) * EPS) / (DELTA * DELTA);
     }
     /*
-  The last thing is the control parameter in optical path:
-*/
+    The last thing is the control parameter in optical path:
+    */
     DER = (SRC_B - SRC_A) / DELTA;
     DER1 = (SRC_C - SRC_B) / DELTA1;
     LAMBDA = (1.0 + DELTA1 / (DELTA + DELTA1)) / 3.0;
@@ -7518,8 +7098,8 @@ void TBINTG1(double rhox[], double opacity[], double source[], double *RESULT)
       CNTR_AB = (SRC_A + DELTA * 0.5 * SPRIME_A + SRC_B - DELTA * 0.5 * SPRIME_B) * 0.5;
     }
     /*
-  Finally, we are ready to compute the intensity in point B
-*/
+    Finally, we are ready to compute the intensity in point B
+    */
     B = ALPHA * SRC_B + BETA * SRC_A + GAMMA * CNTR_AB;
     INTENSITY = EPS * INTENSITY + B;
   }
@@ -7537,18 +7117,13 @@ void TBINTG(int Nmu, double rhox[], double opacity[], double source[],
                          source function calculations to RKINTS which is the
                          caller of TBINTG
             Feb 14, 2011 Move the mu loop inside TBINTG to speed up things
-*/
+  */
   double OPC_A, OPC_B, OPC_C, SRC_A, SRC_B, SRC_C;
   double CNTR_AB, CNTR_BC, SPRIME_A, SPRIME_B;
   double STEP_AB, STEP_BC, DER, DER1, DELTA, DELTA1;
   double ALPHA, BETA, GAMMA, EPS, B, LAMBDA, DBNU;
   double SPRIME_SAVE[MUSIZE], INTENSITY[MUSIZE];
   int IM, imu;
-
-  //  struct rusage r_usage;
-  //  time_t t1;
-  //  getrusage(0, &r_usage);
-  //  t1=r_usage.ru_utime.tv_sec;
 
   /* Useful things for the Planck function */
 
@@ -7572,8 +7147,8 @@ void TBINTG(int Nmu, double rhox[], double opacity[], double source[],
     SRC_C = source[IM - 1]; // Downwind point
     OPC_C = opacity[IM - 1];
     /*
-  Steps in monochromatic optical depth
-*/
+    Steps in monochromatic optical depth
+    */
     for (imu = 0; imu < Nmu; imu++)
     {
       STEP_AB = (rhox[imu * NRHOX + IM + 1] - rhox[imu * NRHOX + IM]);
@@ -7586,27 +7161,18 @@ void TBINTG(int Nmu, double rhox[], double opacity[], double source[],
       CNTR_BC = OPC_B + STEP_BC / 2.0 * SPRIME_A;
       DELTA = STEP_AB / 3.0 * (OPC_A + OPC_B + CNTR_AB);
       DELTA1 = STEP_BC / 3.0 * (OPC_B + OPC_C + CNTR_BC);
-      //      if(debug_print && imu == 0)
-      //      {
-      //        printf("%12.8e %12.8e\n",COPSTD[IM+1],COPSTD[IM-1]);
-      //        printf("%d %12.8e %12.8e %12.8e %12.8e %12.8e %12.8e %12.8e %12.8e %12.8e %12.8e\n",
-      //               IM,STEP_AB,STEP_BC,OPC_A,OPC_B,OPC_C,DELTA,DELTA1,COPSTD[IM+1],COPSTD[IM],COPSTD[IM-1]);
-      //        printf("%d %12.8e %12.8e %12.8e %12.8e %12.8e %12.8e\n",
-      //               IM,OPC_A,OPC_B,OPC_C,COPSTD[IM+1],COPSTD[IM],COPSTD[IM-1]);
-      //        return;
-      //      }
       /*
-  Next we switch to optical depth and compute the contribution
-  from the source function:
-*/
+      Next we switch to optical depth and compute the contribution
+      from the source function:
+      */
       EPS = (DELTA < 100.0) ? exp(-DELTA) : 0.0; // Avoiding underflow
-                                                 /*
-  Calculate parabolic coefficients for the source function
-  Special provision is taken for the case of a very small
-  DELTA resulting in precision loss when evaluating EPS and differences.
-  Here we do Taylor expansion up to delta^3 for ALPHA, BETA and GAMMA.
-*/
-      if (DELTA < 1.e-3)                         // Use analytical expansion for small DELTA
+      /*
+      Calculate parabolic coefficients for the source function
+      Special provision is taken for the case of a very small
+      DELTA resulting in precision loss when evaluating EPS and differences.
+      Here we do Taylor expansion up to delta^3 for ALPHA, BETA and GAMMA.
+      */
+      if (DELTA < 1.e-3) // Use analytical expansion for small DELTA
       {
         ALPHA = DELTA / 3.0 - DELTA * DELTA / 12.0 + DELTA * DELTA * DELTA / 60.0;
         BETA = DELTA / 3.0 - DELTA * DELTA / 4.0 + DELTA * DELTA * DELTA / 10.0;
@@ -7619,8 +7185,8 @@ void TBINTG(int Nmu, double rhox[], double opacity[], double source[],
         GAMMA = (2.0 * DELTA - 4.0 + (2.0 * DELTA + 4.0) * EPS) / (DELTA * DELTA);
       }
       /*
-  The last thing is the control parameter in optical path:
-*/
+      The last thing is the control parameter in optical path:
+      */
       DER = (SRC_B - SRC_A) / DELTA;
       DER1 = (SRC_C - SRC_B) / DELTA1;
       LAMBDA = (1.0 + DELTA1 / (DELTA + DELTA1)) / 3.0;
@@ -7636,28 +7202,14 @@ void TBINTG(int Nmu, double rhox[], double opacity[], double source[],
         CNTR_AB = (SRC_A + DELTA * 0.5 * SPRIME_A + SRC_B - DELTA * 0.5 * SPRIME_B) * 0.5;
       }
       /*
-  Finally, we are ready to compute the intensity in point B
-*/
+      Finally, we are ready to compute the intensity in point B
+      */
       B = ALPHA * SRC_B + BETA * SRC_A + GAMMA * CNTR_AB;
-      //      if(debug_print && imu == 0)
-      //      {
-      //        printf("%3d %12.8e %12.8e %12.8e\n",
-      //               IM,rhox[IM],OPC_B,SRC_B;
-      //        printf("%12.8e %12.8e %12.8e %12.8e %12.8e %12.8e %12.8e\n",
-      //               EPS,INTENSITY[imu],B,SRC_B,SRC_A,CNTR_AB,EPS*INTENSITY[imu]+B);
-      //        printf("%d %12.8e %12.8e %12.8e %12.8e %12.8e %12.8e %12.8e\n",
-      //               IM,STEP_AB,STEP_BC,OPC_A,OPC_B,OPC_C,DELTA,DELTA1);
-      //        printf("%d %12.8e %12.8e %12.8e %12.8e %12.8e %12.8e\n",
-      //               IM,OPC_A,OPC_B,OPC_C,COPSTD[IM+1],COPSTD[IM],COPSTD[IM-1]);
-      //        return;
-      //      }
       INTENSITY[imu] = EPS * INTENSITY[imu] + B;
     }
   }
   for (imu = 0; imu < Nmu; imu++)
     RESULT[imu] = INTENSITY[imu] * FLUX_SCALE;
-  //  getrusage(0, &r_usage);
-  //  t_rt+=r_usage.ru_utime.tv_sec-t1;
 }
 
 void CENTERINTG(double *MUs, int NMU, int LINE, double *contop, double *RESULT)
@@ -7666,7 +7218,7 @@ void CENTERINTG(double *MUs, int NMU, int LINE, double *contop, double *RESULT)
   Quadratic DELO with Bezier spline RT solver
   AUTHOR: N.Piskunov
   LAST UPDATE: May 4, 2009
-*/
+  */
   double OPC_A, OPC_B, OPC_C, SRC_A, SRC_B, SRC_C, INTENSITY;
   double CNTR_AB, CNTR_BC, SPRIME_A, SPRIME_B;
   double STEP_AB, STEP_BC, DER, DER1, DELTA, DELTA1;
@@ -7709,8 +7261,8 @@ void CENTERINTG(double *MUs, int NMU, int LINE, double *contop, double *RESULT)
       SRC_C = CONWL5 / (exp(HNUK / T[IM - 1]) - 1.); // Downwind point
       OPC_C = XK[IM - 1];
       /*
-  Steps in monochromatic optical depth
-*/
+      Steps in monochromatic optical depth
+      */
       STEP_AB = (RHOX[IM + 1] - RHOX[IM]) / MU;
       STEP_BC = (RHOX[IM] - RHOX[IM - 1]) / MU;
       DER = (OPC_B - OPC_A) / STEP_AB;
@@ -7722,17 +7274,17 @@ void CENTERINTG(double *MUs, int NMU, int LINE, double *contop, double *RESULT)
       DELTA = STEP_AB / 3.0 * (OPC_A + OPC_B + CNTR_AB);
       DELTA1 = STEP_BC / 3.0 * (OPC_B + OPC_C + CNTR_BC);
       /*
-  Next we switch to optical depth and compute the contribution
-  from the source function:
-*/
+      Next we switch to optical depth and compute the contribution
+      from the source function:
+      */
       EPS = (DELTA < 100.0) ? exp(-DELTA) : 0.0; // Avoiding underflow
-                                                 /*
-  Calculate parabolic coefficients for the source function
-  Special provision is taken for the case of a very small
-  DELTA resulting in precision loss when evaluating EPS and differences.
-  Here we do Taylor expansion up to delta^3 for ALPHA, BETA and GAMMA.
-*/
-      if (DELTA < 1.e-3)                         // Use analytical expansion for small DELTA
+      /*
+      Calculate parabolic coefficients for the source function
+      Special provision is taken for the case of a very small
+      DELTA resulting in precision loss when evaluating EPS and differences.
+      Here we do Taylor expansion up to delta^3 for ALPHA, BETA and GAMMA.
+      */
+      if (DELTA < 1.e-3) // Use analytical expansion for small DELTA
       {
         ALPHA = DELTA / 3.0 - DELTA * DELTA / 12.0 + DELTA * DELTA * DELTA / 60.0;
         BETA = DELTA / 3.0 - DELTA * DELTA / 4.0 + DELTA * DELTA * DELTA / 10.0;
@@ -7745,8 +7297,8 @@ void CENTERINTG(double *MUs, int NMU, int LINE, double *contop, double *RESULT)
         GAMMA = (2.0 * DELTA - 4.0 + (2.0 * DELTA + 4.0) * EPS) / (DELTA * DELTA);
       }
       /*
-  The last thing is the control parameter in optical path:
-*/
+      The last thing is the control parameter in optical path:
+      */
       DER = (SRC_B - SRC_A) / DELTA;
       DER1 = (SRC_C - SRC_B) / DELTA1;
       LAMBDA = (1.0 + DELTA1 / (DELTA + DELTA1)) / 3.0;
@@ -7762,8 +7314,8 @@ void CENTERINTG(double *MUs, int NMU, int LINE, double *contop, double *RESULT)
         CNTR_AB = (SRC_A + DELTA * 0.5 * SPRIME_A + SRC_B - DELTA * 0.5 * SPRIME_B) * 0.5;
       }
       /*
-  Finally, we are ready to compute the intensity in point B
-*/
+      Finally, we are ready to compute the intensity in point B
+      */
       B = ALPHA * SRC_B + BETA * SRC_A + GAMMA * CNTR_AB;
       INTENSITY = EPS * INTENSITY + B;
     }
@@ -7823,7 +7375,6 @@ extern "C" char const *SME_DLL GetLineOpacity(int n, void *arg[]) /* Returns spe
   return &OK_response;
 }
 
-//#define Z      0.026540045e0
 #define Z 4.9946686e-21
 #define C4PI CLIGHT * 4. * PI
 #define PI4 4. * PI
@@ -7867,7 +7418,7 @@ void LINEOPAC(int LINE)
             Aug 26, 2010
                 Added calculations of continuum opacity and the source
                 function
-*/
+  */
 
   double HNUXXX, DDWL, WAVE;
   double OPCONB, OPCONR, OPCON, DNDOPL, DLDOPL, A, UAV, V4, W4, VOIGT,
@@ -7880,9 +7431,6 @@ void LINEOPAC(int LINE)
   int i_cont;
 
   WAVE = WLCENT[LINE];
-  //  i_cont=INDX_C[max(0,min((int)floor((WAVE-WFIRST)/DWAVE_C),NWAVE_C-1))];
-  //  DDWL=(WAVE-WAVE_C[i_cont])/(WAVE_C[i_cont+1]-WAVE_C[i_cont]);
-  //printf("LINE=%d, i_cont=%d, DDWL=%g\n",LINE,i_cont,DDWL);
   CONTOP(WAVE, opac);
   ALMAX[LINE] = 0.;
   for (ITAU = 0; ITAU < NRHOX; ITAU++)
@@ -7893,8 +7441,6 @@ void LINEOPAC(int LINE)
     XNELEC = XNE[ITAU]; /* Electron number density */
     XNATOM = XNA[ITAU]; /* Atom number density     */
     Vmicro = VTURB[ITAU];
-    //    OPCON=(OPAC_C[i_cont+1][ITAU]-OPAC_C[i_cont][ITAU])*DDWL /* Interpolate continous opacity */
-    //                                 +OPAC_C[i_cont][ITAU];
     OPCON = opac[ITAU];
 
     /* Fractions of H I and He I */
@@ -7937,7 +7483,6 @@ void LINEOPAC(int LINE)
 
       YABUND[LINE] = Z * GF[LINE];
       XMASS[LINE] = 1.66355e24 / CLIGHT / CLIGHT / MOLWEIGHT[SPINDEX[LINE]];
-      //      printf("%s %g\n",Terminator(spname+8*LINE,4),MOLWEIGHT[SPINDEX[LINE]]);
       EXCUP[LINE] = EXCIT[LINE] + 1. / (WLC * 8065.544e-8);
       if (!AUTOION[LINE] && (GAMVW[LINE] == 0. || GAMQST[LINE] == 0.))
       {
@@ -7950,10 +7495,9 @@ void LINEOPAC(int LINE)
       /* Radiative damping */
 
       GAMRAD[LINE] = (GAMRAD[LINE] > 0.0) ? GAMRAD[LINE] : 0.222e16 / (WLC * WLC);
-      //      if(!strncmp(spname+8*LINE, "CN ", 3)) GAMRAD[LINE]=6.3932e4;
 
       /* Identify Helium lines included in Dimitrijevic & Sahal-Brechot table;
-   Stark damping for those will be computed in subroutine GAMHE */
+      Stark damping for those will be computed in subroutine GAMHE */
 
       IDHEL[LINE] = -1;
       if (!strncmp(spname + 8 * LINE, "He ", 3) && !MARK[LINE])
@@ -8031,8 +7575,8 @@ void LINEOPAC(int LINE)
       }
 
       /*  Doppler broadening: DOPL is in fact delta_lambda/lambda
-    DLDOPL is delta_lambda in Angstroems
-    DNDOPL is delta_nu in Hz. */
+      DLDOPL is delta_lambda in Angstroems
+      DNDOPL is delta_nu in Hz. */
 
       DOPL = sqrt(TEMPER * XMASS[LINE] + VTURB2);
       DLDOPL = WAVE * DOPL;
@@ -8041,26 +7585,19 @@ void LINEOPAC(int LINE)
 
       if (!strncmp(spname + 8 * LINE, "H ", 2)) // This is a hydrogen line
       {
-        //        int NBLO, NBUP;
         double HNORM;
 
-        //        NBLO=(int)(GAMQST[LINE]+0.1);
-        //        NBUP=(int)(GAMVW[LINE] +0.1);
-
-        //        HNORM=SQRTPI*EFRACT*CLIGHT*YABUND[LINE]*XSTIM/XXRHO;
         HNORM = SQRTPI * EFRACT * YABUND[LINE] * XSTIM / XXRHO;
         VVOIGT[ITAU][LINE] = DOPL;
         LINEOP[ITAU][LINE] = HNORM;
         ALMAX[LINE] = 1.e6;
-        //        printf("%2d %11.5e %11.5e %11.5e %11.5e\n",
-        //               ITAU,SQRTPI*EFRACT,YABUND[LINE],XSTIM,XXRHO);
       }
       else // Non-hydrogen line
       {
 
         /*  Qudratic Stark effect (if the constant is available, compute according
-    to D.Gray, otherwise - follow C.Cowley). For Helium - Dimitrijevich
-    tables are used. */
+        to D.Gray, otherwise - follow C.Cowley). For Helium - Dimitrijevich
+        tables are used. */
 
         if (IDHEL[LINE] < 0) /* If not Helium */
         {
@@ -8080,24 +7617,19 @@ void LINEOPAC(int LINE)
         if (ANSTEE[LINE])
         {
           /*
-   This van der Waals part is written by Paul Barklem
-   Compute the broadening by hydrogen from cross-section data which is in m^2
-   Unpack the temperature dependent van der Waals parameters:
-   integer part is SIGMA and decimal part is ALPHA.
-*/
+          This van der Waals part is written by Paul Barklem
+          Compute the broadening by hydrogen from cross-section data which is in m^2
+          Unpack the temperature dependent van der Waals parameters:
+          integer part is SIGMA and decimal part is ALPHA.
+          */
           SIGMA = ((int)GAMVW[LINE]) * A0 * A0;
           ALPHA = GAMVW[LINE] - (int)GAMVW[LINE];
-          //          printf("%d %d %g %g\n",LINE,ANSTEE[LINE],SIGMA,ALPHA);
 
           //  Compute the Gamma function of X, this function is valid over the range 1<X<2
 
           X = 2.e0 - ALPHA * 0.5e0;
           GX = X - 1.e0;
-          GAMMAF = 1.e0 + (-0.5748646e0 + (0.9512363e0 + (-0.6998588e0 +
-                                                          (0.4245549e0 - 0.1010678e0 * GX) * GX) *
-                                                             GX) *
-                                              GX) *
-                              GX;
+          GAMMAF = 1.e0 + (-0.5748646e0 + (0.9512363e0 + (-0.6998588e0 + (0.4245549e0 - 0.1010678e0 * GX) * GX) * GX) * GX) * GX;
 
           //  Compute the halfwidth per unit perturber density for vbar
 
@@ -8114,36 +7646,22 @@ void LINEOPAC(int LINE)
         else if ((!ANSTEE[LINE] && GAMVW[LINE] > 0.0) || AUTOION[LINE])
         { // Input was log line width per unit density (rad/s cm^3)
           GVW = GAMVW[LINE] * TEMP3 * VW_scale;
-          //          if(!strncmp(spname+8*LINE, "Na ", 3))
-          //          {
-          //            printf("GVW=%g,H2molFRC=%g,TEMP3=%g,H1FRC=%g %d\n",GVW,H2molFRC,TEMP3,H1FRC,flagH2broad);
-          //            exit(0);
-          //          }
         }
         else
         { // Input was zero and so we use Unsold theory
-          //          CW=1.61e-33*(ENU4[LINE]-ENL4[LINE])/(ion*ion);
-          //          VH=1.28466e4*sqrt(TEMPER);
-          //          GVWPRT=17.*pow(VH, 0.6)*H1FRC;
-          //          GVW=GVWPRT*pow(CW, 0.4)*VW_scale;
           CW = 1.61e-33 * (ENU4[LINE] - ENL4[LINE]) / (ion * ion);
           GAMVW[LINE] = 78654.213 * pow(CW, 0.4);
           GVW = GAMVW[LINE] * TEMP3 * VW_scale;
-          //          GVW=78654.213*pow(CW, 0.4);
-          //          GVW=GVW*TEMP3*VW_scale;
         }
 
         /*  Total broadening and VOIGT function parameters */
 
-        //        printf("%4d %8g %15.6e %15.6e %15.6e %15.6e\n",ITAU,TEMPER,GVW,ALPHA,GAMMAF,VBAR);
         GAMTOT = GAMRAD[LINE] + GQST + GVW;
         AVOIGT[ITAU][LINE] = GAMTOT / (DNDOPL * C4PI);
-        //printf("%8.1f %10.4f %15.7e %15.7e %15.7e\n",TEMPER,WLCENT[LINE],
-        //                      TEMP3,H1FRC,HE1FRC);
         A = AVOIGT[ITAU][LINE];
 
         /*  VOIGT function calculation: Humlicek, J. 1982, J.Q.S.R.T. 27, 437
-    stripted for the case of line center (V==0) */
+        stripted for the case of line center (V==0) */
 
         UAV = A * A;
         if (A >= 15.)
@@ -8151,18 +7669,12 @@ void LINEOPAC(int LINE)
         else if (A >= 5.5)
           W4 = A * (1.410474 + UAV * 0.5641896) / (0.75 + UAV * (3. + UAV));
         else if (A >= -0.176)
-          W4 = (16.4955 + A * (20.20933 + A * (11.96482 +
-                                               A * (3.778987 + A * 0.5642236)))) /
-               (16.4955 +
-                A * (38.82363 + A * (39.27121 +
-                                     A * (21.69274 + A * (6.699398 + A)))));
+          W4 = (16.4955 + A * (20.20933 + A * (11.96482 + A * (3.778987 + A * 0.5642236)))) /
+               (16.4955 + A * (38.82363 + A * (39.27121 + A * (21.69274 + A * (6.699398 + A)))));
         else
         {
-          W4 = A * (36183.31 - UAV * (3321.9905 - UAV * (1540.787 -
-                                                         UAV * (219.0313 - UAV * (35.76683 -
-                                                                                  UAV * (1.320522 - UAV * .56419))))));
-          V4 = (32066.6 - UAV * (24322.84 - UAV * (9022.228 - UAV * (2186.181 - UAV *
-                                                                                    (364.2191 - UAV * (61.57037 - UAV * (1.841439 - UAV)))))));
+          W4 = A * (36183.31 - UAV * (3321.9905 - UAV * (1540.787 - UAV * (219.0313 - UAV * (35.76683 - UAV * (1.320522 - UAV * .56419))))));
+          V4 = (32066.6 - UAV * (24322.84 - UAV * (9022.228 - UAV * (2186.181 - UAV * (364.2191 - UAV * (61.57037 - UAV * (1.841439 - UAV)))))));
           W4 = exp(UAV) - W4 / V4;
         }
         VOIGT = W4;
@@ -8172,22 +7684,6 @@ void LINEOPAC(int LINE)
         LINEOP[ITAU][LINE] = EFRACT * YABUND[LINE] * XSTIM / (XXRHO * DNDOPL);
         if (LINEOP[ITAU][LINE] * VOIGT / OPCON > ALMAX[LINE])
           ALMAX[LINE] = LINEOP[ITAU][LINE] * VOIGT / OPCON;
-        /*
-        if(fabs(WAVE-9242.2557e0)<1.e-4||fabs(WAVE-9246.558e0)<1.e-4)
-        {
-          printf("%4d %s %d %10.5f %10.5e %10.5e %10.5e %10.5e %10.5e %10.5e\n"
-                  ,ITAU+1,Terminator(spname+8*LINE,4),LINE
-                  ,TEMPER,GAMRAD[LINE],GQST,GVW,GAMTOT
-                  ,AVOIGT[ITAU][LINE],LINEOP[ITAU][LINE]);
-        }
-if(ITAU==0)
-{
-          printf("%4d %5d %10.5e %10.5e %10.5e %10.5e %10.5e %10.5e %10.5e %10.5e %10.5e\n"
-                  ,ITAU+1,LINE,EFRACT,FR,YABUND[LINE]
-                  ,GAMRAD[LINE],GQST,GVW,GAMTOT,AVOIGT[ITAU][LINE]
-                  ,LINEOP[ITAU][LINE]);
-}
-*/
       }
     }
   }
@@ -8243,7 +7739,7 @@ void OPMTRX(double WAVE, double *XK, double *XC, double *source_line,
             Aug 26, 2010
                 Added calculations of continuum opacity and the source
                 function
-*/
+  */
 
   double HNUXXX, DDWL;
   double OPCONB, OPCONR, OPCON, DNDOPL, DLDOPL, A, V,
@@ -8254,11 +7750,6 @@ void OPMTRX(double WAVE, double *XK, double *XC, double *source_line,
   short ion, ITAU;
   int i_cont;
   int LINE;
-
-  //  struct rusage r_usage;
-  //  time_t t1;
-  //  getrusage(0, &r_usage);
-  //  t1=r_usage.ru_utime.tv_sec;
 
   CONWL5 = exp(50.7649141 - 5. * log(WAVE));
   HNUK = 1.43868e8 / WAVE;
@@ -8287,8 +7778,6 @@ void OPMTRX(double WAVE, double *XK, double *XC, double *source_line,
     }
 
     /* Loop through spectral lines */
-
-    //    if(ITAU==0) printf("START:%d, END:%d\n", LINE_START,LINE_FINISH);
 
     ALINE = 0.;
     for (LINE = LINE_START; LINE <= LINE_FINISH; LINE++)
@@ -8326,25 +7815,12 @@ void OPMTRX(double WAVE, double *XK, double *XC, double *source_line,
         dopl = VVOIGT[ITAU][LINE];
         hlinprof_(wave, wlcent, temper, xnelec, NBLO, NBUP,
                   h1frc, he1frc, dopl, aline1, PATH, &PATHLEN, &change_byte_order);
-        //if(wave==wlcent) printf("Computing H line: %g %g %g %d %d %g %g %g %g\n",
-        //                         temper,xnelec,wlcent,NBLO,NBUP,h1frc,he1frc,dopl,aline1);
-        //        aline1=hlinop_(wave,NBLO,NBUP,wlcent,temper,xnelec,
-        //                       h1frc,he1frc,dopl)*CLIGHTcm;
-        //if(wave==wlcent) printf("Computing H line: %d %d %d %d %g\n",ITAU,LINE,NBLO,NBUP,aline1);
-        //if(wave==wlcent) printf("Computing H line: %g %g %g %d %d %g %g %g %g\n",
-        //                         temper,xnelec,wlcent,NBLO,NBUP,h1frc,he1frc,dopl,aline1);
         ALINE1 = aline1 * LINEOP[ITAU][LINE] * wave * wave;
         if (initNLTE)
         {
           ALINE1 *= XNLTE; // NLTE correction to the line opacity
           source_line[ITAU] += ALINE1 * SRC_line;
         }
-        //        if(fabs(wave-wlcent) < 0.01)
-        //        {
-        //          printf("Hline: %2d %12.5f %12.5e %12.5e %12.5e %12.5e %12.5e %12.5e %12.5e\n",
-        //                  ITAU,wave,aline1,aline2,xnelec,
-        //                  h1frc,he1frc,dopl,ALINE1);
-        //        }
         ALMAX[LINE] = ALINE1 / OPCON;
       }
       else // Non-hydrogen line
@@ -8456,13 +7932,6 @@ void OPMTRX(double WAVE, double *XK, double *XC, double *source_line,
           ALMAX[LINE] = ALINE1 / OPCON;
       }
       ALINE += ALINE1;
-      //      if(abs(V)<1.e-4)
-      //      if(LINE==1&&fabs(V)<1.e-4)
-      //      if(fabs(V)<1.e-4&&LINE>=54)
-      //      {
-      //        printf("%d %d %10.8g %10.8g %10.8g %10.8g %10.8g %10.8g\n"
-      //               ,ITAU,NRHOX,WAVE,A,VVOIGT[LINE][ITAU],ALINE1/VOIGT,ALINE1,ALINE);
-      //      }
     }
 
     /* Compute total opacity */
@@ -8471,7 +7940,6 @@ void OPMTRX(double WAVE, double *XK, double *XC, double *source_line,
     {
       XK[ITAU] = ALINE + OPCON;
       XC[ITAU] = OPCON;
-      //      printf("%d %d %g %g\n",ONE_LINE,ITAU, ALINE, OPCON);
     }
     else if (MOTYPE == 0) // TAU model
     {
@@ -8486,8 +7954,6 @@ void OPMTRX(double WAVE, double *XK, double *XC, double *source_line,
     if (initNLTE)
       source_line[ITAU] = (source_line[ITAU] + OPCON * SRC_cont) / (ALINE + OPCON);
   }
-  //  getrusage(0, &r_usage);
-  //  t_op+=r_usage.ru_utime.tv_sec-t1;
 }
 
 #undef Z
@@ -8510,7 +7976,7 @@ void OPMTRX1(int LINE, double *XK)
  
    C++ Version: January 15, 1999
    LAST UPDATE: See OPMTRX above
-*/
+  */
 
 #define Z 0.026540045e0
 #define PI4 4. * PI
@@ -8551,15 +8017,13 @@ void OPMTRX1(int LINE, double *XK)
 
         hlinprof_(wave, wlcent, temper, xnelec, NBLO, NBUP,
                   h1frc, he1frc, dopl, aline, PATH, &PATHLEN, &change_byte_order);
-        //        aline=hlinop_(wave,NBLO,NBUP,wlcent,temper,xnelec,
-        //                      h1frc,he1frc,dopl)*CLIGHTcm;
         ALINE = aline * LINEOP[ITAU][LINE];
       }
       else // Non-hydrogen line
       {
 
         /*  VOIGT function calculation: Humlicek, J. 1982, J.Q.S.R.T. 27, 437
-    stripted for the case of line center (V==0) */
+        stripted for the case of line center (V==0) */
 
         A = AVOIGT[ITAU][LINE] * WLCENT[LINE];
         UAV = A * A;
@@ -8568,18 +8032,12 @@ void OPMTRX1(int LINE, double *XK)
         else if (A >= 5.5)
           W4 = A * (1.410474 + UAV * 0.5641896) / (0.75 + UAV * (3. + UAV));
         else if (A >= -0.176)
-          W4 = (16.4955 + A * (20.20933 + A * (11.96482 +
-                                               A * (3.778987 + A * 0.5642236)))) /
-               (16.4955 +
-                A * (38.82363 + A * (39.27121 +
-                                     A * (21.69274 + A * (6.699398 + A)))));
+          W4 = (16.4955 + A * (20.20933 + A * (11.96482 + A * (3.778987 + A * 0.5642236)))) /
+               (16.4955 + A * (38.82363 + A * (39.27121 + A * (21.69274 + A * (6.699398 + A)))));
         else
         {
-          W4 = A * (36183.31 - UAV * (3321.9905 - UAV * (1540.787 -
-                                                         UAV * (219.0313 - UAV * (35.76683 -
-                                                                                  UAV * (1.320522 - UAV * .56419))))));
-          V4 = (32066.6 - UAV * (24322.84 - UAV * (9022.228 - UAV * (2186.181 - UAV *
-                                                                                    (364.2191 - UAV * (61.57037 - UAV * (1.841439 - UAV)))))));
+          W4 = A * (36183.31 - UAV * (3321.9905 - UAV * (1540.787 - UAV * (219.0313 - UAV * (35.76683 - UAV * (1.320522 - UAV * .56419))))));
+          V4 = (32066.6 - UAV * (24322.84 - UAV * (9022.228 - UAV * (2186.181 - UAV * (364.2191 - UAV * (61.57037 - UAV * (1.841439 - UAV)))))));
           W4 = exp(UAV) - W4 / V4;
         }
         VOIGT = W4;
@@ -8613,7 +8071,7 @@ void GAMHE(short IND, double temp, double ANE, double ANP,
   /*   NEUTRAL HELIUM STARK BROADENING PARAMETERS
      AFTER DIMITRIJEVIC AND SAHAL-BRECHOT, 1984, J.Q.S.R.T. 31, 301
      OR FREUDENSTEIN AND COOPER, 1978, AP.J. 224, 1079  (FOR C(IND)>0)
-*/
+  */
   static double W[20][5] =
       /*   ELECTRONS T= 5000   10000   20000   40000     LAMBDA */
       {{5.990, 6.650, 6.610, 6.210, 3819.60},

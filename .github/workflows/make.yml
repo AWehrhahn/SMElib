@@ -35,6 +35,41 @@ jobs:
         draft: false
         prerelease: false
   
+  manylinux-build:
+    needs: [create_release]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: manylinux2010-gfortran
+            compiler: gfortran
+            container: quay.io/pypa/manylinux2010_x86_64
+          - name: manylinux2010-f2c
+            compiler: f2c
+            container: quay.io/pypa/manylinux2010_x86_64
+  
+    container: ${{ matrix.container }}
+    steps:
+      - uses: actions/checkout@v2
+      - run: yum install -y gcc-gfortran f2c cmake autoconf automake libtool
+      - name: Replace Makefile
+        if: ${{ matrix.compiler }} == 'f2c'
+        run: rm Makefile.am && mv Makefile_f2c.am Makefile.am
+      - run: ./bootstrap && ./configure --prefix=$PWD
+      - run: make install
+      - run: zip -r ${{ matrix.name }} lib share
+
+      - name: Upload Release Asset
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./${{ matrix.name }}.zip
+          asset_name: ${{ matrix.name }}.zip
+          asset_content_type: application/zip
+      
   build:
     needs: create_release 
     strategy:

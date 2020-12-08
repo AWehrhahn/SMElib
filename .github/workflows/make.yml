@@ -40,24 +40,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      max-parallel: 1
       matrix:
-        container:
-          [
-            manylinux2014_x86_64,
-            manylinux2014_i686,
-            manylinux2014_aarch64,
-            manylinux2014_ppc64le,
-            manylinux2014_s390x,
-          ]
+        container: [manylinux2014_x86_64]
         compiler: [gfortran, f2c]
-        exclude:
-          - container: manylinux2014_i686
-            compiler: f2c
 
     container:
       image: quay.io/pypa/${{ matrix.container }}
-      options: "--entrypoint /bin/sh"
 
     steps:
       - run: yum install -y zip python3-pip

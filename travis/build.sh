@@ -1,7 +1,12 @@
 #!/bin/bash
 
 # Install dependencies
-yum install -y gcc-gfortran cmake autoconf automake libtool
+yum install -y gcc f2c cmake autoconf automake libtool
+
+f2c -w -a -C++ -Nn1604 -Nq1200 -dsrc/eos/ src/eos/*.f
+f2c -w -a -c++ -dsrc/sme/ src/sme/*.f
+rm makefile.am
+mv makefile_f2c.am makefile.am
 
 ./bootstrap
 ./configure --prefix=$PWD

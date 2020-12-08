@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.com/AWehrhahn/SMElib.svg?branch=master)](https://travis-ci.com/AWehrhahn/SMElib)
-
+![CMake](https://github.com/AWehrhahn/SMElib/workflows/CMake/badge.svg)
 # SMElib
 Spectroscopy Made Easy Source Library
 
@@ -11,7 +11,9 @@ spectrum of a star with a model spectrum. Since its initial release in
 
 ## Download
 You can find compiled versions of the library for Unix, Mac OS, and Windows under [Releases](https://github.com/AWehrhahn/SMElib/releases).
-Note that depending on your system you might have to install libgfortran (version 3) as well.
+
+There are two versions for each OS. The gfortran version uses gfortran to compile the Fortran code, while the [F2C](https://www.netlib.org/f2c/) version first converts the Fortran code to C++ code. The difference between these two are that f2c does not require libgfortran, but gives slightly numerical differences. It also appears to run faster in preliminary tests.
+Note that depending on your system you might have to install libgfortran as well.
 
 ## Notes
  - SMElib requires libgfortran on most OSs to be installed. The exact version, depends on the version of SMELib that you are installing. If PySME fails to load the library try adding that libgfortran file in the same directory.

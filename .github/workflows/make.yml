@@ -52,7 +52,7 @@ jobs:
     steps:
       # We need to install packages first, because the checkout needs gcc already
       - run: yum install -y gcc-gfortran f2c cmake autoconf automake libtool
-      - uses: actions/checkout@v2
+      - run: git clone https://github.com/AWehrhahn/SMElib .
       - name: Replace Makefile
         if: ${{ matrix.compiler }} == 'f2c'
         run: rm Makefile.am && mv Makefile_f2c.am Makefile.am

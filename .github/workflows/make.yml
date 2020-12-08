@@ -13,46 +13,58 @@ jobs:
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
-    - name: GitHub Tag
-      id: tag_release
-      # You may pin to the exact commit or the version.
-      # uses: mathieudutour/github-tag-action@1bab3ab0712cafa42b54c512453487b89bb06504
-      uses: mathieudutour/github-tag-action@v5
-      with:
-        # Required for permission to tag the repo.
-        github_token: ${{ secrets.GITHUB_TOKEN }} 
-        # Which type of bump to use when none explicitly provided (default: `patch`).
-        # default_bump: # optional, default is patch
-    
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-      with:
-        tag_name: ${{ steps.tag_release.outputs.new_tag }}
-        release_name: Release ${{ steps.tag_release.outputs.new_tag }}
-        draft: false
-        prerelease: false
-  
+      - name: GitHub Tag
+        id: tag_release
+        # You may pin to the exact commit or the version.
+        # uses: mathieudutour/github-tag-action@1bab3ab0712cafa42b54c512453487b89bb06504
+        uses: mathieudutour/github-tag-action@v5
+        with:
+          # Required for permission to tag the repo.
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # Which type of bump to use when none explicitly provided (default: `patch`).
+          # default_bump: # optional, default is patch
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ steps.tag_release.outputs.new_tag }}
+          release_name: Release ${{ steps.tag_release.outputs.new_tag }}
+          draft: false
+          prerelease: false
+
   manylinux-build:
     needs: [create_release]
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         include:
-          - name: manylinux2010-gfortran
+          - name: manylinux2014-gfortran
             compiler: gfortran
-            container: quay.io/pypa/manylinux2010_x86_64
-          - name: manylinux2010-f2c
+            container: quay.io/pypa/manylinux2014_x86_64
+          - name: manylinux2014-f2c
             compiler: f2c
-            container: quay.io/pypa/manylinux2010_x86_64
-  
+            container: quay.io/pypa/manylinux2014_x86_64
+
     container: ${{ matrix.container }}
     steps:
       # We need to install packages first, because the checkout needs gcc already
-      - run: yum install -y gcc-gfortran f2c cmake autoconf automake libtool
       - run: git clone https://github.com/AWehrhahn/SMElib .
+      - name: Install F2C & Compile libf2c.a
+        if: matrix.compiler == 'f2c'
+        run: |
+          yum install -y f2c wget
+          cd libf2c
+          wget https://www.netlib.org/f2c/libf2c.zip
+          unzip libf2c.zip -d f2c
+          cd f2c
+          cp ../makefile.u Makefile
+          make
+          cp libf2c.a /usr/local/lib64/
+          cd ../..
       - name: Replace Makefile
         if: matrix.compiler == 'f2c'
         run: rm Makefile.am && mv Makefile_f2c.am Makefile.am
@@ -64,18 +76,18 @@ jobs:
       - run: zip -r ${{ matrix.name }} lib share
 
       - name: Upload Release Asset
-        id: upload-release-asset 
+        id: upload-release-asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          upload_url: ${{ needs.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
           asset_path: ./${{ matrix.name }}.zip
           asset_name: ${{ matrix.name }}.zip
           asset_content_type: application/zip
-      
+
   build:
-    needs: create_release 
+    needs: create_release
     strategy:
       fail-fast: false
       matrix:
@@ -95,14 +107,14 @@ jobs:
             f77: x86_64-w64-mingw32-gfortran
             config_flags: --build=x86_64-pc-linux-gnu --host=x86_64-w64-mingw32
             outputs: bin share
-#          F2C doesn't work for Windows, use gfortran instead
-#          will figure this out when possible
-#          - name: windows-f2c
-#            runs_on: ubuntu-latest
-#            packages: f2c mingw-w64 mingw-w64-tools mingw-w64-common gcc-mingw-w64 gcc-mingw-w64-x86-64 g++-mingw-w64 g++-mingw-w64-x86-64
-#            cxx: x86_64-w64-mingw32-gcc
-#            config_flags: --build=x86_64-pc-linux-gnu --host=x86_64-w64-mingw32
-#            outputs: bin share
+          #          F2C doesn't work for Windows, use gfortran instead
+          #          will figure this out when possible
+          #          - name: windows-f2c
+          #            runs_on: ubuntu-latest
+          #            packages: f2c mingw-w64 mingw-w64-tools mingw-w64-common gcc-mingw-w64 gcc-mingw-w64-x86-64 g++-mingw-w64 g++-mingw-w64-x86-64
+          #            cxx: x86_64-w64-mingw32-gcc
+          #            config_flags: --build=x86_64-pc-linux-gnu --host=x86_64-w64-mingw32
+          #            outputs: bin share
           - name: macos-gfortran
             runs_on: macos-latest
             packages: automake libtool
@@ -115,7 +127,7 @@ jobs:
             packages: automake libtool
             cxx: gcc-9
             outputs: lib share
-            
+
     # The CMake configure and build commands are platform agnostic and should work equally
     # well on Windows or Mac.  You can convert this to a matrix build if you need
     # cross-platform coverage.
@@ -123,72 +135,72 @@ jobs:
     runs-on: ${{ matrix.runs_on }}
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Install packages
-      if: matrix.runs_on == 'ubuntu-latest'
-      run: sudo apt-get install -y ${{ matrix.packages }}
-    
-    - name: Install packages
-      if: matrix.runs_on == 'macos-latest'
-      run: brew tap ${{ matrix.taps }} && brew install ${{ matrix.packages }}
-    
-    - name: Install F2C
-      if: matrix.name == 'macos-f2c'
-      run: brew install --verbose --HEAD franklinchen/tap/f2c
-    
-    - name: Run F2C
-      if: matrix.name == 'ubuntu-f2c' || matrix.name == 'windows-f2c' || matrix.name == 'macos-f2c'
-      run: f2c -w -a -C++ -Nn1604 -Nq1200 -dsrc/eos/ src/eos/*.f & f2c -w -a -C++ -dsrc/sme/ src/sme/*.f
-    
-    - name: Replace Makefile.am
-      if: matrix.name == 'ubuntu-f2c' || matrix.name == 'windows-f2c'
-      run: rm Makefile.am && mv Makefile_f2c.am Makefile.am
-    
-    - name: Replace Makefile.am
-      if: matrix.name == 'macos-f2c'
-      run: rm Makefile.am && mv Makefile_mac.am Makefile.am
-    
-    - name: Copy F2C headers
-      if: matrix.name == 'windows-f2c' 
-      run: cp	/usr/include/f2c.h src/eos/ & cp /usr/include/f2c.h src/sme/
+      - name: Install packages
+        if: matrix.runs_on == 'ubuntu-latest'
+        run: sudo apt-get install -y ${{ matrix.packages }}
 
-    - name: Run Bootstrap and Configure
-      env:
-        CXX: ${{ matrix.cxx }}
-        F77: ${{ matrix.f77 }}
-      run: ./bootstrap && ./configure --prefix=$PWD ${{ matrix.config_flags }}
-  
-    - name: Install
-      env:
-        CXX: ${{ matrix.cxx }}
-        F77: ${{ matrix.f77 }}
-      run: make install
-      
-    - name: Zip data # This would actually build your project, using zip for an example artifact
-      run: zip -r ${{ matrix.name }} ${{ matrix.outputs }}
-    
-    - name: Archive compiled library
-      uses: actions/upload-artifact@v2
-      with:
-        name: library
-        path: ${{ matrix.name }}.zip
+      - name: Install packages
+        if: matrix.runs_on == 'macos-latest'
+        run: brew tap ${{ matrix.taps }} && brew install ${{ matrix.packages }}
 
-    - name: Prepare Test Environment
-      if: matrix.name != 'windows-gfortran' && matrix.name != 'windows-f2c'
-      run: pip3 install -r test/requirements.txt
+      - name: Install F2C
+        if: matrix.name == 'macos-f2c'
+        run: brew install --verbose --HEAD franklinchen/tap/f2c
 
-    - name: Test Library
-      if: matrix.name != 'windows-gfortran' && matrix.name != 'windows-f2c'
-      run: python3 -m pytest
+      - name: Run F2C
+        if: matrix.name == 'ubuntu-f2c' || matrix.name == 'windows-f2c' || matrix.name == 'macos-f2c'
+        run: f2c -w -a -C++ -Nn1604 -Nq1200 -dsrc/eos/ src/eos/*.f & f2c -w -a -C++ -dsrc/sme/ src/sme/*.f
 
-    - name: Upload Release Asset
-      id: upload-release-asset 
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ needs.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ./${{ matrix.name }}.zip
-        asset_name: ${{ matrix.name }}.zip
-        asset_content_type: application/zip
+      - name: Replace Makefile.am
+        if: matrix.name == 'ubuntu-f2c' || matrix.name == 'windows-f2c'
+        run: rm Makefile.am && mv Makefile_f2c.am Makefile.am
+
+      - name: Replace Makefile.am
+        if: matrix.name == 'macos-f2c'
+        run: rm Makefile.am && mv Makefile_mac.am Makefile.am
+
+      - name: Copy F2C headers
+        if: matrix.name == 'windows-f2c'
+        run: cp	/usr/include/f2c.h src/eos/ & cp /usr/include/f2c.h src/sme/
+
+      - name: Run Bootstrap and Configure
+        env:
+          CXX: ${{ matrix.cxx }}
+          F77: ${{ matrix.f77 }}
+        run: ./bootstrap && ./configure --prefix=$PWD ${{ matrix.config_flags }}
+
+      - name: Install
+        env:
+          CXX: ${{ matrix.cxx }}
+          F77: ${{ matrix.f77 }}
+        run: make install
+
+      - name: Zip data # This would actually build your project, using zip for an example artifact
+        run: zip -r ${{ matrix.name }} ${{ matrix.outputs }}
+
+      - name: Archive compiled library
+        uses: actions/upload-artifact@v2
+        with:
+          name: library
+          path: ${{ matrix.name }}.zip
+
+      - name: Prepare Test Environment
+        if: matrix.name != 'windows-gfortran' && matrix.name != 'windows-f2c'
+        run: pip3 install -r test/requirements.txt
+
+      - name: Test Library
+        if: matrix.name != 'windows-gfortran' && matrix.name != 'windows-f2c'
+        run: python3 -m pytest
+
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          asset_path: ./${{ matrix.name }}.zip
+          asset_name: ${{ matrix.name }}.zip
+          asset_content_type: application/zip

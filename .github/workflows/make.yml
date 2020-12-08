@@ -75,6 +75,7 @@ jobs:
         run: f2c -w -a -C++ -Nn1604 -Nq1200 -dsrc/eos/ src/eos/*.f & f2c -w -a -C++ -dsrc/sme/ src/sme/*.f
       - run: ./bootstrap && ./configure --prefix=$PWD
       - run: make install
+      - run: ls lib
       - run: zip -r ${{ matrix.container }}-${{ matrix.compiler}} lib share
 
       - run: pip3 install -r test/requirements.txt

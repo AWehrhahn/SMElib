@@ -30,7 +30,7 @@ class IDL_String(ct.Structure):
 
 def get_lib_name():
     """ Get the name of the sme C library """
-    system = sys.platform
+    system = platform.system().lower()
     arch = platform.machine()
     bits = platform.architecture()[0][:-3]
 

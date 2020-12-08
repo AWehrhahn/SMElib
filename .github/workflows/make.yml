@@ -42,10 +42,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: manylinux2014-gfortran
+          - name: manylinux2014_x86_64-gfortran
             compiler: gfortran
             container: quay.io/pypa/manylinux2014_x86_64
-          - name: manylinux2014-f2c
+          - name: manylinux2014_x86_64-f2c
             compiler: f2c
             container: quay.io/pypa/manylinux2014_x86_64
 

@@ -51,11 +51,17 @@ jobs:
             manylinux2014_s390x,
           ]
         compiler: [gfortran, f2c]
+        exclude:
+          - container: manylinux2014_i686
+            compiler: f2c
 
-    container: quay.io/pypa/${{ matrix.container }}
+    container:
+      image: quay.io/pypa/${{ matrix.container }}
+      options: "--entrypoint /bin/sh"
+
     steps:
-      - run: git clone https://github.com/AWehrhahn/SMElib .
       - run: yum install -y zip python3-pip
+      - run: git clone https://github.com/AWehrhahn/SMElib .
       - name: Install F2C & Compile libf2c.a
         if: matrix.compiler == 'f2c'
         run: |

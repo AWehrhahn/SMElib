@@ -187,7 +187,7 @@ jobs:
         run: make install
 
       - name: Copy libgfortran
-        if: matrix.name == 'ubuntu-gfortran' || matrix.name == 'macos-gfortran'
+        if: matrix.name == 'ubuntu-gfortran'
         run: |
           make -s flib_source
           make -s flib_target

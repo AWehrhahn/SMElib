@@ -194,6 +194,14 @@ jobs:
           cp -v $(readlink -f $(make -s flib_source)) $(make -s flib_target)
 
       - name: Copy libgfortran
+        if: matrix.name == 'macos-gfortran'
+        run: |
+          make -s flib_source
+          make -s flib_target
+          cp -v $(dirname $(make -s flib_source))/$(readlink $(make -s flib_source)) $(make -s flib_target)
+
+
+      - name: Copy libgfortran
         if: matrix.name == 'windows-gfortran'
         run: |
           ls $(x86_64-w64-mingw32-gfortran --print-file-name=)libgfortran-?.dll

@@ -74,7 +74,7 @@ jobs:
       - name: Copy libgfortran
         if: matrix.compiler == 'gfortran'
         run: |
-          make -s flib_source
+          ls -l $(dirname $(make -s flib_source))
           make -s flib_target
           cp -v $(readlink -f $(make -s flib_source)) $(make -s flib_target)
 

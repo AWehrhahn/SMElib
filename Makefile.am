@@ -42,3 +42,10 @@ src/sme/platform.h:
 
 old_link: libsme.la
 	$(MKDIR_P) $(@OUTPUT_DIR@) && cd $(@OUTPUT_DIR@) && $(LN_S) -f libsme@EXTENSION@ sme_synth.so.$(SHL_EXT)
+
+
+flib_source:
+	$(F77) --print-file-name=libgfortran@EXTENSION@ | xargs readlink -f
+
+flib_target:
+	echo $(@OUTPUT_DIR@)/libgfortran@EXTENSION@

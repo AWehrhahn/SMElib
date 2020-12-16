@@ -73,7 +73,10 @@ jobs:
 
       - name: Copy libgfortran
         if: matrix.compiler == 'gfortran'
-        run: cp $(make -s flib_source) $(make -s flib_target)
+        run: |
+          make -s flib_source
+          make -s flib_target
+          cp -v $(readlink -f $(make -s flib_source)) $(make -s flib_target)
 
       - run: ls lib
       - run: zip -r ${{ matrix.container }}-${{ matrix.compiler}} lib share
@@ -184,8 +187,18 @@ jobs:
         run: make install
 
       - name: Copy libgfortran
-        if: matrix.name == 'ubuntu-gfortran' || matrix.name == 'macos-gfortran' || matrix.name == 'windows-gfortran'
-        run: cp $(make -s flib_source) $(make -s flib_target)
+        if: matrix.name == 'ubuntu-gfortran' || matrix.name == 'macos-gfortran'
+        run: |
+          make -s flib_source
+          make -s flib_target
+          cp -v $(readlink -f $(make -s flib_source)) $(make -s flib_target)
+
+      - name: Copy libgfortran
+        if: matrix.name == 'windows-gfortran'
+        run: |
+          ls $(x86_64-w64-mingw32-gfortran --print-file-name=)libgfortran-?.dll
+          make -s flib_target
+          cp -v $(readlink -f $(ls $(x86_64-w64-mingw32-gfortran --print-file-name=)libgfortran-?.dll)) $(make -s flib_target)
 
       - name: Zip data # This would actually build your project, using zip for an example artifact
         run: zip -r ${{ matrix.name }} ${{ matrix.outputs }}

@@ -185,7 +185,7 @@ jobs:
 
       - name: Copy libgfortran
         if: matrix.name == 'ubuntu-gfortran' || matrix.name == 'macos-gfortran' || matrix.name == 'windows-gfortran'
-        run: cp $(ls $(make -s flib_source)$(make -s flib_name)) $(make -s flib_target)
+        run: cp $(make -s flib_source) $(make -s flib_target)
 
       - name: Zip data # This would actually build your project, using zip for an example artifact
         run: zip -r ${{ matrix.name }} ${{ matrix.outputs }}

@@ -47,7 +47,7 @@ flib_name:
 	echo libgfortran*@EXTENSION@
 
 flib_source:
-	$(F77) --print-file-name=
+	$(F77) --print-file-name=libgfortran@EXTENSION@
 
 flib_target:
 	echo $(@OUTPUT_DIR@)/libgfortran@EXTENSION@

@@ -15,8 +15,8 @@ libsme_la_SOURCES = \
 	src/sme/hlinop.f \
 	src/sme/hlinprof.f
 libsme_la_LDFLAGS = -fPIC -version-info 5:22:0 -shared -no-undefined
-libsme_la_CPPFLAGS = -fPIC -shared
-libsme_la_FFLAGS = -fPIC -shared -fexpensive-optimizations
+libsme_la_CPPFLAGS = -fPIC -shared -O3
+libsme_la_FFLAGS = -fPIC -shared -O3
 libsme_la_LIBADD = -lc -lm -lstdc++ -lgfortran
 
 dist_pkgdata_DATA = src/data/bpo_self.grid.INTEL \

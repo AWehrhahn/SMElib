@@ -176,12 +176,12 @@ class SME_DLL:
             names of the elements (with Ionization level)
         """
         try:
-            atomic = linelist.atomic.T
-            species = linelist.species
+            atomic = linelist["atomic"].T
+            species = linelist["species"]
         except AttributeError:
             raise TypeError("linelist has to be a LineList type")
 
-        nlines = len(linelist)
+        nlines = 1
         species = np.asarray(species, "U8")
 
         assert (
@@ -265,16 +265,16 @@ class SME_DLL:
             raise ValueError("Turbulence velocity must be positive or zero")
 
         try:
-            motype = atmo.depth
+            motype = atmo["depth"]
             depth = atmo[motype]
             ndepth = len(depth)
-            t = atmo.temp
-            xne = atmo.xne
-            xna = atmo.xna
-            rho = atmo.rho
+            t = atmo["temp"]
+            xne = atmo["xne"]
+            xna = atmo["xna"]
+            rho = atmo["rho"]
             vt = np.full(ndepth, vturb) if np.size(vturb) == 1 else vturb
-            wlstd = atmo.wlstd
-            opflag = atmo.opflag
+            wlstd = atmo["wlstd"]
+            opflag = atmo["opflag"]
             args = [
                 ndepth,
                 teff,
@@ -291,9 +291,9 @@ class SME_DLL:
             ]
             type = "sdddusdddddd"  # s : short, d: double, u: unicode (string)
 
-            if atmo.geom == "SPH":
-                radius = atmo.radius
-                height = atmo.height
+            if atmo["geom"] == "SPH":
+                radius = atmo["radius"]
+                height = atmo["height"]
                 motype = "SPH"
                 args = args[:5] + [radius] + args[5:] + [height]
                 type = type[:5] + "d" + type[5:] + "d"

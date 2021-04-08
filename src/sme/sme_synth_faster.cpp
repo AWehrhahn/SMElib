@@ -15,6 +15,9 @@
 #define SME_DLL
 #endif
 
+// The SME library version (and compilation date)
+#define VERSION "6.03, July 2019"
+
 /* Datafile locations */
 // DATA_DIR is defined in platform.h
 
@@ -335,7 +338,7 @@ int compress(char *target, char *source)
 
 extern "C" char const *SME_DLL SMELibraryVersion(int n, void *arg[]) /* Return SME library version */
 {
-  sprintf(result, "SME Library version: 6.03, July 2019, %s", PLATFORM);
+  sprintf(result, "SME Library version: %s, %s", VERSION, PLATFORM);
   return result;
 }
 

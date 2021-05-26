@@ -16,7 +16,9 @@
 #endif
 
 // The SME library version (and compilation date)
+#ifndef VERSION
 #define VERSION "6.03, July 2019"
+#endif
 
 /* Datafile locations */
 // DATA_DIR is defined in platform.h

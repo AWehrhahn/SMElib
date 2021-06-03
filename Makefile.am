@@ -7,6 +7,7 @@ CXXLD = $(F77)
 lib_LTLIBRARIES = libsme.la
 libsme_la_SOURCES = \
 	src/sme/platform.h \
+	src/sme/sme_synth_faster.h \
 	src/sme/sme_synth_faster.cpp \
 	src/eos/eos.f \
 	src/eos/eos_eqns.f \

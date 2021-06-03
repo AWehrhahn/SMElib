@@ -87,3 +87,4 @@ src/sme/hlinop.c
 src/sme/hlinprof.c
 debug_radiative_transfer.npz
 origin/
+**/.deps/

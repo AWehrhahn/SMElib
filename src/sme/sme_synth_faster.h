@@ -31,6 +31,11 @@ typedef struct {		/* Define string descriptor */
   char *s;			/* Addr of string */
 } IDL_STRING;
 #endif
+// define global parameter access
+extern "C" int SME_DLL GetNLINES(void);
+extern "C" short SME_DLL GetNRHOX(void);
+extern "C" short SME_DLL GetNMU(void);
+
 
 // define the external methods
 extern "C" const char * SME_DLL SMELibraryVersion(int n, void *arg[]); /* Return SME library version */
@@ -60,4 +65,3 @@ extern "C" const char * SME_DLL Transf(int n, void *arg[]);                     
 extern "C" const char * SME_DLL CentralDepth(int n, void *arg[]);               /* Computes line central depths */
 extern "C" const char * SME_DLL GetLineOpacity(int n, void *arg[]);             /* Returns specific line opacity */
 extern "C" const char * SME_DLL GetLineRange(int n, void *arg[]);               /* Get validity range for every line */
-

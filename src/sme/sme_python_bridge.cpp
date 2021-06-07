@@ -195,8 +195,8 @@ const char * Python_CentralDepth(int nmu, double * mu, int nwsize, float * table
 }
 
 /* Returns specific line opacity */
-const char * Python_GetLineOpacity(double wave, short nmu, double * lop, double * cop, double * scr, double * tsf, double * csf){
-    void * args[] = {&wave, &nmu, lop, cop, scr, tsf, csf};
+const char * Python_GetLineOpacity(double wave, short nrhox, double * lop, double * cop, double * scr, double * tsf, double * csf){
+    void * args[] = {&wave, &nrhox, lop, cop, scr, tsf, csf};
     return GetLineOpacity(7, args);
 }
 

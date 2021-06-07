@@ -31,7 +31,7 @@ resp = cywrapper.InputLineList(species, atomic)
 print(resp)
 
 atomic = np.zeros((2, 8))
-resp = cywrapper.OutputLineList(atomic)
+resp = cywrapper.OutputLineList()
 print(resp)
 
 species = np.array(["S 1"])

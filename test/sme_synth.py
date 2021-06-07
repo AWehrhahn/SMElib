@@ -625,7 +625,7 @@ class SME_DLL:
         csf : array
             Continuum source function
         """
-        nmu = self.nmu
+        nmu = self.ndepth
         lop = np.zeros(nmu)
         cop = np.zeros(nmu)
         scr = np.zeros(nmu)

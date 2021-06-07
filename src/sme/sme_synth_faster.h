@@ -19,6 +19,8 @@
 #define DATAFILE_BPO "bpo_self.grid.INTEL"
 #define DATAFILE_VCS "vcsbalmer.dat"
 
+#ifndef IDL_DEFINE
+#define IDL_DEFINE
 // Define IDL String
 typedef int IDL_STRING_SLEN_T;
 #define IDL_STRING_MAX_SLEN 2147483647
@@ -28,6 +30,7 @@ typedef struct {		/* Define string descriptor */
   short stype;			/* type of string, static or dynamic */
   char *s;			/* Addr of string */
 } IDL_STRING;
+#endif
 
 // define the external methods
 extern "C" const char * SME_DLL SMELibraryVersion(int n, void *arg[]); /* Return SME library version */

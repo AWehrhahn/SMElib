@@ -1,15 +1,15 @@
 # distutils: language = c++
 # cython: infer_types=True
-
+import os
 import numpy as np
 cimport numpy as np
 from cpython.mem cimport PyMem_Malloc, PyMem_Realloc, PyMem_Free
 
-np_int = np.int
+np_int = np.int32
 np_double = np.double
 np_str = np.str_
 np_short = np.short
-np_float = np.float
+np_float = np.float32
 
 ctypedef np.int_t np_int_t
 ctypedef np.double_t np_double_t
@@ -112,35 +112,45 @@ def GetLibraryPath() -> str:
     byte = Python_GetLibraryPath()
     return byte.decode("utf8")
 
-def SetLibraryPath(path:str) -> str:
+def SetLibraryPath(path:str):
     cdef IDL_STRING path_idl
     cdef const char * byte
+    if not path.endswith(os.sep):
+        path += os.sep
     path_idl = _idl(path)
     byte = Python_SetLibraryPath(&path_idl)
-    return byte.decode("utf8")
+    if byte != b"":
+        raise Exception(byte.decode("utf8"))
+    return
 
-def InputWaveRange(double wmin, double wmax) -> str:
+def InputWaveRange(double wmin, double wmax):
     cdef const char * byte
     byte = Python_InputWaveRange(wmin, wmax)
-    return byte.decode("utf8")
+    if byte != b"":
+        raise Exception(byte.decode("utf8"))
+    return
 
-def SetVWscale(double gamma6) -> str:
+def SetVWscale(double gamma6):
     cdef const char * byte
     byte = Python_SetVWscale(gamma6)
-    return byte.decode("utf8")
+    if byte != b"":
+        raise Exception(byte.decode("utf8"))
+    return
 
-def SetH2broad(flag=True) -> str:
+def SetH2broad(flag=True):
     cdef const char * byte
     if flag:
         byte = Python_SetH2broad()
     else:
         byte = Python_ClearH2broad()
-    return byte.decode("utf8")
+    if byte != b"":
+        raise Exception(byte.decode("utf8"))
+    return
 
-def ClearH2broad() -> str:
+def ClearH2broad():
     return SetH2broad(flag=False)
 
-def InputLineList(np.ndarray species, np_double_t[:, ::1] atomic) -> str:
+def _InputLineList(np.ndarray species, np_double_t[:, ::1] atomic) -> str:
     cdef int nlines
     cdef double * atomic_data
     cdef IDL_STRING * species_data
@@ -152,7 +162,20 @@ def InputLineList(np.ndarray species, np_double_t[:, ::1] atomic) -> str:
     atomic_data = to_arr_double_2d(atomic)
     byte = Python_InputLineList(nlines, species_data, atomic_data)
     PyMem_Free(species_data)
-    return byte.decode("utf8")
+    if byte != b"":
+        raise Exception(byte.decode("utf8"))
+    return
+
+def InputLineList(linelist):
+    cdef np.ndarray atomic
+    cdef np.ndarray species
+
+    atomic = linelist["atomic"]
+    atomic = np.transpose(atomic)
+    atomic = np.require(atomic, dtype=np_double, requirements=["C"])
+    species = linelist["species"]
+    species = np.asarray(species, "U8")
+    return _InputLineList(species, atomic)
 
 def OutputLineList() -> np.ndarray:
     cdef int nlines
@@ -160,13 +183,14 @@ def OutputLineList() -> np.ndarray:
     cdef np.ndarray atomic
 
     nlines = GetNLINES()
-    atomic = np.empty((8, nlines), dtype=np_double)
+    atomic = np.empty((6, nlines), dtype=np_double)
     byte = Python_OutputLineList(nlines, to_arr_double_2d(atomic))
+    atomic = np.transpose(atomic)
     if byte != b"":
         raise Exception(byte.decode("utf8"))
     return atomic
 
-def UpdateLineList(np.ndarray species, np_double_t[:, ::1] atomic, np_short_t[::1] index) -> str:
+def UpdateLineList(np.ndarray species, np_double_t[:, ::1] atomic, np_short_t[::1] index):
     cdef short nlines
     cdef double * atomic_data
     cdef short * index_data
@@ -176,33 +200,51 @@ def UpdateLineList(np.ndarray species, np_double_t[:, ::1] atomic, np_short_t[::
     # TODO: Is there a way to avoid creating a new species array everytime?
     nlines = species.shape[0]
     species_data = to_strarr(species)
+    atomic = np.transpose(atomic)
     atomic_data = to_arr_double_2d(atomic)
     index_data = &index[0]
     byte = Python_UpdateLineList(nlines, species_data, atomic_data, index_data)
     PyMem_Free(species_data)
-    return byte.decode("utf8")
+    if byte != b"":
+        raise Exception(byte.decode("utf8"))
+    return
 
-def InputModel(
-    np_double_t teff,
-    np_double_t grav,
-    motype:str,
-    np_double_t wlstd,
-    np_short_t[::1] opflag,
-    np_double_t[::1] depth,
-    np_double_t[::1] temp,
-    np_double_t[::1] xne,
-    np_double_t[::1] xna,
-    np_double_t[::1] rho,
-    np_double_t[::1] vt,
-    np_double_t radius, 
-    np_double_t[::1] height,
-    )->str:
+def InputModel(double teff, double grav, vturb, atmo):
     cdef short ndepth;
     cdef IDL_STRING motype_str;
     cdef const char * byte
+    cdef np_double_t wlstd
+    cdef np_short_t[::1] opflag
+    cdef np_double_t[::1] depth
+    cdef np_double_t[::1] temp
+    cdef np_double_t[::1] xne
+    cdef np_double_t[::1] xna
+    cdef np_double_t[::1] rho
+    cdef np_double_t[::1] vt
+    cdef np_double_t radius 
+    cdef np_double_t[::1] height
+    cdef str motype
+
+    motype = atmo["depth"]
+    depth = np.asarray(atmo[motype], dtype=np_double)
+    ndepth = depth.shape[0]
+    temp = np.asarray(atmo["temp"], dtype=np_double)
+    xne = np.asarray(atmo["xne"], dtype=np_double)
+    xna = np.asarray(atmo["xna"], dtype=np_double)
+    rho = np.asarray(atmo["rho"], dtype=np_double)
+    vt = np.full(ndepth, vturb, dtype=np_double) if np.size(vturb) == 1 else np.asarray(vturb, dtype=np_double)
+    wlstd = atmo["wlstd"]
+    opflag = np.asarray(atmo["opflag"], dtype=np_short)
+
+    if atmo["geom"] == "SPH":
+        radius = atmo["radius"]
+        height = np.asarray(atmo["height"], dtype=np_double)
+        motype = "SPH"
+    else:
+        radius = 1
+        height = np.empty(1)
 
     motype_str = _idl(motype)
-    ndepth = depth.shape[0]
     byte = Python_InputModel(
         ndepth, 
         teff, 
@@ -219,53 +261,87 @@ def InputModel(
         radius, 
         to_arr_double(height),
         )
-    return byte.decode("utf8")
+    if byte != b"":
+        raise Exception(byte.decode("utf8"))
+    return
 
-def InputDepartureCoefficients(np_double_t[:, ::1] bmat, int lineindex) -> str:
+def InputDepartureCoefficients(np_double_t[:, ::1] bmat, int lineindex):
     cdef const char * byte
     byte = Python_InputDepartureCoefficients(to_arr_double_2d(bmat), lineindex)
-    return byte.decode("utf8")
+    if byte != b"":
+        raise Exception(byte.decode("utf8"))
+    return
 
-def GetDepartureCoefficients(np_double_t[:, ::1] bmat, int ndepth, int line) -> str:
+def GetDepartureCoefficients(int line) -> np.ndarray:
     cdef const char * byte
-    byte = Python_GetDepartureCoefficients(to_arr_double_2d(bmat), ndepth, line)
-    return byte.decode("utf8")
+    cdef int nrhox
+    cdef np.ndarray bmat
+    nrhox = GetNRHOX()
+    bmat = np.empty((nrhox, 2), dtype=np_double)    
+    byte = Python_GetDepartureCoefficients(to_arr_double_2d(bmat), nrhox, line)
+    if byte != b"":
+        raise Exception(byte.decode("utf8"))
+    return bmat
 
-def GetNLTEflags(np_short_t[::1] nlte_flags) -> str:
+def GetNLTEflags() -> np.ndarray:
     cdef const char * byte
     cdef int nlines
-    nlines = nlte_flags.shape[0]
+    cdef np.ndarray nlte_flags
+    nlines = GetNLINES()
+    nlte_flags = np.empty(nlines, dtype=np_short)
     byte = Python_GetNLTEflags(to_arr_short(nlte_flags), nlines)
-    return byte.decode("utf8")
+    if byte != b"":
+        raise Exception(byte.decode("utf8"))
+    return nlte_flags
 
 def ResetDepartureCoefficients() -> str:
     cdef const char * byte
     byte = Python_ResetDepartureCoefficients()
-    return byte.decode("utf8")
+    if byte != b"":
+        raise Exception(byte.decode("utf8"))
+    return
 
-def InputAbund(np_double_t[::1] abund) -> str:
+def _InputAbund(np_double_t[::1] abund) -> str:
     cdef const char * byte
     byte = Python_InputAbund(to_arr_double(abund))
-    return byte.decode()
+    if byte != b"":
+        raise Exception(byte.decode("utf8"))
+    return
+
+def InputAbund(abund) -> str:
+    cdef np.ndarray abund_data
+    abund_data = abund("sme", raw=True)
+    return _InputAbund(abund_data)
 
 def Opacity() -> str:
     cdef const char * byte
     byte = Python_Opacity()
-    return byte.decode()
+    if byte != b"":
+        raise Exception(byte.decode("utf8"))
+    return
 
-def GetOpacity(short ifop, short length, np_double_t[::1] result, species:str = "", key:str = "") -> str:
+def GetOpacity(short ifop, species:str = "", key:str = "") -> np.ndarray:
     cdef const char * byte
     cdef IDL_STRING species_idl
     cdef IDL_STRING key_idl
+    cdef short length
+    cdef np.ndarray result
+
     species_idl = _idl(species)
     key_idl = _idl(key)
+    length = GetNRHOX()
+    result = np.empty(length, dtype=np_double)
     byte = Python_GetOpacity(ifop, length, to_arr_double(result), &species_idl, &key_idl)
-    return byte.decode()
+    if byte != b"":
+        raise Exception(byte.decode("utf8"))
+    return result
 
-def Ionization(short ion = 0) -> str:
+def Ionization(short ion = 0):
     cdef const char * byte
     byte = Python_Ionization(ion)
-    return byte.decode()
+    if byte != b"":
+        raise Exception(byte.decode("utf8"))
+    return
 
 def GetDensity() -> np.ndarray:
     cdef const char * byte
@@ -305,12 +381,12 @@ def GetNelec() -> np.ndarray:
 
 def Transf(
     np_double_t[::1] mu,
-    np_double_t[::1] wave = None, 
     double accrt = 0.01,
     double accwi = 0.03,
     int nwmax = 400000,
     short keep_lineop = 0, 
-    short long_continuum = 1
+    short long_continuum = 1,
+    np_double_t[::1] wave = None,
     ):
     cdef const char * byte
     cdef short nmu
@@ -397,6 +473,8 @@ def GetLineOpacity(double wave):
     csf = np.empty(nrhox, dtype=np_double)
 
     byte = Python_GetLineOpacity(wave, nrhox, to_arr_double(lop), to_arr_double(cop), to_arr_double(scr), to_arr_double(tsf), to_arr_double(csf))
+    if byte != b"":
+        raise Exception(byte.decode("utf8"))
     return lop, cop, scr, tsf, csf
 
 def GetLineRange() -> np.ndarray:

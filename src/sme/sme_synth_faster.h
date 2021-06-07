@@ -34,8 +34,6 @@ typedef struct {		/* Define string descriptor */
 // define global parameter access
 extern "C" int SME_DLL GetNLINES(void);
 extern "C" short SME_DLL GetNRHOX(void);
-extern "C" short SME_DLL GetNMU(void);
-
 
 // define the external methods
 extern "C" const char * SME_DLL SMELibraryVersion(int n, void *arg[]); /* Return SME library version */

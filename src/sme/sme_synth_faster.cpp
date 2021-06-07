@@ -293,10 +293,6 @@ extern "C" short SME_DLL GetNRHOX(){
     return NRHOX;
 }
 
-extern "C" short SME_DLL GetNMU(){
-    return NMU;
-}
-
 extern "C" char const *SME_DLL SMELibraryVersion(int n, void *arg[]) /* Return SME library version */
 {
   sprintf(result, "SME Library version: %s, %s", VERSION, PLATFORM);

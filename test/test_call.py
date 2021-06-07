@@ -2,10 +2,12 @@ from os.path import dirname, join
 
 import pytest
 import numpy as np
+import logging
 
 from sme_synth import SME_DLL
 from cwrapper import get_lib_name
 
+logger = logging.getLogger(__name__)
 
 @pytest.fixture
 def libfile():
@@ -593,16 +595,15 @@ def test_radiative_transfer(dll, libfile, datadir):
         ),
         "citation_info": "",
     }
-
+    
     dll.SetLibraryPath(datadir)
     dll.InputLineList(linelist)
     dll.InputModel(5770, 4.44, 0.7, atmo)
     dll.InputAbund(lambda *_, **__: abund)
-    dll.Ionization(0)
+    dll.InputWaveRange(6436, 6442)
     dll.SetVWscale(1.0)
     dll.SetH2broad(True)
-
-    dll.InputWaveRange(6436, 6442)
+    dll.Ionization(0)
     dll.Opacity()
     _, wint, sint, cint = dll.Transf([1], 0.01, 0.03)
 
@@ -616,3 +617,4 @@ if __name__ == "__main__":
     dll = SME_DLL(libfile, datadir)
     version = dll.SMELibraryVersion()
     print(version)
+    test_radiative_transfer(dll, libfile, datadir)

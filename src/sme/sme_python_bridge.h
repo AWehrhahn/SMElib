@@ -37,5 +37,5 @@ const char * Python_GetNatom(short length, double * result);                   /
 const char * Python_GetNelec(short length, double * result);                   /* Returns electron number density */
 const char * Python_Transf(short nmu, double * mu, double * cint_seg, double * cintr_seg, int nwmax, int nw, double * wint_seg, double * sint_seg, double accrt, double accwi, short keep_lineop, short long_continuum);                     /* Computes spectral synthesis */
 const char * Python_CentralDepth(int nmu, double * mu, int nwsize, float * table, double accrt);               /* Computes line central depths */
-const char * Python_GetLineOpacity(double wave, short nmu, double * lop, double * cop, double * scr, double * tsf, double * csf);             /* Returns specific line opacity */
+const char * Python_GetLineOpacity(double wave, short nrhox, double * lop, double * cop, double * scr, double * tsf, double * csf);             /* Returns specific line opacity */
 const char * Python_GetLineRange(double * linerange, int nlines);               /* Get validity range for every line */

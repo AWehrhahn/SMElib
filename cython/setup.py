@@ -2,6 +2,7 @@ from os.path import join, realpath, dirname
 from distutils.core import setup
 from distutils.extension import Extension
 from Cython.Build import cythonize
+import numpy as np
 
 lib_path = realpath(join(dirname(__file__), "../lib"))
 file_path = realpath(join(dirname(__file__), "smelib.pyx"))
@@ -12,6 +13,7 @@ examples_extension = Extension(
     libraries=["gfortran", "sme"],
     library_dirs=[lib_path],
     runtime_library_dirs=[lib_path],
+    include_dirs=[np.get_include()],
 )
 setup(
     name="smelib",

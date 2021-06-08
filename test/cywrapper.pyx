@@ -2,21 +2,23 @@
 # cython: infer_types=True
 import os
 import numpy as np
+import ctypes as ct
 cimport numpy as np
 from cpython.mem cimport PyMem_Malloc, PyMem_Realloc, PyMem_Free
+from libc.stdlib cimport malloc, free
+from libc.string cimport strcpy, strlen
 
-np_int = np.int32
-np_double = np.double
-np_str = np.str_
-np_short = np.short
-np_float = np.float32
+np_int = ct.c_int
+np_double = ct.c_double
+np_short = ct.c_short
+np_float = ct.c_float
+np_long = ct.c_long
 
-ctypedef np.int_t np_int_t
-ctypedef np.double_t np_double_t
-ctypedef str np_str_t
+ctypedef int np_int_t
+ctypedef double np_double_t
 ctypedef short np_short_t
 ctypedef float np_float_t
-
+ctypedef long np_long_t
 
 cdef extern from "../src/sme/sme_python_bridge.h":
     cdef struct s_IDL_STRING:
@@ -57,12 +59,27 @@ cdef extern from "../src/sme/sme_python_bridge.h":
 cdef extern from "../src/sme/sme_synth_faster.h":
     int GetNLINES()
     short GetNRHOX()
+    char * GetSPNAME()
+
+class IDL_String(ct.Structure):
+    """
+    IDL strings are actually structures like this one,
+    for correct passing of values we need to define this structure
+    NOTE: the definition might have changed with IDL version,
+    so make sure to use the same one as in the C code
+    """
+
+    _fields_ = [("slen", ct.c_int), ("stype", ct.c_ushort), ("s", ct.c_char_p)]
+
 
 cdef char * _chars(s):
     if isinstance(s, unicode):
         # encode to the specific encoding used inside of the module
         s = (<unicode>s).encode('utf8')
     return s
+
+cdef np.ndarray require(np.ndarray arr, dtype=np_double):
+    return np.require(arr, dtype=dtype, requirements=["C", "A", "W", "O"])
 
 cdef IDL_STRING _idl(s):
     cdef IDL_STRING idl_str
@@ -71,29 +88,54 @@ cdef IDL_STRING _idl(s):
     idl_str.s = _chars(s)
     return idl_str
 
-cdef IDL_STRING * to_strarr(np.ndarray arr):
+cdef (IDL_STRING *, char *) to_strarr(np.ndarray arr):
     cdef Py_ssize_t i
     cdef Py_ssize_t size
-    cdef IDL_STRING * strarr
-    
+    cdef char * strarr
+    cdef IDL_STRING * idlarr
+
+    arr = require(arr, dtype="S8")
     size = arr.shape[0]
-    strarr = <IDL_STRING*> PyMem_Malloc(size * sizeof(IDL_STRING *))
+    slen = 8
+    strarr = <char *> malloc(size * 8 * sizeof(char))
+    idlarr = <IDL_STRING *> malloc(size * sizeof(IDL_STRING))
+    for i in range(size * 8):
+        strarr[i] = b" "
     for i in range(size):
-        strarr[i] = _idl(arr[i])
+        strcpy(strarr + 8 * i, arr[i])
+        idlarr[i].slen = len(arr[i])
+        idlarr[i].stype = 1
+        idlarr[i].s = strarr + 8 * i
 
-    return strarr
+    return idlarr, strarr
 
-cdef double * to_arr_double_2d(np_double_t[:,::1] arr):
+cdef double * _pdouble(np_double_t[::1] arr):
+    return &arr[0]
+
+cdef double * _pdouble_2d(np_double_t[:, ::1] arr):
     return &arr[0, 0]
 
-cdef double * to_arr_double(np_double_t[::1] arr):
+cdef short * _pshort(np_short_t[::1] arr):
     return &arr[0]
 
-cdef short * to_arr_short(np_short_t[::1] arr):
+cdef float * _pfloat(np_float_t[::1] arr):
     return &arr[0]
 
-cdef float * to_arr_float(np_float_t[::1] arr):
-    return &arr[0]
+cdef double * to_arr_double_2d(np.ndarray arr):
+    arr = require(arr, dtype=np_double)
+    return _pdouble_2d(arr)
+
+cdef double * to_arr_double(np.ndarray arr):
+    arr = require(arr, dtype=np_double)
+    return _pdouble(arr)
+
+cdef short * to_arr_short(np.ndarray arr):
+    arr = require(arr, dtype=np_short)
+    return _pshort(arr)
+
+cdef float * to_arr_float(np.ndarray arr):
+    arr = require(arr, dtype=np_float)
+    return _pfloat(arr)
 
 def SMELibraryVersion() -> str:
     cdef const char * byte
@@ -150,18 +192,21 @@ def SetH2broad(flag=True):
 def ClearH2broad():
     return SetH2broad(flag=False)
 
-def _InputLineList(np.ndarray species, np_double_t[:, ::1] atomic) -> str:
+def _InputLineList(np.ndarray species, np.ndarray atomic) -> str:
     cdef int nlines
     cdef double * atomic_data
     cdef IDL_STRING * species_data
     cdef const char * byte
+    cdef char * str_data
 
     # TODO: Is there a way to avoid creating a new species array everytime?
     nlines = species.shape[0]
-    species_data = to_strarr(species)
+    species = require(species, dtype="S8")
+    species_data, str_data = to_strarr(species)
     atomic_data = to_arr_double_2d(atomic)
     byte = Python_InputLineList(nlines, species_data, atomic_data)
-    PyMem_Free(species_data)
+    free(species_data)
+    free(str_data)
     if byte != b"":
         raise Exception(byte.decode("utf8"))
     return
@@ -172,9 +217,7 @@ def InputLineList(linelist):
 
     atomic = linelist["atomic"]
     atomic = np.transpose(atomic)
-    atomic = np.require(atomic, dtype=np_double, requirements=["C"])
     species = linelist["species"]
-    species = np.asarray(species, "U8")
     return _InputLineList(species, atomic)
 
 def OutputLineList() -> np.ndarray:
@@ -183,9 +226,8 @@ def OutputLineList() -> np.ndarray:
     cdef np.ndarray atomic
 
     nlines = GetNLINES()
-    atomic = np.empty((6, nlines), dtype=np_double)
+    atomic = np.empty((nlines, 6), dtype=np_double)
     byte = Python_OutputLineList(nlines, to_arr_double_2d(atomic))
-    atomic = np.transpose(atomic)
     if byte != b"":
         raise Exception(byte.decode("utf8"))
     return atomic
@@ -196,15 +238,17 @@ def UpdateLineList(np.ndarray species, np_double_t[:, ::1] atomic, np_short_t[::
     cdef short * index_data
     cdef IDL_STRING * species_data
     cdef const char * byte
+    cdef char * str_data
 
     # TODO: Is there a way to avoid creating a new species array everytime?
     nlines = species.shape[0]
-    species_data = to_strarr(species)
+    species_data, str_data = to_strarr(species)
     atomic = np.transpose(atomic)
     atomic_data = to_arr_double_2d(atomic)
     index_data = &index[0]
     byte = Python_UpdateLineList(nlines, species_data, atomic_data, index_data)
-    PyMem_Free(species_data)
+    free(species_data)
+    free(str_data)
     if byte != b"":
         raise Exception(byte.decode("utf8"))
     return
@@ -213,36 +257,37 @@ def InputModel(double teff, double grav, vturb, atmo):
     cdef short ndepth;
     cdef IDL_STRING motype_str;
     cdef const char * byte
-    cdef np_double_t wlstd
-    cdef np_short_t[::1] opflag
-    cdef np_double_t[::1] depth
-    cdef np_double_t[::1] temp
-    cdef np_double_t[::1] xne
-    cdef np_double_t[::1] xna
-    cdef np_double_t[::1] rho
-    cdef np_double_t[::1] vt
+    cdef double wlstd
+    cdef np.ndarray opflag
+    cdef np.ndarray depth
+    cdef np.ndarray temp
+    cdef np.ndarray xne
+    cdef np.ndarray xna
+    cdef np.ndarray rho
+    cdef np.ndarray vt
     cdef np_double_t radius 
-    cdef np_double_t[::1] height
+    cdef np.ndarray height
     cdef str motype
 
+
     motype = atmo["depth"]
-    depth = np.asarray(atmo[motype], dtype=np_double)
+    depth = atmo[motype]
     ndepth = depth.shape[0]
-    temp = np.asarray(atmo["temp"], dtype=np_double)
-    xne = np.asarray(atmo["xne"], dtype=np_double)
-    xna = np.asarray(atmo["xna"], dtype=np_double)
-    rho = np.asarray(atmo["rho"], dtype=np_double)
-    vt = np.full(ndepth, vturb, dtype=np_double) if np.size(vturb) == 1 else np.asarray(vturb, dtype=np_double)
+    temp = atmo["temp"]
+    xne = atmo["xne"]
+    xna = atmo["xna"]
+    rho = atmo["rho"]
+    vt = np.full(ndepth, vturb, dtype=np_double) if np.size(vturb) == 1 else vturb
     wlstd = atmo["wlstd"]
-    opflag = np.asarray(atmo["opflag"], dtype=np_short)
+    opflag = atmo["opflag"]
 
     if atmo["geom"] == "SPH":
         radius = atmo["radius"]
-        height = np.asarray(atmo["height"], dtype=np_double)
+        height = atmo["height"]
         motype = "SPH"
     else:
         radius = 1
-        height = np.empty(1)
+        height = np.empty(1, dtype=np_double)
 
     motype_str = _idl(motype)
     byte = Python_InputModel(
@@ -301,7 +346,7 @@ def ResetDepartureCoefficients() -> str:
         raise Exception(byte.decode("utf8"))
     return
 
-def _InputAbund(np_double_t[::1] abund) -> str:
+def _InputAbund(np.ndarray abund) -> str:
     cdef const char * byte
     byte = Python_InputAbund(to_arr_double(abund))
     if byte != b"":
@@ -340,7 +385,7 @@ def Ionization(short ion = 0):
     cdef const char * byte
     byte = Python_Ionization(ion)
     if byte != b"":
-        raise Exception(byte.decode("utf8"))
+        raise Warning(byte.decode("utf8"))
     return
 
 def GetDensity() -> np.ndarray:
@@ -380,7 +425,7 @@ def GetNelec() -> np.ndarray:
     return byte.decode("utf8")
 
 def Transf(
-    np_double_t[::1] mu,
+    np.ndarray mu,
     double accrt = 0.01,
     double accwi = 0.03,
     int nwmax = 400000,
@@ -488,3 +533,12 @@ def GetLineRange() -> np.ndarray:
     if byte != b"":
         raise Exception(byte.decode("utf8"))
     return linerange
+
+def get_NLINES() -> int:
+    return GetNLINES()
+
+def get_NRHOX() -> int:
+    return GetNRHOX()
+
+def get_SPNAME() -> bytes:
+    return GetSPNAME()

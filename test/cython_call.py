@@ -96,9 +96,19 @@ def check_data_files_exist():
 # print(resp)
 
 linelist = {
-    "species": np.array(["Ca 1"]),
+    "species": np.array(["Ca 1", "Fe 1"]),
     "atomic": np.array(
         [
+            [
+                1.00000000e00,
+                1.00000000e00,
+                6.43907500e03,
+                2.52568209e00,
+                3.90000000e-01,
+                7.64900000e00,
+                -6.07200000e00,
+                -7.56900000e00,
+            ], 
             [
                 1.00000000e00,
                 1.00000000e00,
@@ -656,20 +666,23 @@ datadir = realpath(join(dirname(__file__), "../share/libsme"))
 dll.SetLibraryPath(datadir)
 print(dll.GetLibraryPath())
 check_data_files_exist()
+logger.critical("There")
+
 # linelist["atomic"] = np.require(np.transpose(linelist["atomic"]), requirements=["C"])
-print(linelist["atomic"])
 dll.InputLineList(linelist)
-print(dll.OutputLineList())
+logger.critical("NLINES: %i" % dll.get_NLINES())
+
+print(dll.get_SPNAME())
+
 dll.InputModel(5770, 4.44, 0.7, atmo)
 dll.InputAbund(lambda *_, **__: abund)
 dll.InputWaveRange(6436, 6442)
 dll.SetVWscale(1.0)
 dll.SetH2broad(True)
-
-logger.critical("There")
-dll.Ionization(0)
+logger.critical("NRHOX: %i" % dll.get_NRHOX())
+dll.Ionization(ion=0)
 logger.critical("General")
 
 dll.Opacity()
-_, wint, sint, cint = dll.Transf([1], 0.01, 0.03)
+_, wint, sint, cint = dll.Transf(np.array([1]), 0.01, 0.03)
 logger.critical("Kenobi")

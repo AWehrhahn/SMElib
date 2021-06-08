@@ -293,6 +293,10 @@ extern "C" short SME_DLL GetNRHOX(){
     return NRHOX;
 }
 
+extern "C" char * SME_DLL GetSPNAME(){
+  return spname;
+}
+
 extern "C" char const *SME_DLL SMELibraryVersion(int n, void *arg[]) /* Return SME library version */
 {
   sprintf(result, "SME Library version: %s, %s", VERSION, PLATFORM);
@@ -5453,6 +5457,7 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[])
     POTION[i] = -1.;
     MOLWEIGHT[i] = -1.;
   }
+
   eos_mode = (use_electron_density_from_EOS) ? 0 : 10;
   if (return_pfs)
   {
@@ -5475,9 +5480,12 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[])
     TEMP = T[i];
     Pelec = XNE[i] * TK[i];
     Pgas = Pelec + XNA[i] * TK[i];
+
     eqstat_(eos_mode, TEMP, Pgas, Pelec, ABUND + 1, ELEMEN + 1, AMASS + 1,
             nelem, SPINDEX, SPLIST, FRACT[i], PARTITION_FUNCTIONS[i], POTION,
             MOLWEIGHT, NLINES, N_SPLIST, XNE_estim, XNA_estim, RHO_estim, NITER, 3, 8);
+
+
 
     if (fabs(XNE[i] - XNE_estim) / XNE[i] > max_Ne_err)
     {

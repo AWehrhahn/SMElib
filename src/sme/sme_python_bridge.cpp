@@ -89,7 +89,7 @@ const char * Python_InputModel(
         double * vt, 
         double radius, 
         double * height){
-    if (strcmp(motype->s, "SPH")){
+    if (strcmp(motype->s, "SPH") == 0){
         void * args[] = {&ndepth, &teff, &grav, &wlstd, motype, &radius, opflag, depth, temp, xne, xna, rho, vt, height};
         return InputModel(14, args);
     } else {

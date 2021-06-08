@@ -167,6 +167,8 @@ def test_radiative_transfer(datadir):
         ]
     )
     abund[np.isnan(abund)] = -99
+    abund_data = abund
+    abund = lambda *_, **__: abund_data
 
     atmo = {
         "teff": 5777.0,
@@ -603,7 +605,7 @@ def test_radiative_transfer(datadir):
     dll.SetLibraryPath(datadir)
     dll.InputLineList(linelist)
     dll.InputModel(5770, 4.44, 0.7, atmo)
-    dll.InputAbund(lambda *_, **__: abund)
+    dll.InputAbund(abund)
     dll.InputWaveRange(6436, 6442)
     dll.SetVWscale(1.0)
     dll.SetH2broad(True)

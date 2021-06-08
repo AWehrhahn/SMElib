@@ -1,11 +1,15 @@
-from os.path import join, realpath, dirname
 from distutils.core import setup
 from distutils.extension import Extension
-from Cython.Build import cythonize
+from os.path import dirname, join, realpath
+
 import numpy as np
+from Cython.Build import cythonize
 
 lib_path = realpath(join(dirname(__file__), "../lib"))
 file_path = realpath(join(dirname(__file__), "smelib.pyx"))
+
+print("lib_path: " + lib_path)
+print("file_path: " + file_path)
 
 examples_extension = Extension(
     name="smelib",

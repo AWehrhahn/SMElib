@@ -310,7 +310,7 @@ def InputModel(double teff, double grav, vturb, atmo):
         raise Exception(byte.decode("utf8"))
     return
 
-def InputDepartureCoefficients(np_double_t[:, ::1] bmat, int lineindex):
+def InputDepartureCoefficients(np.ndarray bmat, int lineindex):
     cdef const char * byte
     byte = Python_InputDepartureCoefficients(to_arr_double_2d(bmat), lineindex)
     if byte != b"":
@@ -431,7 +431,7 @@ def Transf(
     int nwmax = 400000,
     short keep_lineop = 0, 
     short long_continuum = 1,
-    np_double_t[::1] wave = None,
+    np.ndarray wave = None,
     ):
     cdef const char * byte
     cdef short nmu

@@ -4,8 +4,9 @@ import pytest
 import numpy as np
 import logging
 
-from sme_synth import SME_DLL
-from cwrapper import get_lib_name
+# from sme_synth import SME_DLL
+# from cwrapper import get_lib_name
+import cywrapper as dll
 
 
 logger = logging.getLogger(__name__)
@@ -21,23 +22,16 @@ def datadir():
     return join(dirname(__file__), "../share/libsme/")
 
 
-@pytest.fixture
-def dll(libfile, datadir):
-    # We set the data directory explicitly in case
-    # the library file has been loaded from a different location
-    return SME_DLL(libfile, datadir)
-
-
-def test_simple_call(dll):
+def test_simple_call():
     version = dll.SMELibraryVersion()
     assert isinstance(version, str)
 
 
-def test_call_with_input(dll):
+def test_call_with_input():
     dll.InputWaveRange(5000, 6000)
 
 
-def test_radiative_transfer(dll, libfile, datadir):
+def test_radiative_transfer(datadir):
 
     #     species    wlcent  gflog     excit  j_lo  ...    term_lower     term_upper  error  atom_number  ionization
     # 35    Ca 1  6439.075   0.39  2.525682   3.0  ...  3p6.3d.4s 3D  3p6.3d.4p 3F*    0.5          1.0         1.0
@@ -616,7 +610,7 @@ def test_radiative_transfer(dll, libfile, datadir):
     dll.SetH2broad(True)
     dll.Ionization(0)
     dll.Opacity()
-    _, wint, sint, cint = dll.Transf([1], 0.01, 0.03)
+    _, wint, sint, cint = dll.Transf(np.ndarray([1]), 0.01, 0.03)
 
     # For comparison
     np.savez("debug_radiative_transfer.npz", wave=wint, spec=sint, cont=cint)
@@ -625,7 +619,6 @@ def test_radiative_transfer(dll, libfile, datadir):
 if __name__ == "__main__":
     libfile = join(dirname(__file__), "../lib/", "libsme-5.dll")
     datadir = join(dirname(__file__), "../share/libsme")
-    dll = SME_DLL(libfile, datadir)
     version = dll.SMELibraryVersion()
     print(version)
-    test_radiative_transfer(dll, libfile, datadir)
+    test_radiative_transfer(datadir)

@@ -181,7 +181,7 @@ class SME_DLL:
         except AttributeError:
             raise TypeError("linelist has to be a LineList type")
 
-        nlines = 1
+        nlines = len(species)
         species = np.asarray(species, "U8")
 
         assert (

@@ -20,7 +20,7 @@ ctypedef short np_short_t
 ctypedef float np_float_t
 ctypedef long np_long_t
 
-cdef extern from "../src/sme/sme_python_bridge.h":
+cdef extern from "sme_python_bridge.h":
     cdef struct s_IDL_STRING:
         int slen
         short stype
@@ -56,7 +56,7 @@ cdef extern from "../src/sme/sme_python_bridge.h":
     const char * Python_GetLineOpacity(double wave, short nmu, double * lop, double * cop, double * scr, double * tsf, double * csf)
     const char * Python_GetLineRange(double * linerange, int nlines)
 
-cdef extern from "../src/sme/sme_synth_faster.h":
+cdef extern from "sme_synth_faster.h":
     int GetNLINES()
     short GetNRHOX()
     char * GetSPNAME()

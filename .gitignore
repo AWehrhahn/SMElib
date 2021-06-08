@@ -88,4 +88,5 @@ src/sme/hlinprof.c
 debug_radiative_transfer.npz
 origin/
 **/.deps/
-test/cywrapper.cpp
+cython/smelib.egg-info/
+cython/smelib.cpp

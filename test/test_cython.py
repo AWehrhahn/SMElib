@@ -4,9 +4,8 @@ import pytest
 import numpy as np
 import logging
 
-# from sme_synth import SME_DLL
-# from cwrapper import get_lib_name
-import cywrapper as dll
+# Run python setup.py build_ext --inplace
+import smelib as dll
 
 
 logger = logging.getLogger(__name__)

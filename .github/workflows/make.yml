@@ -82,6 +82,12 @@ jobs:
       - run: zip -r ${{ matrix.container }}-${{ matrix.compiler}} lib share
 
       - run: pip3 install -r test/requirements.txt
+      - run: pip3 install -r cython/requirements.txt
+      - run: |
+         cd cython/
+         python setup.py build_ext --inplace
+         pip3 install .
+         cd ..
       - run: python3 -m pytest
 
       - name: Upload Debug Spectrum

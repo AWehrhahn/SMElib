@@ -1,8 +1,7 @@
 from os.path import dirname, join, realpath, exists
 import numpy as np
 import logging
-import cywrapper
-import cywrapper as dll
+import smelib as dll
 logger = logging.getLogger(__name__)
 
 def check_data_files_exist():

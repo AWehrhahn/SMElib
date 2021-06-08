@@ -85,7 +85,7 @@ jobs:
       - run: pip3 install -r cython/requirements.txt
       - run: |
          cd cython/
-         python setup.py build_ext --inplace
+         python3 setup.py build_ext --inplace
          pip3 install .
          cd ..
       - run: python3 -m pytest

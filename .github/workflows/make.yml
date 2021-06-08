@@ -179,7 +179,11 @@ jobs:
 
       - name: Replace Makefile.am
         if: matrix.name == 'ubuntu-f2c' || matrix.name == 'windows-f2c'
-        run: rm Makefile.am && mv Makefile_f2c.am Makefile.am
+        run: |
+          rm Makefile.am
+          mv Makefile_f2c.am Makefile.am
+          rm cython/setup.py
+          mv cython/setup-f2c.py cython/setup.py
 
       - name: Replace Makefile.am
         if: matrix.name == 'macos-f2c'

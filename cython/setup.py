@@ -5,7 +5,7 @@ from os.path import dirname, join, realpath
 import numpy as np
 from Cython.Build import cythonize
 
-lib_path = realpath(join(dirname(__file__), "../lib"))
+lib_path = realpath(join(dirname(__file__), "lib"))
 file_path = realpath(join(dirname(__file__), "smelib.pyx"))
 
 print("lib_path: " + lib_path)

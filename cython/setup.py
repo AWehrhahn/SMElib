@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import setup
 from distutils.extension import Extension
 from os.path import dirname, join, realpath
 
@@ -21,5 +21,6 @@ examples_extension = Extension(
 )
 setup(
     name="smelib",
-    ext_modules=cythonize([examples_extension], language_level=3)
+    ext_modules=cythonize([examples_extension], language_level=3),
+    include_package_data=True,
 )

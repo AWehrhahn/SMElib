@@ -5,7 +5,10 @@ ACLOCAL_AMFLAGS = -I m4
 lib_LTLIBRARIES = libsme.la
 libsme_la_SOURCES = \
 	src/sme/platform.h \
+	src/sme/sme_synth_faster.h\
 	src/sme/sme_synth_faster.cpp \
+	src/sme/sme_python_bridge.h \
+	src/sme/sme_python_bridge.cpp \
 	src/eos/eos.c \
 	src/eos/eos_eqns.c \
 	src/eos/eos_math_special.c \

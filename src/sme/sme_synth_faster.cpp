@@ -5289,7 +5289,7 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[])
   CALLOC(SPLIST, N_SPLIST * 8, char);
   if (SPLIST == NULL)
   {
-    strcpy(result, "No enough space in EOS_count_species");
+    strcpy(result, "Not enough space in EOS_count_species");
     return result;
   }
 
@@ -5320,6 +5320,11 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[])
     FREE(species_list);
     FREE(SPLIST);
     strcpy(result, "EOS_list_species found e- in the middle of the list");
+    return result;
+  case 5:
+    FREE(species_list);
+    FREE(SPLIST);
+    strcpy(result, "EOS_list_species - Unreasonable abundances");
     return result;
   default:
     FREE(species_list);

@@ -38,11 +38,20 @@ jobs:
   manylinux-build:
     needs: [create_release]
     runs-on: ubuntu-latest
+    container: 
     strategy:
       fail-fast: false
       matrix:
-        container: [manylinux2014_x86_64]
-        compiler: [gfortran] # F2C fails the test on manylinux for some reason , f2c]
+        include: 
+          - name: gfortran
+            container: manylinux2014_x86_64
+            compiler: gfortran
+            makefile: Makefile.am
+          - name: gfortran-parallel
+            container: manylinux2014_x86_64
+            compiler: gfortran
+            makefile: Makefile_parallel.am
+          # F2C fails the test on manylinux for some reason , f2c]
 
     container:
       image: quay.io/pypa/${{ matrix.container }}
@@ -63,11 +72,12 @@ jobs:
           cp libf2c.a /usr/local/lib/
           cd ../..
       - name: Replace Makefile
-        if: matrix.compiler == 'f2c'
-        run: rm Makefile.am && mv Makefile_f2c.am Makefile.am
+        if: matrix.makefile != 'Makefile.am'
+        run: rm Makefile.am && mv ${{ matrix.makefile }} Makefile.am
       - name: Run F2C
         if: matrix.compiler == 'f2c'
         run: f2c -w -a -C++ -Nn1604 -Nq1200 -dsrc/eos/ src/eos/*.f & f2c -w -a -C++ -dsrc/sme/ src/sme/*.f
+  
       - run: ./bootstrap && ./configure --prefix=$PWD
       - run: make install
 
@@ -79,7 +89,7 @@ jobs:
           cp -v $(readlink -f $(make -s flib_source)) $(make -s flib_target)
 
       - run: ls lib
-      - run: zip -r ${{ matrix.container }}-${{ matrix.compiler}} lib share
+      - run: zip -r ${{ matrix.container }}-${{ matrix.name }} lib share
 
       - run: pip3 install -r test/requirements.txt
       - run: pip3 install -r cython/requirements.txt
@@ -95,7 +105,7 @@ jobs:
       - name: Upload Debug Spectrum
         uses: actions/upload-artifact@v2
         with:
-          name: debug_radiative_transfer_${{ matrix.container }}-${{ matrix.compiler}}.npz
+          name: debug_radiative_transfer_${{ matrix.container }}-${{ matrix.name }}.npz
           path: ./debug_radiative_transfer.npz
 
       - name: Upload Release Asset
@@ -105,8 +115,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-          asset_path: ./${{ matrix.container }}-${{ matrix.compiler}}.zip
-          asset_name: ${{ matrix.container }}-${{ matrix.compiler}}.zip
+          asset_path: ./${{ matrix.container }}-${{ matrix.name }}.zip
+          asset_name: ${{ matrix.container }}-${{ matrix.name s}}.zip
           asset_content_type: application/zip
 
   build:

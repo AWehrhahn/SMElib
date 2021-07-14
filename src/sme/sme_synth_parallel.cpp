@@ -85,50 +85,50 @@ to do such a terrible thing!
 #endif
 /* Modules */
 
-void ALAM(double *, struct GlobalState state);
-void CONTOP(double, double *, struct GlobalState state);
-void HOP(double *, int, int, struct GlobalState state);
-void H2PLOP(double *, int, int, struct GlobalState state);
-void HMINOP(double *, int, int, struct GlobalState state);
-void HMINOP_old(double *, int, int, struct GlobalState state);
-void HRAYOP(double *, int, struct GlobalState state);
-void HE1OP(double *, int, int, struct GlobalState state);
-void HE1OP_new(double *, int, int, struct GlobalState state);
-void HE2OP(double *, int, int, struct GlobalState state);
-void HEMIOP(double *, int, struct GlobalState state);
-void HERAOP(double *, int, struct GlobalState state);
-void COOLOP(double *, struct GlobalState state);
-double C1OP(int, struct GlobalState state);
-double MG1OP(int, struct GlobalState state);
-double AL1OP(int, struct GlobalState state);
-double SI1OP(int, struct GlobalState state);
-double FE1OP(int, struct GlobalState state);
-double C1OP_new(int, struct GlobalState state);
-double MG1OP_new(int, struct GlobalState state);
-double N1OP(int, struct GlobalState state);
-double O1OP(int, struct GlobalState state);
-double MG2OP(int, struct GlobalState state);
-double SI2OP(int, struct GlobalState state);
-double CA2OP(int, struct GlobalState state);
+void ALAM(double *,  GlobalState * state);
+void CONTOP(double, double *,  GlobalState * state);
+void HOP(double *, int, int,  GlobalState * state);
+void H2PLOP(double *, int, int,  GlobalState * state);
+void HMINOP(double *, int, int,  GlobalState * state);
+void HMINOP_old(double *, int, int,  GlobalState * state);
+void HRAYOP(double *, int,  GlobalState * state);
+void HE1OP(double *, int, int,  GlobalState * state);
+void HE1OP_new(double *, int, int,  GlobalState * state);
+void HE2OP(double *, int, int,  GlobalState * state);
+void HEMIOP(double *, int,  GlobalState * state);
+void HERAOP(double *, int,  GlobalState * state);
+void COOLOP(double *,  GlobalState * state);
+double C1OP(int,  GlobalState * state);
+double MG1OP(int,  GlobalState * state);
+double AL1OP(int,  GlobalState * state);
+double SI1OP(int,  GlobalState * state);
+double FE1OP(int,  GlobalState * state);
+double C1OP_new(int,  GlobalState * state);
+double MG1OP_new(int,  GlobalState * state);
+double N1OP(int,  GlobalState * state);
+double O1OP(int,  GlobalState * state);
+double MG2OP(int,  GlobalState * state);
+double SI2OP(int,  GlobalState * state);
+double CA2OP(int,  GlobalState * state);
 
-void LUKEOP(double *, struct GlobalState state);
-void HOTOP(double *, struct GlobalState state);
-void ELECOP(double *, struct GlobalState state);
-void H2RAOP(double *, int, struct GlobalState state);
+void LUKEOP(double *,  GlobalState * state);
+void HOTOP(double *,  GlobalState * state);
+void ELECOP(double *,  GlobalState * state);
+void H2RAOP(double *, int,  GlobalState * state);
 int RKINTS(double *, int, double, double, double *, double *, double *,
-           int, int &, double *, short, struct GlobalState state);
+           int, int &, double *, short,  GlobalState * state);
 int RKINTS_sph(double rhox[][2 * MOSIZE], int, int NRHOXs[], double, double,
                double *, double *, double *, int, int &,
-               double *, short, int grazing[], struct GlobalState state);
-double FCINTG(double, double, double *, struct GlobalState state);
-void TBINTG(int, double *, double *, double *, double *, struct GlobalState state);
-void TBINTG_sph(int, double *, double *, double *, double *, int, struct GlobalState state);
-void CENTERINTG(double *, int, int, double *, double *, struct GlobalState state);
-void LINEOPAC(int, struct GlobalState state);
-void OPMTRX(double, double *, double *, double *, double *, int, int, struct GlobalState state);
-void OPMTRXn(double, double *, double *, double *, struct GlobalState state);
-void OPMTRX1(int, double *, struct GlobalState state);
-void GAMHE(short, double, double, double, double &, double &, struct GlobalState state);
+               double *, short, int grazing[],  GlobalState * state);
+double FCINTG(double, double, double *,  GlobalState * state);
+void TBINTG(int, double *, double *, double *, double *,  GlobalState * state);
+void TBINTG_sph(int, double *, double *, double *, double *, int,  GlobalState * state);
+void CENTERINTG(double *, int, int, double *, double *,  GlobalState * state);
+void LINEOPAC(int,  GlobalState * state);
+void OPMTRX(double, double *, double *, double *, double *, int, int,  GlobalState * state);
+void OPMTRXn(double, double *, double *, double *,  GlobalState * state);
+void OPMTRX1(int, double *,  GlobalState * state);
+void GAMHE(short, double, double, double, double &, double &,  GlobalState * state);
 double HFNM(int, int);
 double VCSE1F(double);
 double VACAIR(double);
@@ -215,117 +215,205 @@ int compress(char *target, char *source)
   return t - 1;
 }
 
-extern "C" int SME_DLL GetNLINES(struct GlobalState state){
-    return state.NLINES;
-}
+extern "C" GlobalState * SME_DLL NewState(){
+  GlobalState * state = (GlobalState *) malloc(sizeof(GlobalState));
 
-extern "C" short SME_DLL GetNRHOX(struct GlobalState state){
-    return state.NRHOX;
-}
+  state->FREQ = 0;
+  state->FREQLG = 0;
+  state->NRHOX = -1;
+  state->NRHOX_allocated = -1;
+  state->MOTYPE = -1;
+  state->TEFF =  -1;
+  state->GRAV = -1;
+  state->WLSTD = -1;
+  state->RADIUS = -1;
+  state->NumberSpectralSegments = -1;
+  state->NLINES = -1;
+  state->NWAVE_C = -1;
+  state->WFIRST = -1;
+  state->WLAST = -1;
+  state->VW_scale = -1;
+  state->N_SPLIST = -1;
+  state->IXH1 = state->IXH2 =  state->IXH2mol =  state->IXH2pl =  state->IXHMIN = \
+      state->IXHE1 =  state->IXHE2 = state->IXHE3 =  state->IXC1 =  state->IXAL1 = state->IXSI1 = \
+      state->IXSI2 =  state->IXCA1 =  state->IXMG1 = state->IXMG2 = state->IXCA2 = state->IXN1 = \
+      state->IXFE1 = state->IXO1 = state->IXCH = state->IXNH = state->IXOH = -1;
+  state->PATHLEN = 0;
+  state->change_byte_order = 0;
+  state->allocated_NLTE_lines = -1;
+  // consistency flags
+  state->flagMODEL =  state->flagWLRANGE =  state->flagABUND = state->flagLINELIST = \
+      state->flagIONIZ = state->flagCONTIN = state->lineOPACITIES = state->flagH2broad = \
+      state->initNLTE = 0;
 
-extern "C" char * SME_DLL GetSPNAME(struct GlobalState state){
-  return state.spname;
-}
+  /* Global pointers for dynamically allocated arrays */
 
-extern "C" struct GlobalState SME_DLL NewState(){
-  struct GlobalState state;
+  // statically sized arrays
+  // short IFOP[20];
+  // float ABUND[MAX_ELEM];
+  // double RHOX[MOSIZE], T[MOSIZE], XNE[MOSIZE], XNA[MOSIZE],
+  //     RHO[MOSIZE], VTURB[MOSIZE], RAD_ATMO[MOSIZE];
+  // double XNA_eos[MOSIZE], XNE_eos[MOSIZE], RHO_eos[MOSIZE];
+  // double AHYD[MOSIZE], AH2P[MOSIZE], AHMIN[MOSIZE], SIGH[MOSIZE],
+  //     AHE1[MOSIZE], AHE2[MOSIZE], AHEMIN[MOSIZE],
+  //     SIGHE[MOSIZE], ACOOL[MOSIZE], ALUKE[MOSIZE],
+  //     AHOT[MOSIZE], SIGEL[MOSIZE], SIGH2[MOSIZE];
+  // double TKEV[MOSIZE], TK[MOSIZE], HKT[MOSIZE], TLOG[MOSIZE];
+  // double FREQ, FREQLG, EHVKT[MOSIZE], STIM[MOSIZE], BNU[MOSIZE];
+  // float H1FRACT[MOSIZE], HE1FRACT[MOSIZE], H2molFRACT[MOSIZE];
+  // double COPBLU[MOSIZE], COPRED[MOSIZE], COPSTD[MOSIZE];
+  // double *LINEOP[MOSIZE], *AVOIGT[MOSIZE], *VVOIGT[MOSIZE];
+  // double LTE_b[MOSIZE];
+  // char PATH[MAX_PATHLEN];
+
+  state->debug_print = 0;
+
+  // dynamic arrays
+  state->ATOTAL = NULL;
+  state->INDX_C = NULL;
+  state->YABUND = NULL;
+  state->XMASS = NULL;
+  state->EXCUP = NULL;
+  state->ENU4 = NULL;
+  state->ENL4 = NULL;
+  state->BNLTE_low = NULL;
+  state->BNLTE_upp = NULL;
+  state->FRACT = NULL;
+  state->PARTITION_FUNCTIONS = NULL;
+  state->POTION = NULL;
+  state->MOLWEIGHT = NULL;
+  state->MARK = NULL;
+  state->AUTOION = NULL;
+  state->IDHEL = NULL;
+  state->ION = NULL;
+  state->ANSTEE = NULL;
+  state->WLCENT = NULL;
+  state->EXCIT = NULL;
+  state->GF = NULL;
+  state->GAMRAD = NULL;
+  state->GAMQST = NULL;
+  state->GAMVW = NULL;
+  state->ALMAX = NULL;
+  state->Wlim_left = NULL;
+  state->Wlim_right = NULL;
+  state->SPLIST = NULL;
+  state->spname = NULL;
+  state->SPINDEX = NULL;
+  /* Consistency flags */
+  state->flagNLTE = NULL;
   return state;
 }
 
-extern "C" char const *SME_DLL SMELibraryVersion(int n, void *arg[], struct GlobalState state) /* Return SME library version */
-{
-  sprintf(state.result, "SME Library version: %s, %s", VERSION, PLATFORM);
-  return state.result;
+extern "C" void SME_DLL FreeState(GlobalState * state){
+  free(state);
 }
 
-extern "C" char const *SME_DLL GetDataFiles(int n, void *arg[], struct GlobalState state) /* Return SME library version */
-{
-  sprintf(state.result, "%s;%s;%s;%s;%s", DATAFILE_FE, DATAFILE_NH, DATAFILE_STEHLE, DATAFILE_VCS, DATAFILE_BPO);
-  return state.result;
+extern "C" int SME_DLL GetNLINES( GlobalState * state){
+    return state->NLINES;
 }
 
-extern "C" char const *SME_DLL GetLibraryPath(int n, void *arg[], struct GlobalState state)
+extern "C" short SME_DLL GetNRHOX( GlobalState * state){
+    return state->NRHOX;
+}
+
+extern "C" char * SME_DLL GetSPNAME( GlobalState * state){
+  return state->spname;
+}
+
+extern "C" char const *SME_DLL SMELibraryVersion(int n, void *arg[],  GlobalState * state) /* Return SME library version */
 {
-  sprintf(state.result, "%s", state.PATH);
-  return state.result;
+  sprintf(state->result, "SME Library version: %s, %s", VERSION, PLATFORM);
+  return state->result;
+}
+
+extern "C" char const *SME_DLL GetDataFiles(int n, void *arg[],  GlobalState * state) /* Return SME library version */
+{
+  sprintf(state->result, "%s;%s;%s;%s;%s", DATAFILE_FE, DATAFILE_NH, DATAFILE_STEHLE, DATAFILE_VCS, DATAFILE_BPO);
+  return state->result;
+}
+
+extern "C" char const *SME_DLL GetLibraryPath(int n, void *arg[],  GlobalState * state)
+{
+  sprintf(state->result, "%s", state->PATH);
+  return state->result;
 }
 
 /*
   Set SME library datafile location
   If smelib was installed using make install the default location should point to the data files already
 */
-extern "C" char const *SME_DLL SetLibraryPath(int n, void *arg[], struct GlobalState state)
+extern "C" char const *SME_DLL SetLibraryPath(int n, void *arg[],  GlobalState * state)
 {
-  state.PATHLEN = 0;
+  state->PATHLEN = 0;
   if (n == 1)
   {
-    state.PATHLEN = (*(IDL_STRING *)arg[0]).slen;
-    strncpy(state.PATH, (*(IDL_STRING *)arg[0]).s, state.PATHLEN); /* Copy path to the Hydrogen line data files */
-    state.PATH[state.PATHLEN] = '\0';
-    state.change_byte_order = 1;
-    state.change_byte_order = (*((char *)(&state.change_byte_order))) ? 0 : 1; /* Check if big-endian than need to change byte order */
+    state->PATHLEN = (*(IDL_STRING *)arg[0]).slen;
+    strncpy(state->PATH, (*(IDL_STRING *)arg[0]).s, state->PATHLEN); /* Copy path to the Hydrogen line data files */
+    state->PATH[state->PATHLEN] = '\0';
+    state->change_byte_order = 1;
+    state->change_byte_order = (*((char *)(&state->change_byte_order))) ? 0 : 1; /* Check if big-endian than need to change byte order */
     return &OK_response;
   }
-  strcpy(state.result, "No path was specified");
-  return state.result;
+  strcpy(state->result, "No path was specified");
+  return state->result;
 }
 
-extern "C" char const *SME_DLL InputWaveRange(int n, void *arg[], struct GlobalState state) /* Read in Wavelength range */
+extern "C" char const *SME_DLL InputWaveRange(int n, void *arg[],  GlobalState * state) /* Read in Wavelength range */
 {
   int i;
 
   if (n < 2)
   {
-    strcpy(state.result, "Only one argument found");
-    return state.result;
+    strcpy(state->result, "Only one argument found");
+    return state->result;
   }
-  if (state.flagWLRANGE)
+  if (state->flagWLRANGE)
   {
-    if (fabs(state.WFIRST - *(double *)arg[0]) < 1.e-3 &&
-        fabs(state.WLAST - *(double *)arg[1]) < 1.e-3)
+    if (fabs(state->WFIRST - *(double *)arg[0]) < 1.e-3 &&
+        fabs(state->WLAST - *(double *)arg[1]) < 1.e-3)
       return &OK_response;
   }
-  state.WFIRST = *(double *)arg[0];
-  state.WLAST = *(double *)arg[1];
-  if (state.WFIRST >= state.WLAST || state.WFIRST <= 0.0 || state.WLAST <= 0.)
+  state->WFIRST = *(double *)arg[0];
+  state->WLAST = *(double *)arg[1];
+  if (state->WFIRST >= state->WLAST || state->WFIRST <= 0.0 || state->WLAST <= 0.)
   {
-    state.flagWLRANGE = 0;
-    strcpy(state.result, "Wrong wavelength range");
-    return state.result;
+    state->flagWLRANGE = 0;
+    strcpy(state->result, "Wrong wavelength range");
+    return state->result;
   }
   else
   {
-    state.flagWLRANGE = 1;
-    state.flagCONTIN = 0;
+    state->flagWLRANGE = 1;
+    state->flagCONTIN = 0;
     return &OK_response;
   }
 }
 
-extern "C" char const *SME_DLL SetVWscale(int n, void *arg[], struct GlobalState state) /* Set van der Waals scaling factor */
+extern "C" char const *SME_DLL SetVWscale(int n, void *arg[],  GlobalState * state) /* Set van der Waals scaling factor */
 {
   if (n < 1)
   {
-    strcpy(state.result, "Not enough arguments");
-    return state.result;
+    strcpy(state->result, "Not enough arguments");
+    return state->result;
   }
-  state.VW_scale = *(double *)arg[0];
-  state.VW_scale = fabs(state.VW_scale);
+  state->VW_scale = *(double *)arg[0];
+  state->VW_scale = fabs(state->VW_scale);
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL SetH2broad(int n, void *arg[], struct GlobalState state) /* Set flag for H2 molecule */
+extern "C" char const *SME_DLL SetH2broad(int n, void *arg[],  GlobalState * state) /* Set flag for H2 molecule */
 {
-  state.flagH2broad = 1;
+  state->flagH2broad = 1;
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL ClearH2broad(int n, void *arg[], struct GlobalState state) /* Clear flag for H2 molecule */
+extern "C" char const *SME_DLL ClearH2broad(int n, void *arg[],  GlobalState * state) /* Clear flag for H2 molecule */
 {
-  state.flagH2broad = 0;
+  state->flagH2broad = 0;
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL InputLineList(int n, void *arg[], struct GlobalState state) /* Read in line list */
+extern "C" char const *SME_DLL InputLineList(int n, void *arg[],  GlobalState * state) /* Read in line list */
 {
   short l;
   int LINE, i;
@@ -333,287 +421,287 @@ extern "C" char const *SME_DLL InputLineList(int n, void *arg[], struct GlobalSt
   double GFLOG, GRLG10, GSLG10, GWLG10,
       *a1, *a2, *a3, *a4, *a5, *a6, *a7, *a8;
   /*
-   state.NLINES - NUMBERS OF SPECTRAL LINES;
+   state->NLINES - NUMBERS OF SPECTRAL LINES;
    For each line:
-   state.ION    - IONIZATION STAGE (1 - neutral, 2 - single ion, etc.)
-   state.WLCENT - UNSHIFTED CENTRAL WAVELENGTH (Angstroems);
-   state.EXCIT  - LOW LEVEL EXCITATION POTENTIAL IN eV;
-   GFLOG  - log(state.GF);
-   state.GAMRAD - RADIATION DAMPING (C1);
-   state.GAMQST - QUADRATIC STARK DUMPING (C4);
-   state.GAMVW  - VAN DER WAALS DUMPING (C6);
+   state->ION    - IONIZATION STAGE (1 - neutral, 2 - single ion, etc.)
+   state->WLCENT - UNSHIFTED CENTRAL WAVELENGTH (Angstroems);
+   state->EXCIT  - LOW LEVEL EXCITATION POTENTIAL IN eV;
+   GFLOG  - log(state->GF);
+   state->GAMRAD - RADIATION DAMPING (C1);
+   state->GAMQST - QUADRATIC STARK DUMPING (C4);
+   state->GAMVW  - VAN DER WAALS DUMPING (C6);
   */
   if (n < 2)
   {
-    strcpy(state.result, "Not enough arguments");
-    return state.result;
+    strcpy(state->result, "Not enough arguments");
+    return state->result;
   }
-  if (state.flagLINELIST)
+  if (state->flagLINELIST)
   {
-    if (state.spname != NULL)
-      FREE(state.spname);
-    if (state.SPINDEX != NULL)
-      FREE(state.SPINDEX);
-    if (state.ION != NULL)
-      FREE(state.ION);
-    if (state.MARK != NULL)
-      FREE(state.MARK);
-    if (state.AUTOION != NULL)
-      FREE(state.AUTOION);
-    if (state.WLCENT != NULL)
-      FREE(state.WLCENT);
-    if (state.EXCIT != NULL)
-      FREE(state.EXCIT);
-    if (state.GF != NULL)
-      FREE(state.GF);
-    if (state.GAMRAD != NULL)
-      FREE(state.GAMRAD);
-    if (state.GAMQST != NULL)
-      FREE(state.GAMQST);
-    if (state.GAMVW != NULL)
-      FREE(state.GAMVW);
-    if (state.ANSTEE != NULL)
-      FREE(state.ANSTEE);
-    if (state.IDHEL != NULL)
-      FREE(state.IDHEL);
-    if (state.ALMAX != NULL)
-      FREE(state.ALMAX);
-    if (state.Wlim_left != NULL)
-      FREE(state.Wlim_left);
-    if (state.Wlim_right != NULL)
-      FREE(state.Wlim_right);
-    state.flagLINELIST = 0;
+    if (state->spname != NULL)
+      FREE(state->spname);
+    if (state->SPINDEX != NULL)
+      FREE(state->SPINDEX);
+    if (state->ION != NULL)
+      FREE(state->ION);
+    if (state->MARK != NULL)
+      FREE(state->MARK);
+    if (state->AUTOION != NULL)
+      FREE(state->AUTOION);
+    if (state->WLCENT != NULL)
+      FREE(state->WLCENT);
+    if (state->EXCIT != NULL)
+      FREE(state->EXCIT);
+    if (state->GF != NULL)
+      FREE(state->GF);
+    if (state->GAMRAD != NULL)
+      FREE(state->GAMRAD);
+    if (state->GAMQST != NULL)
+      FREE(state->GAMQST);
+    if (state->GAMVW != NULL)
+      FREE(state->GAMVW);
+    if (state->ANSTEE != NULL)
+      FREE(state->ANSTEE);
+    if (state->IDHEL != NULL)
+      FREE(state->IDHEL);
+    if (state->ALMAX != NULL)
+      FREE(state->ALMAX);
+    if (state->Wlim_left != NULL)
+      FREE(state->Wlim_left);
+    if (state->Wlim_right != NULL)
+      FREE(state->Wlim_right);
+    state->flagLINELIST = 0;
   }
 
-  if (state.lineOPACITIES)
+  if (state->lineOPACITIES)
   {
-    for (i = 0; i < state.NRHOX; i++)
+    for (i = 0; i < state->NRHOX; i++)
     {
-      if (state.LINEOP[i] != NULL)
-        FREE(state.LINEOP[i]);
-      if (state.AVOIGT[i] != NULL)
-        FREE(state.AVOIGT[i]);
-      if (state.VVOIGT[i] != NULL)
-        FREE(state.VVOIGT[i]);
+      if (state->LINEOP[i] != NULL)
+        FREE(state->LINEOP[i]);
+      if (state->AVOIGT[i] != NULL)
+        FREE(state->AVOIGT[i]);
+      if (state->VVOIGT[i] != NULL)
+        FREE(state->VVOIGT[i]);
     }
-    state.lineOPACITIES = 0;
+    state->lineOPACITIES = 0;
   }
 
-  state.NLINES = *(int *)arg[0];
-  if (state.NLINES < 1)
+  state->NLINES = *(int *)arg[0];
+  if (state->NLINES < 1)
   {
-    state.flagLINELIST = 0;
-    strcpy(state.result, "No line list");
-    return state.result;
+    state->flagLINELIST = 0;
+    strcpy(state->result, "No line list");
+    return state->result;
   }
 
   a3 = (double *)arg[2]; /* Setup pointers to line parameters */
-  a3 += 2 * state.NLINES;
-  for (LINE = 0; LINE < state.NLINES - 1; LINE++)
+  a3 += 2 * state->NLINES;
+  for (LINE = 0; LINE < state->NLINES - 1; LINE++)
   {
     if (a3[LINE] > a3[LINE + 1]) /* Check that central wavelength are monotoneously increasing */
     {
-      state.flagLINELIST = 0;
-      strcpy(state.result, "Line list is not sorted in wavelength ascending order");
-      return state.result;
+      state->flagLINELIST = 0;
+      strcpy(state->result, "Line list is not sorted in wavelength ascending order");
+      return state->result;
     }
   }
 
-  CALLOC(state.spname, state.NLINES * 8, char);
-  CALLOC(state.SPINDEX, state.NLINES, int);
-  CALLOC(state.ION, state.NLINES, int);
-  CALLOC(state.MARK, state.NLINES, short);
-  CALLOC(state.AUTOION, state.NLINES, short);
-  CALLOC(state.WLCENT, state.NLINES, double);
-  CALLOC(state.EXCIT, state.NLINES, double);
-  CALLOC(state.GF, state.NLINES, double);
-  CALLOC(state.GAMRAD, state.NLINES, double);
-  CALLOC(state.GAMQST, state.NLINES, double);
-  CALLOC(state.GAMVW, state.NLINES, double);
-  CALLOC(state.ANSTEE, state.NLINES, int);
-  CALLOC(state.IDHEL, state.NLINES, short);
-  CALLOC(state.ALMAX, state.NLINES, double);
-  CALLOC(state.Wlim_left, state.NLINES, double);
-  CALLOC(state.Wlim_right, state.NLINES, double);
+  CALLOC(state->spname, state->NLINES * 8, char);
+  CALLOC(state->SPINDEX, state->NLINES, int);
+  CALLOC(state->ION, state->NLINES, int);
+  CALLOC(state->MARK, state->NLINES, short);
+  CALLOC(state->AUTOION, state->NLINES, short);
+  CALLOC(state->WLCENT, state->NLINES, double);
+  CALLOC(state->EXCIT, state->NLINES, double);
+  CALLOC(state->GF, state->NLINES, double);
+  CALLOC(state->GAMRAD, state->NLINES, double);
+  CALLOC(state->GAMQST, state->NLINES, double);
+  CALLOC(state->GAMVW, state->NLINES, double);
+  CALLOC(state->ANSTEE, state->NLINES, int);
+  CALLOC(state->IDHEL, state->NLINES, short);
+  CALLOC(state->ALMAX, state->NLINES, double);
+  CALLOC(state->Wlim_left, state->NLINES, double);
+  CALLOC(state->Wlim_right, state->NLINES, double);
 
-  if (state.Wlim_right == NULL)
+  if (state->Wlim_right == NULL)
   {
-    if (state.spname != NULL)
+    if (state->spname != NULL)
     {
-      FREE(state.spname);
+      FREE(state->spname);
     }
-    if (state.SPINDEX != NULL)
-      FREE(state.SPINDEX);
-    if (state.ION != NULL)
-      FREE(state.ION);
-    if (state.MARK != NULL)
-      FREE(state.MARK);
-    if (state.AUTOION != NULL)
-      FREE(state.AUTOION);
-    if (state.WLCENT != NULL)
-      FREE(state.WLCENT);
-    if (state.EXCIT != NULL)
-      FREE(state.EXCIT);
-    if (state.GF != NULL)
-      FREE(state.GF);
-    if (state.GAMRAD != NULL)
-      FREE(state.GAMRAD);
-    if (state.GAMQST != NULL)
-      FREE(state.GAMQST);
-    if (state.GAMVW != NULL)
-      FREE(state.GAMVW);
-    if (state.ANSTEE != NULL)
-      FREE(state.ANSTEE);
-    if (state.IDHEL != NULL)
-      FREE(state.IDHEL);
-    if (state.ALMAX != NULL)
-      FREE(state.ALMAX);
-    if (state.Wlim_left != NULL)
-      FREE(state.Wlim_left);
-    if (state.Wlim_right != NULL)
-      FREE(state.Wlim_right);
-    state.flagLINELIST = 0;
-    strcpy(state.result, "Not enough memory");
-    return state.result;
+    if (state->SPINDEX != NULL)
+      FREE(state->SPINDEX);
+    if (state->ION != NULL)
+      FREE(state->ION);
+    if (state->MARK != NULL)
+      FREE(state->MARK);
+    if (state->AUTOION != NULL)
+      FREE(state->AUTOION);
+    if (state->WLCENT != NULL)
+      FREE(state->WLCENT);
+    if (state->EXCIT != NULL)
+      FREE(state->EXCIT);
+    if (state->GF != NULL)
+      FREE(state->GF);
+    if (state->GAMRAD != NULL)
+      FREE(state->GAMRAD);
+    if (state->GAMQST != NULL)
+      FREE(state->GAMQST);
+    if (state->GAMVW != NULL)
+      FREE(state->GAMVW);
+    if (state->ANSTEE != NULL)
+      FREE(state->ANSTEE);
+    if (state->IDHEL != NULL)
+      FREE(state->IDHEL);
+    if (state->ALMAX != NULL)
+      FREE(state->ALMAX);
+    if (state->Wlim_left != NULL)
+      FREE(state->Wlim_left);
+    if (state->Wlim_right != NULL)
+      FREE(state->Wlim_right);
+    state->flagLINELIST = 0;
+    strcpy(state->result, "Not enough memory");
+    return state->result;
   }
 
   a0 = (IDL_STRING *)arg[1]; /* Pointer to the list of species    */
   a1 = (double *)arg[2];     /* Setup pointers to line parameters */
-  a2 = a1 + state.NLINES;
-  a3 = a2 + state.NLINES;
-  a4 = a3 + state.NLINES;
-  a5 = a4 + state.NLINES;
-  a6 = a5 + state.NLINES;
-  a7 = a6 + state.NLINES;
-  a8 = a7 + state.NLINES;
+  a2 = a1 + state->NLINES;
+  a3 = a2 + state->NLINES;
+  a4 = a3 + state->NLINES;
+  a5 = a4 + state->NLINES;
+  a6 = a5 + state->NLINES;
+  a7 = a6 + state->NLINES;
+  a8 = a7 + state->NLINES;
 
-  state.VW_scale = 1;
-  for (LINE = 0; LINE < state.NLINES; LINE++)
+  state->VW_scale = 1;
+  for (LINE = 0; LINE < state->NLINES; LINE++)
   {
-    /* state.spname will be passed to FORTRAN, so no trailing zero's, fixed length
+    /* state->spname will be passed to FORTRAN, so no trailing zero's, fixed length
    padded with spaces instead */
-    memcpy(state.spname + 8 * LINE, a0[LINE].s, a0[LINE].slen);
+    memcpy(state->spname + 8 * LINE, a0[LINE].s, a0[LINE].slen);
     if (a0[LINE].slen < 8)
       for (l = a0[LINE].slen; l < 8; l++)
-        state.spname[8 * LINE + l] = ' ';
-    //    state.ION[LINE]   =(int)a2[LINE]; /* Ionization            */
+        state->spname[8 * LINE + l] = ' ';
+    //    state->ION[LINE]   =(int)a2[LINE]; /* Ionization            */
     for (l = 0; l < a0[LINE].slen; l++)
       if (*(a0[LINE].s + l) == ' ')
         break;
-    state.ION[LINE] = (l == a0[LINE].slen) ? 1 : atoi(a0[LINE].s + l + 1);
-    state.WLCENT[LINE] = a3[LINE];               /* Central wavelength    */
-    state.EXCIT[LINE] = a4[LINE];                /* Excitation            */
+    state->ION[LINE] = (l == a0[LINE].slen) ? 1 : atoi(a0[LINE].s + l + 1);
+    state->WLCENT[LINE] = a3[LINE];               /* Central wavelength    */
+    state->EXCIT[LINE] = a4[LINE];                /* Excitation            */
     GFLOG = a5[LINE];                      /* Oscillator strength   */
-    state.GAMRAD[LINE] = a6[LINE];               /* Radiative damping     */
-    state.GAMQST[LINE] = a7[LINE];               /* Stark damping         */
-    state.GAMVW[LINE] = a8[LINE];                /* Van der Waals damping */
-    state.MARK[LINE] = -1;                       /* Initialize line flag  */
-    state.Wlim_left[LINE] = state.WLCENT[LINE] - 150.; /* Initialize line contribution limits */
-    state.Wlim_right[LINE] = state.WLCENT[LINE] + 150.;
+    state->GAMRAD[LINE] = a6[LINE];               /* Radiative damping     */
+    state->GAMQST[LINE] = a7[LINE];               /* Stark damping         */
+    state->GAMVW[LINE] = a8[LINE];                /* Van der Waals damping */
+    state->MARK[LINE] = -1;                       /* Initialize line flag  */
+    state->Wlim_left[LINE] = state->WLCENT[LINE] - 150.; /* Initialize line contribution limits */
+    state->Wlim_right[LINE] = state->WLCENT[LINE] + 150.;
 
-    if (state.EXCIT[LINE] > 100.)
-      state.EXCIT[LINE] = state.EXCIT[LINE] / 8065.544;
-    if (state.GAMRAD[LINE] < 20. && state.GAMRAD[LINE] > 0.)
-      state.GAMRAD[LINE] = pow10(state.GAMRAD[LINE]);
+    if (state->EXCIT[LINE] > 100.)
+      state->EXCIT[LINE] = state->EXCIT[LINE] / 8065.544;
+    if (state->GAMRAD[LINE] < 20. && state->GAMRAD[LINE] > 0.)
+      state->GAMRAD[LINE] = pow10(state->GAMRAD[LINE]);
     GRLG10 = 0.;
-    if (state.GAMRAD[LINE] > 0.)
-      GRLG10 = log10(state.GAMRAD[LINE]);
-    if (strncmp(state.spname + 8 * LINE, "H 1", 3)) /* Non-Hydrogen line */
+    if (state->GAMRAD[LINE] > 0.)
+      GRLG10 = log10(state->GAMRAD[LINE]);
+    if (strncmp(state->spname + 8 * LINE, "H 1", 3)) /* Non-Hydrogen line */
     {
-      if (state.GAMQST[LINE] < 0.)
-        state.GAMQST[LINE] = pow10(state.GAMQST[LINE]);
+      if (state->GAMQST[LINE] < 0.)
+        state->GAMQST[LINE] = pow10(state->GAMQST[LINE]);
       GSLG10 = 0.;
-      if (state.GAMQST[LINE] > 0.)
-        GSLG10 = log10(state.GAMQST[LINE]);
-      if (state.GAMVW[LINE] < 0.)
+      if (state->GAMQST[LINE] > 0.)
+        GSLG10 = log10(state->GAMQST[LINE]);
+      if (state->GAMVW[LINE] < 0.)
       {
-        state.GAMVW[LINE] = pow10(state.GAMVW[LINE]);
+        state->GAMVW[LINE] = pow10(state->GAMVW[LINE]);
         GWLG10 = 0.;
-        if (state.GAMVW[LINE] > 0.)
-          GWLG10 = log10(state.GAMVW[LINE]);
-        state.ANSTEE[LINE] = 0;
+        if (state->GAMVW[LINE] > 0.)
+          GWLG10 = log10(state->GAMVW[LINE]);
+        state->ANSTEE[LINE] = 0;
       }
-      else if (state.GAMVW[LINE] > 10.)
+      else if (state->GAMVW[LINE] > 10.)
       {
         GWLG10 = 0.;
-        state.ANSTEE[LINE] = 1;
+        state->ANSTEE[LINE] = 1;
       }
     }
-    else /* For hydrogen lines state.GAMQST & state.GAMVW have special meaning */
+    else /* For hydrogen lines state->GAMQST & state->GAMVW have special meaning */
     {
       int nLO, nUP;
-      nLO = GSLG10 = state.GAMQST[LINE];
-      nUP = GWLG10 = state.GAMVW[LINE];
+      nLO = GSLG10 = state->GAMQST[LINE];
+      nUP = GWLG10 = state->GAMVW[LINE];
       if (nUP <= nLO || nLO <= 0) // Incorrect Hydrogen line format. Ignore it.
       {
         printf("SME will not compute H I line at %g A because energy level numbers are incorrect:\n",
-               state.WLCENT[LINE]);
+               state->WLCENT[LINE]);
         printf("n_lower=%d, n_upper=%d\n", nLO, nUP);
-        state.MARK[LINE] = 2;
+        state->MARK[LINE] = 2;
       }
     }
 
-    state.GF[LINE] = pow10(GFLOG);
+    state->GF[LINE] = pow10(GFLOG);
   }
-  state.flagLINELIST = 1;
+  state->flagLINELIST = 1;
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL OutputLineList(int n, void *arg[], struct GlobalState state) /* Return line list */
+extern "C" char const *SME_DLL OutputLineList(int n, void *arg[],  GlobalState * state) /* Return line list */
 {
   int LINE, Nlines;
   double *a1;
   /*
-   state.NLINES - NUMBERS OF SPECTRAL LINES;
+   state->NLINES - NUMBERS OF SPECTRAL LINES;
    For each line:
-   state.GAMRAD - RADIATION DAMPING (C1);
-   state.GAMQST - QUADRATIC STARK DUMPING (C4);
-   state.GAMVW  - VAN DER WAALS DUMPING (C6);
+   state->GAMRAD - RADIATION DAMPING (C1);
+   state->GAMQST - QUADRATIC STARK DUMPING (C4);
+   state->GAMVW  - VAN DER WAALS DUMPING (C6);
 */
 
   if (n < 2)
   {
-    strcpy(state.result, "Not enough arguments");
-    return state.result;
+    strcpy(state->result, "Not enough arguments");
+    return state->result;
   }
-  if (!state.flagLINELIST)
+  if (!state->flagLINELIST)
   {
-    strcpy(state.result, "No line list");
-    return state.result;
+    strcpy(state->result, "No line list");
+    return state->result;
   }
   Nlines = *(int *)arg[0];
-  if (state.NLINES < 1)
+  if (state->NLINES < 1)
   {
-    state.flagLINELIST = 0;
-    strcpy(state.result, "No line list");
-    return state.result;
+    state->flagLINELIST = 0;
+    strcpy(state->result, "No line list");
+    return state->result;
   }
   a1 = (double *)arg[1];
 
-  for (LINE = 0; LINE < min(Nlines, state.NLINES); LINE++)
+  for (LINE = 0; LINE < min(Nlines, state->NLINES); LINE++)
   {
-    a1[6 * LINE] = state.WLCENT[LINE];
-    a1[6 * LINE + 1] = state.GF[LINE];
-    a1[6 * LINE + 2] = state.EXCIT[LINE];
-    a1[6 * LINE + 3] = (state.GAMRAD[LINE] > 0.) ? log10(state.GAMRAD[LINE]) : 0.; /* Radiative damping     */
-    if (strncmp(state.spname + 8 * LINE, "H ", 2))                           /* Non-Hydrogen line     */
+    a1[6 * LINE] = state->WLCENT[LINE];
+    a1[6 * LINE + 1] = state->GF[LINE];
+    a1[6 * LINE + 2] = state->EXCIT[LINE];
+    a1[6 * LINE + 3] = (state->GAMRAD[LINE] > 0.) ? log10(state->GAMRAD[LINE]) : 0.; /* Radiative damping     */
+    if (strncmp(state->spname + 8 * LINE, "H ", 2))                           /* Non-Hydrogen line     */
     {
-      a1[6 * LINE + 4] = (state.GAMQST[LINE] > 0.) ? log10(state.GAMQST[LINE]) : 0.; /* Stark damping         */
-      a1[6 * LINE + 5] = (state.GAMVW[LINE] > 0. &&
-                          state.GAMVW[LINE] < 5.)
-                             ? log10(state.GAMVW[LINE])
-                             : state.GAMVW[LINE]; /* Van der Waals damping */
+      a1[6 * LINE + 4] = (state->GAMQST[LINE] > 0.) ? log10(state->GAMQST[LINE]) : 0.; /* Stark damping         */
+      a1[6 * LINE + 5] = (state->GAMVW[LINE] > 0. &&
+                          state->GAMVW[LINE] < 5.)
+                             ? log10(state->GAMVW[LINE])
+                             : state->GAMVW[LINE]; /* Van der Waals damping */
     }
     else /* Hydrogen line         */
     {
-      a1[6 * LINE + 4] = state.GAMQST[LINE]; /* Stark damping         */
-      a1[6 * LINE + 5] = state.GAMVW[LINE];  /* Van der Waals damping */
+      a1[6 * LINE + 4] = state->GAMQST[LINE]; /* Stark damping         */
+      a1[6 * LINE + 5] = state->GAMVW[LINE];  /* Van der Waals damping */
     }
   }
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL UpdateLineList(int n, void *arg[], struct GlobalState state) /* Change line list parameters */
+extern "C" char const *SME_DLL UpdateLineList(int n, void *arg[],  GlobalState * state) /* Change line list parameters */
 {
   static char ERRMES[60];
   char tmpname[8];
@@ -625,24 +713,24 @@ extern "C" char const *SME_DLL UpdateLineList(int n, void *arg[], struct GlobalS
    NUPDTE - NUMBERS OF SPECTRAL LINES;
    INDEX  - ARRAY OF INDICES IN EXISTING LINE LIST;
    For each line:
-   state.ION    - IONIZATION STAGE (1 - neutral)
-   state.WLCENT - UNSHIFTED CENTRAL WAVELENGTH (ANGSTREMS);
-   state.EXCIT  - LOW LEVEL EXCITATION POTENTIAL IN EV;
-   GFLOG  - log(state.GF);
-   state.GAMRAD - RADIATION DAMPING (C1);
-   state.GAMQST - QUADRATIC STARK DUMPING (C4);
-   state.GAMVW  - VAN DER WAALS DUMPING (C6).
+   state->ION    - IONIZATION STAGE (1 - neutral)
+   state->WLCENT - UNSHIFTED CENTRAL WAVELENGTH (ANGSTREMS);
+   state->EXCIT  - LOW LEVEL EXCITATION POTENTIAL IN EV;
+   GFLOG  - log(state->GF);
+   state->GAMRAD - RADIATION DAMPING (C1);
+   state->GAMQST - QUADRATIC STARK DUMPING (C4);
+   state->GAMVW  - VAN DER WAALS DUMPING (C6).
 */
 
   if (n < 4)
   {
-    strcpy(state.result, "Not enough arguments");
-    return state.result;
+    strcpy(state->result, "Not enough arguments");
+    return state->result;
   }
-  if (!state.flagLINELIST)
+  if (!state->flagLINELIST)
   {
-    strcpy(state.result, "Line list was not set. Cannot update.");
-    return state.result;
+    strcpy(state->result, "Line list was not set. Cannot update.");
+    return state->result;
   }
   NUPDTE = *(short *)arg[0];
   if (NUPDTE < 1)
@@ -664,13 +752,13 @@ extern "C" char const *SME_DLL UpdateLineList(int n, void *arg[], struct GlobalS
     short i, l;
 
     i = INDEX[LINE];
-    if (i < 0 || i >= state.NLINES)
+    if (i < 0 || i >= state->NLINES)
     {
-      strcpy(state.result, "Replacement index is out of range");
-      return state.result;
+      strcpy(state->result, "Replacement index is out of range");
+      return state->result;
     }
 
-    /* state.spname will be passed to FORTRAN, so no trailing
+    /* state->spname will be passed to FORTRAN, so no trailing
    zero's, fixed length padded with spaces instead */
 
     memcpy(tmpname, a0[LINE].s, a0[LINE].slen);
@@ -685,52 +773,52 @@ extern "C" char const *SME_DLL UpdateLineList(int n, void *arg[], struct GlobalS
     /* Make sure we are talking about the same line.
    Check species name and excitation potential */
 
-    if (strncmp(state.spname + 8 * i, tmpname, 8) || fabs(EXC - state.EXCIT[i]) > 0.005)
+    if (strncmp(state->spname + 8 * i, tmpname, 8) || fabs(EXC - state->EXCIT[i]) > 0.005)
     {
       sprintf(ERRMES, "Attempt to replace line %d with another line", i);
       printf("Subst: %10.4f, '%s', %f, %f\n", WW, tmpname, EXC, a5[LINE]);
-      printf("Orig:  %10.4f, '%4s', %f, %f\n", state.WLCENT[i], state.spname + 8 * i, state.EXCIT[i],
-             log10(state.GF[i]));
+      printf("Orig:  %10.4f, '%4s', %f, %f\n", state->WLCENT[i], state->spname + 8 * i, state->EXCIT[i],
+             log10(state->GF[i]));
       return ERRMES;
     }
 
-    state.WLCENT[i] = WW;
+    state->WLCENT[i] = WW;
     GFLOG = a5[LINE];
-    state.GAMRAD[i] = a6[LINE];
-    state.GAMQST[i] = a7[LINE];
-    state.GAMVW[i] = a8[LINE];
-    if (state.GAMRAD[i] < 20. && state.GAMRAD[i] > 0.)
-      state.GAMRAD[i] = pow10(state.GAMRAD[i]);
+    state->GAMRAD[i] = a6[LINE];
+    state->GAMQST[i] = a7[LINE];
+    state->GAMVW[i] = a8[LINE];
+    if (state->GAMRAD[i] < 20. && state->GAMRAD[i] > 0.)
+      state->GAMRAD[i] = pow10(state->GAMRAD[i]);
     GRLG10 = 0.;
-    if (state.GAMRAD[i] > 0.)
-      GRLG10 = log10(state.GAMRAD[i]);
-    if (strncmp(state.spname + 8 * i, "H ", 2)) /* Non-Hydrogen line */
+    if (state->GAMRAD[i] > 0.)
+      GRLG10 = log10(state->GAMRAD[i]);
+    if (strncmp(state->spname + 8 * i, "H ", 2)) /* Non-Hydrogen line */
     {
-      if (state.GAMQST[i] < 0.)
-        state.GAMQST[i] = pow10(state.GAMQST[i]);
+      if (state->GAMQST[i] < 0.)
+        state->GAMQST[i] = pow10(state->GAMQST[i]);
       GSLG10 = 0.;
-      if (state.GAMQST[i] > 0.)
-        GSLG10 = log10(state.GAMQST[i]);
-      if (state.GAMVW[i] < 0.)
-        state.GAMVW[i] = pow10(state.GAMVW[i]);
+      if (state->GAMQST[i] > 0.)
+        GSLG10 = log10(state->GAMQST[i]);
+      if (state->GAMVW[i] < 0.)
+        state->GAMVW[i] = pow10(state->GAMVW[i]);
       GWLG10 = 0.;
-      if (state.GAMVW[i] > 0.)
-        GWLG10 = log10(state.GAMVW[i]);
+      if (state->GAMVW[i] > 0.)
+        GWLG10 = log10(state->GAMVW[i]);
     }
     else /* For hydrogen lines this parameters have special meaning */
     {
-      GSLG10 = state.GAMQST[i];
-      GWLG10 = state.GAMVW[i];
+      GSLG10 = state->GAMQST[i];
+      GWLG10 = state->GAMVW[i];
     }
-    state.GF[i] = pow10(GFLOG);
-    state.MARK[i] = -1;                              /* Mark line for is unknown in terms of opacity contribution */
-    state.Wlim_left[i] = max(state.WLCENT[i] - 1000., 0.); /* Initialize line contribution limits */
-    state.Wlim_right[i] = min(state.WLCENT[i] + 1000., 20000000.);
+    state->GF[i] = pow10(GFLOG);
+    state->MARK[i] = -1;                              /* Mark line for is unknown in terms of opacity contribution */
+    state->Wlim_left[i] = max(state->WLCENT[i] - 1000., 0.); /* Initialize line contribution limits */
+    state->Wlim_right[i] = min(state->WLCENT[i] + 1000., 20000000.);
   }
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL InputModel(int n, void *arg[], struct GlobalState state) /* Read in model atmosphere */
+extern "C" char const *SME_DLL InputModel(int n, void *arg[],  GlobalState * state) /* Read in model atmosphere */
 {
   int IM, im, i, arg_offset;
   short *ifop, l;
@@ -742,35 +830,35 @@ extern "C" char const *SME_DLL InputModel(int n, void *arg[], struct GlobalState
 
   if (n < 12)
   {
-    strcpy(state.result, "Not enough arguments");
-    return state.result;
+    strcpy(state->result, "Not enough arguments");
+    return state->result;
   }
 
   // Free invalidated arrays
-  if (state.lineOPACITIES)
+  if (state->lineOPACITIES)
   {
-    for (L = 0; L < state.NRHOX; L++)
+    for (L = 0; L < state->NRHOX; L++)
     {
-      FREE(state.LINEOP[L]);
-      FREE(state.AVOIGT[L]);
-      FREE(state.VVOIGT[L]);
+      FREE(state->LINEOP[L]);
+      FREE(state->AVOIGT[L]);
+      FREE(state->VVOIGT[L]);
     }
   }
 
-  state.flagMODEL = 0;
-  state.flagCONTIN = 0;
-  state.lineOPACITIES = 0;
+  state->flagMODEL = 0;
+  state->flagCONTIN = 0;
+  state->lineOPACITIES = 0;
 
-  state.NRHOX = *(short *)arg[0];
-  if (state.NRHOX > MOSIZE)
+  state->NRHOX = *(short *)arg[0];
+  if (state->NRHOX > MOSIZE)
   {
-    sprintf(state.result, "SME library supports atmospheric model with maximum %d depth layers", MOSIZE);
-    return state.result;
+    sprintf(state->result, "SME library supports atmospheric model with maximum %d depth layers", MOSIZE);
+    return state->result;
   }
 
-  state.TEFF = *(double *)arg[1];
-  state.GRAV = *(double *)arg[2];
-  state.WLSTD = *(double *)arg[3];
+  state->TEFF = *(double *)arg[1];
+  state->GRAV = *(double *)arg[2];
+  state->WLSTD = *(double *)arg[3];
 
   s = (IDL_STRING *)arg[4];
   l = min(4, s->slen);
@@ -782,37 +870,37 @@ extern "C" char const *SME_DLL InputModel(int n, void *arg[], struct GlobalState
   // Adding provision for spherical models
   if (!strncmp(motype, "TAU", 3))
   {
-    state.MOTYPE = 0;
+    state->MOTYPE = 0;
     arg_offset = 0;
-    state.RADIUS = -1.;
+    state->RADIUS = -1.;
   }
   else if (!strncmp(motype, "RHOX", 4))
   {
-    state.MOTYPE = 1;
+    state->MOTYPE = 1;
     arg_offset = 0;
-    state.RADIUS = -1.;
+    state->RADIUS = -1.;
   }
   else if (!strncmp(motype, "SPH", 3))
   {
-    state.MOTYPE = 3;
+    state->MOTYPE = 3;
     arg_offset = 1;
-    state.RADIUS = *(double *)arg[5];
+    state->RADIUS = *(double *)arg[5];
   }
 
   ifop = (short *)arg[5 + arg_offset];
   for (i = 0; i < 20; i++)
-    state.IFOP[i] = ifop[i];
+    state->IFOP[i] = ifop[i];
 
   // Allocate space for the line opacities and Voigt parameters
-  if (!state.lineOPACITIES)
+  if (!state->lineOPACITIES)
   {
-    for (L = 0; L < state.NRHOX; L++)
+    for (L = 0; L < state->NRHOX; L++)
     {
-      CALLOC(state.LINEOP[L], state.NLINES, double);
-      CALLOC(state.AVOIGT[L], state.NLINES, double);
-      CALLOC(state.VVOIGT[L], state.NLINES, double);
+      CALLOC(state->LINEOP[L], state->NLINES, double);
+      CALLOC(state->AVOIGT[L], state->NLINES, double);
+      CALLOC(state->VVOIGT[L], state->NLINES, double);
     }
-    state.lineOPACITIES = 1;
+    state->lineOPACITIES = 1;
   }
 
   a1 = (double *)arg[6 + arg_offset];
@@ -821,119 +909,119 @@ extern "C" char const *SME_DLL InputModel(int n, void *arg[], struct GlobalState
   a4 = (double *)arg[9 + arg_offset];
   a5 = (double *)arg[10 + arg_offset];
   a6 = (double *)arg[11 + arg_offset];
-  if (state.MOTYPE == 3)
+  if (state->MOTYPE == 3)
     a7 = (double *)arg[12 + arg_offset];
 
-  for (IM = im = 0; IM < state.NRHOX; im++, IM++) /* Copy model on the original grid */
+  for (IM = im = 0; IM < state->NRHOX; im++, IM++) /* Copy model on the original grid */
   {                                         /* Intermediate points are found   */
-    state.RHOX[IM] = a1[im];                      /* by iterpolation                 */
-    state.T[IM] = a2[im];
-    state.XNE[IM] = a3[im];
-    state.XNA[IM] = a4[im];
-    state.RHO[IM] = a5[im];
-    state.VTURB[IM] = a6[im];
-    if (state.MOTYPE == 3)
-      state.RAD_ATMO[IM] = a7[im];
+    state->RHOX[IM] = a1[im];                      /* by iterpolation                 */
+    state->T[IM] = a2[im];
+    state->XNE[IM] = a3[im];
+    state->XNA[IM] = a4[im];
+    state->RHO[IM] = a5[im];
+    state->VTURB[IM] = a6[im];
+    if (state->MOTYPE == 3)
+      state->RAD_ATMO[IM] = a7[im];
   }
 
-  for (IM = 0; IM < state.NRHOX; IM++)
+  for (IM = 0; IM < state->NRHOX; IM++)
   {
-    state.TKEV[IM] = 8.6171e-5 * state.T[IM];  // Temperature in eV
-    state.TK[IM] = 1.38054e-16 * state.T[IM];  // Temperature times Boltzmann factor kT
+    state->TKEV[IM] = 8.6171e-5 * state->T[IM];  // Temperature in eV
+    state->TK[IM] = 1.38054e-16 * state->T[IM];  // Temperature times Boltzmann factor kT
                                    // NP changed the value of the Planck constant from 6.6256e-27 in the line below 22-Jan-2018
-    state.HKT[IM] = 6.6261e-27 / state.TK[IM]; // Plank constant divided by kT h/kT (h is in erg*s)
-    state.TLOG[IM] = log(state.T[IM]);
+    state->HKT[IM] = 6.6261e-27 / state->TK[IM]; // Plank constant divided by kT h/kT (h is in erg*s)
+    state->TLOG[IM] = log(state->T[IM]);
   }
-  state.flagMODEL = 1;
+  state->flagMODEL = 1;
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL InputDepartureCoefficients(int n, void *arg[], struct GlobalState state)
+extern "C" char const *SME_DLL InputDepartureCoefficients(int n, void *arg[],  GlobalState * state)
 {
   /* Reads in NLTE b's  for one transition at a time. The calling sequence
-   requires a pointer to a double array of the size 2*state.NRHOX and an integer
+   requires a pointer to a double array of the size 2*state->NRHOX and an integer
    with the transition number. The logic of handling NLTE is the following:
 
    1) The first call is detected using a global static flag initNBLTE.
-      At this moment we set the "default" departure coefficients state.LTE_b to 1,
+      At this moment we set the "default" departure coefficients state->LTE_b to 1,
       allocate the the vector of pointer the size of the line list and set them
-      all to default and allocate the vector of flags state.flagNLTE all set to 0 (false)
-   2) The initialization flag (state.initNLTE) is set to true
-   3) The state.BNLTE_low and state.BNLTE_upp corresponding to the specified line are allocated
-      state.NRHOX memory and the input array is copied there. The corresponding state.flagNLTE
+      all to default and allocate the vector of flags state->flagNLTE all set to 0 (false)
+   2) The initialization flag (state->initNLTE) is set to true
+   3) The state->BNLTE_low and state->BNLTE_upp corresponding to the specified line are allocated
+      state->NRHOX memory and the input array is copied there. The corresponding state->flagNLTE
       is set to 1 (true)
    4) Subsequent calls to the routine may allocate memory to other pointers or reset
       already existing once. In this case memory is reallocated to avoid leaks if
-      state.NRHOX changes
+      state->NRHOX changes
    5) There no need to reset NLTE system in a given run, only in the end of calculations
   */
   int im, line;
   double *b;
 
-  if (n < 2) // We assume that the caller will provide 2*state.NRHOX element array, so
+  if (n < 2) // We assume that the caller will provide 2*state->NRHOX element array, so
              // be careful on the IDL side. The other argument is the line number.
   {
-    strcpy(state.result, "No arguments found");
-    return state.result;
+    strcpy(state->result, "No arguments found");
+    return state->result;
   }
-  if (!state.flagMODEL)
+  if (!state->flagMODEL)
   {
-    strcpy(state.result, "Model atmosphere must be set before departure coefficients");
-    return state.result;
+    strcpy(state->result, "Model atmosphere must be set before departure coefficients");
+    return state->result;
   }
-  if (!state.flagLINELIST)
+  if (!state->flagLINELIST)
   {
-    strcpy(state.result, "Line list must be set before departure coefficients");
-    return state.result;
+    strcpy(state->result, "Line list must be set before departure coefficients");
+    return state->result;
   }
 
-  if (!state.initNLTE) // Initialize the departure arrays for the first time
+  if (!state->initNLTE) // Initialize the departure arrays for the first time
   {
     for (im = 0; im < MOSIZE; im++)
-      state.LTE_b[im] = 1.; // Initialize the default LTE b's
+      state->LTE_b[im] = 1.; // Initialize the default LTE b's
 
-    CALLOC(state.BNLTE_low, state.NLINES, double *);
-    CALLOC(state.BNLTE_upp, state.NLINES, double *);
-    CALLOC(state.flagNLTE, state.NLINES, short);
-    for (line = 0; line < state.NLINES; line++) // Set all lines to LTE first
+    CALLOC(state->BNLTE_low, state->NLINES, double *);
+    CALLOC(state->BNLTE_upp, state->NLINES, double *);
+    CALLOC(state->flagNLTE, state->NLINES, short);
+    for (line = 0; line < state->NLINES; line++) // Set all lines to LTE first
     {
-      state.BNLTE_low[line] = state.LTE_b;
-      state.BNLTE_upp[line] = state.LTE_b;
-      state.flagNLTE[line] = 0;
+      state->BNLTE_low[line] = state->LTE_b;
+      state->BNLTE_upp[line] = state->LTE_b;
+      state->flagNLTE[line] = 0;
     }
-    state.allocated_NLTE_lines = state.NLINES;
-    state.initNLTE = 1;
+    state->allocated_NLTE_lines = state->NLINES;
+    state->initNLTE = 1;
   } // End of initialization
 
   b = (double *)arg[0];
   line = *(int *)arg[1];
 
-  if (line < 0 || line >= state.allocated_NLTE_lines)
+  if (line < 0 || line >= state->allocated_NLTE_lines)
   {
-    strcpy(state.result, "Attempt to set departure coefficients for non-existing transition");
-    return state.result;
+    strcpy(state->result, "Attempt to set departure coefficients for non-existing transition");
+    return state->result;
   }
 
-  if (state.flagNLTE[line])
+  if (state->flagNLTE[line])
   {
-    FREE(state.BNLTE_low[line]);
-    FREE(state.BNLTE_upp[line]);
+    FREE(state->BNLTE_low[line]);
+    FREE(state->BNLTE_upp[line]);
   }
 
-  CALLOC(state.BNLTE_low[line], state.NRHOX, double); // Allocate departure coefficient arrays
-  CALLOC(state.BNLTE_upp[line], state.NRHOX, double);
+  CALLOC(state->BNLTE_low[line], state->NRHOX, double); // Allocate departure coefficient arrays
+  CALLOC(state->BNLTE_upp[line], state->NRHOX, double);
 
-  for (im = 0; im < state.NRHOX; im++) // Copy departure coefficients
+  for (im = 0; im < state->NRHOX; im++) // Copy departure coefficients
   {
-    state.BNLTE_low[line][im] = *b++;
-    state.BNLTE_upp[line][im] = *b++;
+    state->BNLTE_low[line][im] = *b++;
+    state->BNLTE_upp[line][im] = *b++;
   }
-  state.flagNLTE[line] = 1;
+  state->flagNLTE[line] = 1;
 
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL GetDepartureCoefficients(int n, void *arg[], struct GlobalState state) /* Get NLTE b's for specific line */
+extern "C" char const *SME_DLL GetDepartureCoefficients(int n, void *arg[],  GlobalState * state) /* Get NLTE b's for specific line */
 {
   int im;
   int nrhox, line;
@@ -941,37 +1029,37 @@ extern "C" char const *SME_DLL GetDepartureCoefficients(int n, void *arg[], stru
 
   if (n < 3) // Check if arguments are present
   {
-    strcpy(state.result, "Requires an array pointer, its length and line number");
-    return state.result;
+    strcpy(state->result, "Requires an array pointer, its length and line number");
+    return state->result;
   }
 
-  if (!state.initNLTE)
+  if (!state->initNLTE)
   {
-    strcpy(state.result, "NLTE mode was not initialized. No departure coefficients available.");
-    return state.result;
+    strcpy(state->result, "NLTE mode was not initialized. No departure coefficients available.");
+    return state->result;
   }
 
   line = *(int *)arg[2];
-  if (line < 0 || line >= state.NLINES)
+  if (line < 0 || line >= state->NLINES)
   {
-    strcpy(state.result, "Attempt to set departure coefficients for non-existing transition");
-    return state.result;
+    strcpy(state->result, "Attempt to set departure coefficients for non-existing transition");
+    return state->result;
   }
 
   b = (double *)arg[0];
   nrhox = *(int *)arg[1];
 
-  if (state.flagNLTE[line])
+  if (state->flagNLTE[line])
   {
-    for (im = 0; im < min(nrhox, state.NRHOX); im++)
+    for (im = 0; im < min(nrhox, state->NRHOX); im++)
     {
-      *b++ = state.BNLTE_low[line][im];
-      *b++ = state.BNLTE_upp[line][im];
+      *b++ = state->BNLTE_low[line][im];
+      *b++ = state->BNLTE_upp[line][im];
     }
   }
   else
   {
-    for (im = 0; im < min(nrhox, state.NRHOX); im++)
+    for (im = 0; im < min(nrhox, state->NRHOX); im++)
     {
       *b++ = 1.e0;
       *b++ = 1.e0;
@@ -981,23 +1069,23 @@ extern "C" char const *SME_DLL GetDepartureCoefficients(int n, void *arg[], stru
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL GetNLTEflags(int n, void *arg[], struct GlobalState state) /* Get NLTE flag for every line */
+extern "C" char const *SME_DLL GetNLTEflags(int n, void *arg[],  GlobalState * state) /* Get NLTE flag for every line */
 {
   int nlines, line;
   short *b;
 
   if (n < 2) // Check if arguments are present
   {
-    strcpy(state.result, "GetNLTELines: Requires an array pointer and its length");
-    return state.result;
+    strcpy(state->result, "GetNLTELines: Requires an array pointer and its length");
+    return state->result;
   }
 
   b = (short *)arg[0];
   nlines = *(int *)arg[1];
 
-  if (!state.initNLTE)
+  if (!state->initNLTE)
   {
-    for (line = 0; line < min(nlines, state.NLINES); line++)
+    for (line = 0; line < min(nlines, state->NLINES); line++)
     {
       b[line] = 0;
     }
@@ -1005,128 +1093,128 @@ extern "C" char const *SME_DLL GetNLTEflags(int n, void *arg[], struct GlobalSta
     ;
   }
 
-  for (line = 0; line < min(nlines, state.NLINES); line++)
+  for (line = 0; line < min(nlines, state->NLINES); line++)
   {
-    b[line] = state.flagNLTE[line];
+    b[line] = state->flagNLTE[line];
   }
 
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL ResetDepartureCoefficients(int n, void *arg[], struct GlobalState state) /* Reset LTE */
+extern "C" char const *SME_DLL ResetDepartureCoefficients(int n, void *arg[],  GlobalState * state) /* Reset LTE */
 {
   int line;
 
-  if (!state.initNLTE)
+  if (!state->initNLTE)
     return &OK_response;
 
-  for (line = 0; line < state.allocated_NLTE_lines; line++)
+  for (line = 0; line < state->allocated_NLTE_lines; line++)
   {
-    if (state.flagNLTE[line])
+    if (state->flagNLTE[line])
     {
-      FREE(state.BNLTE_low[line]);
-      FREE(state.BNLTE_upp[line]);
+      FREE(state->BNLTE_low[line]);
+      FREE(state->BNLTE_upp[line]);
     }
   }
-  FREE(state.flagNLTE);
-  FREE(state.BNLTE_low);
-  FREE(state.BNLTE_upp);
-  state.allocated_NLTE_lines = 0;
-  state.initNLTE = 0;
+  FREE(state->flagNLTE);
+  FREE(state->BNLTE_low);
+  FREE(state->BNLTE_upp);
+  state->allocated_NLTE_lines = 0;
+  state->initNLTE = 0;
 
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL InputAbund(int n, void *arg[], struct GlobalState state) /* Read in abundances */
+extern "C" char const *SME_DLL InputAbund(int n, void *arg[],  GlobalState * state) /* Read in abundances */
 {
   int i;
   double *a;
 
   if (n < 1)
   {
-    strcpy(state.result, "Not enough arguments");
-    return state.result;
+    strcpy(state->result, "Not enough arguments");
+    return state->result;
   }
   a = (double *)arg[0];
   for (i = 1; i < MAX_ELEM; i++)
   {
-    state.ABUND[i] = (a[i - 1] >= 0.) ? a[i - 1] : pow10(a[i - 1]);
+    state->ABUND[i] = (a[i - 1] >= 0.) ? a[i - 1] : pow10(a[i - 1]);
   }
-  state.flagABUND = 1;
-  state.flagCONTIN = 0;
+  state->flagABUND = 1;
+  state->flagCONTIN = 0;
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL Opacity(int n, void *arg[], struct GlobalState state) /* Calculate opacities */
+extern "C" char const *SME_DLL Opacity(int n, void *arg[],  GlobalState * state) /* Calculate opacities */
 {
   short i, nrhox;
   double *a1, *a2, *a3;
 
   if (n > 0)
   {
-    if ((state.MOTYPE != 0 && n < 3) ||
-        (state.MOTYPE == 0 && n < 4))
+    if ((state->MOTYPE != 0 && n < 3) ||
+        (state->MOTYPE == 0 && n < 4))
     {
-      strcpy(state.result, "Opacity: Not enough arguments");
-      return state.result;
+      strcpy(state->result, "Opacity: Not enough arguments");
+      return state->result;
     }
   }
-  if (!state.flagMODEL)
+  if (!state->flagMODEL)
   {
-    strcpy(state.result, "Model atmosphere not set");
-    return state.result;
+    strcpy(state->result, "Model atmosphere not set");
+    return state->result;
   }
-  if (!state.flagWLRANGE)
+  if (!state->flagWLRANGE)
   {
-    strcpy(state.result, "Wavelength interval was not specified");
-    return state.result;
+    strcpy(state->result, "Wavelength interval was not specified");
+    return state->result;
   }
-  if (!state.flagABUND)
+  if (!state->flagABUND)
   {
-    strcpy(state.result, "Abundances were not set");
-    return state.result;
+    strcpy(state->result, "Abundances were not set");
+    return state->result;
   }
 
-  if (!state.flagIONIZ)
+  if (!state->flagIONIZ)
   {
-    strcpy(state.result, "Molecular-ionization equilibrium was not computed");
-    return state.result;
+    strcpy(state->result, "Molecular-ionization equilibrium was not computed");
+    return state->result;
   }
-  state.flagCONTIN = 0;
+  state->flagCONTIN = 0;
 
   // Continuous opacity at the red edge
 
-  CONTOP(state.WLAST, state.COPRED, state);
+  CONTOP(state->WLAST, state->COPRED, state);
 
-  if (state.MOTYPE == 0)
-    CONTOP(state.WLSTD, state.COPSTD, state); // Compute special opacity vector
+  if (state->MOTYPE == 0)
+    CONTOP(state->WLSTD, state->COPSTD, state); // Compute special opacity vector
 
   // Continuous opacity at the blue edge
 
-  CONTOP(state.WFIRST, state.COPBLU, state);
+  CONTOP(state->WFIRST, state->COPBLU, state);
 
   if (n >= 3)
   {
     i = *(short *)arg[0]; /* Length of IDL arrays */
-    nrhox = min(state.NRHOX, i);
+    nrhox = min(state->NRHOX, i);
     a1 = (double *)arg[1];
     a2 = (double *)arg[2];
-    if (state.MOTYPE == 0)
+    if (state->MOTYPE == 0)
       a3 = (double *)arg[3];
     for (i = 0; i < nrhox; i++)
     {
-      a1[i] = state.COPBLU[i];
-      a2[i] = state.COPRED[i];
-      if (n >= 4 && state.MOTYPE == 0)
-        a3[i] = state.COPSTD[i];
+      a1[i] = state->COPBLU[i];
+      a2[i] = state->COPRED[i];
+      if (n >= 4 && state->MOTYPE == 0)
+        a3[i] = state->COPSTD[i];
     }
   }
 
-  state.flagCONTIN = 1;
+  state->flagCONTIN = 1;
   return &OK_response;
 }
 
-void CONTOP(double WLCONT, double *opacity, struct GlobalState state)
+void CONTOP(double WLCONT, double *opacity,  GlobalState * state)
 {
   /*  This subroutine computes the continuous opacity vector for one
     or two wavelengths.
@@ -1135,7 +1223,7 @@ void CONTOP(double WLCONT, double *opacity, struct GlobalState state)
 
      LAST UPDATE: January 12, 1992
 
-    IF state.MOTYPE!= 0 - Kurucz type model with state.RHOX as depth scale
+    IF state->MOTYPE!= 0 - Kurucz type model with state->RHOX as depth scale
              == 0 - Depth parameter is TAUSTD
 
     WLCONT    - continuum wavelength
@@ -1144,19 +1232,19 @@ void CONTOP(double WLCONT, double *opacity, struct GlobalState state)
   double FREQ15;
   int j;
 
-  state.FREQ = 2.997925e18 / WLCONT;
-  state.FREQLG = log(state.FREQ);
-  for (j = 0; j < state.NRHOX; j++)
+  state->FREQ = 2.997925e18 / WLCONT;
+  state->FREQLG = log(state->FREQ);
+  for (j = 0; j < state->NRHOX; j++)
   {
-    state.EHVKT[j] = exp(-state.FREQ * state.HKT[j]);
-    FREQ15 = state.FREQ * 1.e-15;
-    state.STIM[j] = 1. - state.EHVKT[j];
-    state.BNU[j] = 1.47439e-2 * FREQ15 * FREQ15 * FREQ15 * state.EHVKT[j] / state.STIM[j];
+    state->EHVKT[j] = exp(-state->FREQ * state->HKT[j]);
+    FREQ15 = state->FREQ * 1.e-15;
+    state->STIM[j] = 1. - state->EHVKT[j];
+    state->BNU[j] = 1.47439e-2 * FREQ15 * FREQ15 * FREQ15 * state->EHVKT[j] / state->STIM[j];
   }
   ALAM(opacity, state);
 }
 
-void ALAM(double *opacity, struct GlobalState state)
+void ALAM(double *opacity,  GlobalState * state)
 {
   /*  THIS SUBROUTINE COMPUTES CONTINUOUS OPACITY USING
     KURUCZ's ATLAS-9 SUBROUTINES.
@@ -1165,57 +1253,57 @@ void ALAM(double *opacity, struct GlobalState state)
 
   /*  CLEAR OPACITY ACCUMULATORS */
 
-  for (J = 0; J < state.NRHOX; J++)
+  for (J = 0; J < state->NRHOX; J++)
   {
-    state.AHYD[J] = 0;
-    state.AH2P[J] = 0;
-    state.AHMIN[J] = 0;
-    state.SIGH[J] = 0;
-    state.AHE1[J] = 0;
-    state.AHE2[J] = 0;
-    state.AHEMIN[J] = 0;
-    state.SIGHE[J] = 0;
-    state.ACOOL[J] = 0;
-    state.ALUKE[J] = 0;
-    state.AHOT[J] = 0;
-    state.SIGEL[J] = 0;
-    state.SIGH2[J] = 0;
+    state->AHYD[J] = 0;
+    state->AH2P[J] = 0;
+    state->AHMIN[J] = 0;
+    state->SIGH[J] = 0;
+    state->AHE1[J] = 0;
+    state->AHE2[J] = 0;
+    state->AHEMIN[J] = 0;
+    state->SIGHE[J] = 0;
+    state->ACOOL[J] = 0;
+    state->ALUKE[J] = 0;
+    state->AHOT[J] = 0;
+    state->SIGEL[J] = 0;
+    state->SIGH2[J] = 0;
   }
 
-  if (state.IFOP[0] == 1)
-    HOP(state.AHYD, state.IXH1, state.IXH2, state);
-  if (state.IFOP[1] == 1)
-    H2PLOP(state.AH2P, state.IXH1, state.IXH2, state);
-  if (state.IFOP[2] == 1)
-    HMINOP(state.AHMIN, state.IXH1, state.IXHMIN, state);
-  if (state.IFOP[3] == 1)
-    HRAYOP(state.SIGH, state.IXH1, state);
-  if (state.IFOP[4] == 1)
-    HE1OP_new(state.AHE1, state.IXHE1, state.IXHE2, state);
-  if (state.IFOP[5] == 1)
-    HE2OP(state.AHE2, state.IXHE2, state.IXHE3, state);
-  if (state.IFOP[6] == 1)
-    HEMIOP(state.AHEMIN, state.IXHE1, state);
-  if (state.IFOP[7] == 1)
-    HERAOP(state.SIGHE, state.IXHE1, state);
-  if (state.IFOP[8] == 1)
-    COOLOP(state.ACOOL, state);
-  if (state.IFOP[9] == 1)
-    LUKEOP(state.ALUKE, state);
-  if (state.IFOP[10] == 1)
-    HOTOP(state.AHOT, state);
-  if (state.IFOP[11] == 1)
-    ELECOP(state.SIGEL, state);
-  if (state.IFOP[12] == 1)
-    H2RAOP(state.SIGH2, state.IXH2mol, state);
+  if (state->IFOP[0] == 1)
+    HOP(state->AHYD, state->IXH1, state->IXH2, state);
+  if (state->IFOP[1] == 1)
+    H2PLOP(state->AH2P, state->IXH1, state->IXH2, state);
+  if (state->IFOP[2] == 1)
+    HMINOP(state->AHMIN, state->IXH1, state->IXHMIN, state);
+  if (state->IFOP[3] == 1)
+    HRAYOP(state->SIGH, state->IXH1, state);
+  if (state->IFOP[4] == 1)
+    HE1OP_new(state->AHE1, state->IXHE1, state->IXHE2, state);
+  if (state->IFOP[5] == 1)
+    HE2OP(state->AHE2, state->IXHE2, state->IXHE3, state);
+  if (state->IFOP[6] == 1)
+    HEMIOP(state->AHEMIN, state->IXHE1, state);
+  if (state->IFOP[7] == 1)
+    HERAOP(state->SIGHE, state->IXHE1, state);
+  if (state->IFOP[8] == 1)
+    COOLOP(state->ACOOL, state);
+  if (state->IFOP[9] == 1)
+    LUKEOP(state->ALUKE, state);
+  if (state->IFOP[10] == 1)
+    HOTOP(state->AHOT, state);
+  if (state->IFOP[11] == 1)
+    ELECOP(state->SIGEL, state);
+  if (state->IFOP[12] == 1)
+    H2RAOP(state->SIGH2, state->IXH2mol, state);
 
   /*  CALCULATE THE TOTAL CONTINUOUS OPACITY */
 
-  for (J = 0; J < state.NRHOX; J++)
+  for (J = 0; J < state->NRHOX; J++)
   {
-    opacity[J] = state.AHYD[J] + state.AH2P[J] + state.AHMIN[J] + state.SIGH[J] + state.AHE1[J] + state.AHE2[J] +
-                 state.AHEMIN[J] + state.SIGHE[J] + state.ACOOL[J] + state.ALUKE[J] + state.AHOT[J] + state.SIGEL[J] +
-                 state.SIGH2[J];
+    opacity[J] = state->AHYD[J] + state->AH2P[J] + state->AHMIN[J] + state->SIGH[J] + state->AHE1[J] + state->AHE2[J] +
+                 state->AHEMIN[J] + state->SIGHE[J] + state->ACOOL[J] + state->ALUKE[J] + state->AHOT[J] + state->SIGEL[J] +
+                 state->SIGH2[J];
   }
   return;
 }
@@ -1750,7 +1838,7 @@ double XKARZAS(double FREQ, double ZEFF2, int N, int L)
   return exp(X * 2.30258509299405e0) / ZEFF2;
 }
 
-double COULX(int N, double freq, double Z, struct GlobalState state)
+double COULX(int N, double freq, double Z,  GlobalState * state)
 {
   static double A[6] = {0.9916, 1.105, 1.101, 1.101, 1.102, 1.0986},
                 B[6] = {2.719e3, -2.375e4, -9.863e3, -5.765e3, -3.909e3, -2.704e3},
@@ -1768,14 +1856,14 @@ double COULX(int N, double freq, double Z, struct GlobalState state)
     return CLX;
   if (N == 0)
   {
-    CLX *= COULBF1S(state.FREQ, Z);
+    CLX *= COULBF1S(state->FREQ, Z);
     return CLX;
   }
   CLX *= (A[N] + (B[N] + C[N] * (Z * Z / FREQ1)) * (Z * Z / FREQ1));
   return CLX;
 }
 
-double COULFF(int J, int NZ, struct GlobalState state)
+double COULFF(int J, int NZ,  GlobalState * state)
 {
   static double Z4LOG[6] = {0., 1.20412, 1.90849, 2.40824, 2.79588, 3.11261},
                 A[12][11] = {
@@ -1794,12 +1882,12 @@ double COULFF(int J, int NZ, struct GlobalState state)
   double GAMLOG, HVKTLG, P, Q, CLFF;
   int IGAM, IHVKT;
 
-  GAMLOG = 10.39638 - state.TLOG[J] / 1.15129 + Z4LOG[NZ - 1];
+  GAMLOG = 10.39638 - state->TLOG[J] / 1.15129 + Z4LOG[NZ - 1];
   IGAM = min((int)(GAMLOG + 7.), 10);
   if (IGAM < 1)
     IGAM = 1;
 
-  HVKTLG = (state.FREQLG - state.TLOG[J]) / 1.15129 - 20.63764;
+  HVKTLG = (state->FREQLG - state->TLOG[J]) / 1.15129 - 20.63764;
   IHVKT = min((int)(HVKTLG + 9.), 11);
   if (IHVKT < 1)
     IHVKT = 1;
@@ -1810,93 +1898,93 @@ double COULFF(int J, int NZ, struct GlobalState state)
   return CLFF;
 }
 
-void HOP(double *ahyd, int iH1, int iH2, struct GlobalState state) /* REQUIRES FUNCTIONS COULX AND COULFF */
+void HOP(double *ahyd, int iH1, int iH2,  GlobalState * state) /* REQUIRES FUNCTIONS COULX AND COULFF */
 {
   double BOLT[MOSIZE][8], EXLIM[MOSIZE], FREET[MOSIZE], BOLTEX[MOSIZE];
   double CONT[8], H, CFREE, XR, EX, C, nH1;
   int J, N;
 
-  for (J = 0; J < state.NRHOX; J++)
+  for (J = 0; J < state->NRHOX; J++)
   {
-    nH1 = state.FRACT[J][iH1];
+    nH1 = state->FRACT[J][iH1];
     for (N = 0; N < 8; N++)
-      BOLT[J][N] = exp(-13.595 * (1. - 1. / (N + 1) / (N + 1)) / state.TKEV[J]) *
-                   2. * (N + 1) * (N + 1) * nH1 / state.RHO[J];
-    FREET[J] = state.XNE[J] * state.FRACT[J][iH2] / (sqrt(state.T[J]) * state.RHO[J]);
-    XR = nH1 / 13.595 * state.TKEV[J] / state.RHO[J];
-    BOLTEX[J] = exp(-13.427 / state.TKEV[J]) * XR;
-    EXLIM[J] = exp(-13.595 / state.TKEV[J]) * XR;
+      BOLT[J][N] = exp(-13.595 * (1. - 1. / (N + 1) / (N + 1)) / state->TKEV[J]) *
+                   2. * (N + 1) * (N + 1) * nH1 / state->RHO[J];
+    FREET[J] = state->XNE[J] * state->FRACT[J][iH2] / (sqrt(state->T[J]) * state->RHO[J]);
+    XR = nH1 / 13.595 * state->TKEV[J] / state->RHO[J];
+    BOLTEX[J] = exp(-13.427 / state->TKEV[J]) * XR;
+    EXLIM[J] = exp(-13.595 / state->TKEV[J]) * XR;
   }
   for (N = 0; N < 8; N++)
-    CONT[N] = COULX(N, state.FREQ, 1., state);
-  CFREE = 3.6919e8 / (state.FREQ * state.FREQ);
-  C = ((2.815e29 / state.FREQ) / state.FREQ) / state.FREQ;
-  for (J = 0; J < state.NRHOX; J++)
+    CONT[N] = COULX(N, state->FREQ, 1., state);
+  CFREE = 3.6919e8 / (state->FREQ * state->FREQ);
+  C = ((2.815e29 / state->FREQ) / state->FREQ) / state->FREQ;
+  for (J = 0; J < state->NRHOX; J++)
   {
     EX = BOLTEX[J];
-    if (state.FREQ < 4.05933e13)
-      EX = EXLIM[J] / state.EHVKT[J];
+    if (state->FREQ < 4.05933e13)
+      EX = EXLIM[J] / state->EHVKT[J];
     H = (CONT[6] * BOLT[J][6] + CONT[7] * BOLT[J][7] + (EX - EXLIM[J]) * C +
-         COULFF(J, 1, state) * FREET[J] / state.FREQ * CFREE) *
-        state.STIM[J];
+         COULFF(J, 1, state) * FREET[J] / state->FREQ * CFREE) *
+        state->STIM[J];
     for (N = 0; N < 6; N++)
-      H += CONT[N] * BOLT[J][N] * (1. - state.EHVKT[J]);
+      H += CONT[N] * BOLT[J][N] * (1. - state->EHVKT[J]);
     ahyd[J] = H;
   }
   return;
 }
 
-void HRAYOP(double *sigh, int iH1, struct GlobalState state)
+void HRAYOP(double *sigh, int iH1,  GlobalState * state)
 {
   double WAVE, WW, SIG, nH1;
   int J;
 
-  WAVE = CLIGHT / min(state.FREQ, 2.463e15); // Wavelength in Angstroems
+  WAVE = CLIGHT / min(state->FREQ, 2.463e15); // Wavelength in Angstroems
   WW = WAVE * WAVE;
   SIG = (5.799e-13 + 1.422e-6 / WW + 2.784 / (WW * WW)) / (WW * WW);
-  for (J = 0; J < state.NRHOX; J++)
-    sigh[J] = SIG * state.FRACT[J][iH1] * 2. / state.RHO[J];
+  for (J = 0; J < state->NRHOX; J++)
+    sigh[J] = SIG * state->FRACT[J][iH1] * 2. / state->RHO[J];
   return;
 }
 
-void H2PLOP(double *ah2p, int iH1, int iH2, struct GlobalState state)
+void H2PLOP(double *ah2p, int iH1, int iH2,  GlobalState * state)
 {
   double FR, ES, FREQ15, nH1;
   int J;
 
-  if (state.FREQ > 3.28805e15)
+  if (state->FREQ > 3.28805e15)
     return;
-  FR = -3.0233e3 + (3.7797e2 + (-1.82496e1 + (3.9207e-1 - 3.1672e-3 * state.FREQLG) *
-                                                 state.FREQLG) *
-                                   state.FREQLG) *
-                       state.FREQLG;
-  FREQ15 = state.FREQ * 1.e-15;
+  FR = -3.0233e3 + (3.7797e2 + (-1.82496e1 + (3.9207e-1 - 3.1672e-3 * state->FREQLG) *
+                                                 state->FREQLG) *
+                                   state->FREQLG) *
+                       state->FREQLG;
+  FREQ15 = state->FREQ * 1.e-15;
   ES = -7.342e-3 + (-2.409 + (1.028 + (-0.4230 + (0.1224 - 0.01351 * FREQ15) *
                                                      FREQ15) *
                                           FREQ15) *
                                  FREQ15) *
                        FREQ15;
-  for (J = 0; J < state.NRHOX; J++)
+  for (J = 0; J < state->NRHOX; J++)
   {
-    //  ah2p[J]=exp(-ES/state.TKEV[J]+FR)*2.*state.FRACT[J][iH1]*state.FRACT[J][iH2]/state.RHO[J]*state.STIM[J];
-    nH1 = state.FRACT[J][iH1] * 2;
-    ah2p[J] = exp(-ES / state.TKEV[J] + FR) * nH1 * state.FRACT[J][iH2] / state.RHO[J] * state.STIM[J];
-    //    printf("%d %10.5g %10.5g\n",J,ah2p[J],state.STIM[J]);
+    //  ah2p[J]=exp(-ES/state->TKEV[J]+FR)*2.*state->FRACT[J][iH1]*state->FRACT[J][iH2]/state->RHO[J]*state->STIM[J];
+    nH1 = state->FRACT[J][iH1] * 2;
+    ah2p[J] = exp(-ES / state->TKEV[J] + FR) * nH1 * state->FRACT[J][iH2] / state->RHO[J] * state->STIM[J];
+    //    printf("%d %10.5g %10.5g\n",J,ah2p[J],state->STIM[J]);
   }
   return;
 }
 
-void HMINOP_old(double *ahmin, int iH1, int iHmin, struct GlobalState state)
+void HMINOP_old(double *ahmin, int iH1, int iHmin,  GlobalState * state)
 {
   double HMINBF, HMINFF, H, FREQ1, B, C, HMINFR, nH1;
   int J;
 
-  FREQ1 = state.FREQ * 1.e-10;
-  B = (1.3727e-15 + 4.3748 / state.FREQ) / FREQ1;
+  FREQ1 = state->FREQ * 1.e-10;
+  B = (1.3727e-15 + 4.3748 / state->FREQ) / FREQ1;
   C = -2.5993e-7 / (FREQ1 * FREQ1);
-  if (state.FREQ <= 1.8259e14)
+  if (state->FREQ <= 1.8259e14)
     HMINBF = 0.;
-  else if (state.FREQ >= 2.111e14)
+  else if (state->FREQ >= 2.111e14)
     HMINBF = 6.801e-10 + (5.358e-3 + (1.481e3 + (-5.519e7 +
                                                  4.808e11 / FREQ1) /
                                                     FREQ1) /
@@ -1904,27 +1992,27 @@ void HMINOP_old(double *ahmin, int iH1, int iHmin, struct GlobalState state)
                              FREQ1;
   else
     HMINBF = 3.695e-6 + (-1.251e-1 + 1.052e3 / FREQ1) / FREQ1;
-  for (J = 0; J < state.NRHOX; J++)
+  for (J = 0; J < state->NRHOX; J++)
   {
-    //    HMINFF=(B+C/state.T[J])*state.FRACT[J][iH1]*state.XNE[J]*2.e-20;
-    nH1 = state.FRACT[J][iH1] * 2;
-    HMINFF = (B + C / state.T[J]) * nH1 * state.XNE[J] * 1.e-20;
-    if (state.T[J] > 7730.)
-      HMINFR = exp(0.7552 / state.TKEV[J]) / (2. * 2.4148E15 * state.T[J] * sqrt(state.T[J])) * state.FRACT[J][iH1] * state.XNE[J];
+    //    HMINFF=(B+C/state->T[J])*state->FRACT[J][iH1]*state->XNE[J]*2.e-20;
+    nH1 = state->FRACT[J][iH1] * 2;
+    HMINFF = (B + C / state->T[J]) * nH1 * state->XNE[J] * 1.e-20;
+    if (state->T[J] > 7730.)
+      HMINFR = exp(0.7552 / state->TKEV[J]) / (2. * 2.4148E15 * state->T[J] * sqrt(state->T[J])) * state->FRACT[J][iH1] * state->XNE[J];
     // Bug fixed 2007-12-15: Partition function of H- is 1 and not 2 as we used
     // before:
     else
-      HMINFR = state.FRACT[J][iHmin];
-    //    printf("state.T: %10.1f Kurucz: %11.6e EOS: %11.6e\n",state.T[J],
-    //                          exp(0.7552/state.TKEV[J])/(2.*2.4148E15*state.T[J]*
-    //                          sqrt(state.T[J]))*state.FRACT[J][iH1]*state.XNE[J],state.FRACT[J][iHmin]);
-    H = HMINBF * (1. - state.EHVKT[J]) * HMINFR * 1.e-10;
-    ahmin[J] = (H + HMINFF) / state.RHO[J];
+      HMINFR = state->FRACT[J][iHmin];
+    //    printf("state->T: %10.1f Kurucz: %11.6e EOS: %11.6e\n",state->T[J],
+    //                          exp(0.7552/state->TKEV[J])/(2.*2.4148E15*state->T[J]*
+    //                          sqrt(state->T[J]))*state->FRACT[J][iH1]*state->XNE[J],state->FRACT[J][iHmin]);
+    H = HMINBF * (1. - state->EHVKT[J]) * HMINFR * 1.e-10;
+    ahmin[J] = (H + HMINFF) / state->RHO[J];
   }
   return;
 }
 
-void HMINOP(double *ahmin, int iH1, int iHmin, struct GlobalState state)
+void HMINOP(double *ahmin, int iH1, int iHmin,  GlobalState * state)
 {
   //From Mathisen (1984), after Wishart (1979) and  Broad & Reinhardt (1976)
   static double WBF[85] = {18.00, 19.60, 21.40, 23.60, 26.40, 29.80, 34.30,
@@ -1992,13 +2080,13 @@ void HMINOP(double *ahmin, int iH1, int iHmin, struct GlobalState state)
       FFLOG[ITHETA][IWAVE] = log(FF[IWAVE][ITHETA] * 1.e-26);
   }
 
-  for (J = 0; J < state.NRHOX; J++)
+  for (J = 0; J < state->NRHOX; J++)
   {
-    THETA[J] = 5040. / state.T[J];
+    THETA[J] = 5040. / state->T[J];
     // .754209 Hotop and Lineberger J. Phys. Chem. Ref. Data Vol. 14, 731-752, 1985
-    XHMIN[J] = exp(0.754209 / state.TKEV[J]) / (2. * 2.4148e15 * state.T[J] * sqrt(state.T[J])) * state.FRACT[J][iH1] * state.XNE[J];
+    XHMIN[J] = exp(0.754209 / state->TKEV[J]) / (2. * 2.4148e15 * state->T[J] * sqrt(state->T[J])) * state->FRACT[J][iH1] * state->XNE[J];
   }
-  WAVE[0] = CLIGHT / state.FREQ * 0.1; // Wavelength in nanometers
+  WAVE[0] = CLIGHT / state->FREQ * 0.1; // Wavelength in nanometers
   WAVELOG[0] = log(WAVE[0]);
   for (ITHETA = 0; ITHETA < 11; ITHETA++)
   {
@@ -2007,20 +2095,20 @@ void HMINOP(double *ahmin, int iH1, int iHmin, struct GlobalState state)
   }
 
   HMINBF[0] = 0.;
-  if (state.FREQ > 1.82365E14)
+  if (state->FREQ > 1.82365E14)
     MAXWAVE = MAP1(WBF, BF, 85, WAVE, HMINBF, 1);
-  for (J = 0; J < state.NRHOX; J++)
+  for (J = 0; J < state->NRHOX; J++)
   {
     LINTER(THETAFF, FFTT, 11, THETA + J, FFTHETA + J, 1);
-    HMINFF = FFTHETA[J] * state.FRACT[J][iH1] * 2. * state.XNE[J] / state.RHO[J];
-    //    H=HMINBF[0]*1.e-18*(1.-state.EHVKT[J])*XHMIN[J]/state.RHO[J];
-    H = HMINBF[0] * 1.e-18 * (1. - state.EHVKT[J]) * state.FRACT[J][iHmin] * state.PARTITION_FUNCTIONS[J][iHmin] / state.RHO[J];
+    HMINFF = FFTHETA[J] * state->FRACT[J][iH1] * 2. * state->XNE[J] / state->RHO[J];
+    //    H=HMINBF[0]*1.e-18*(1.-state->EHVKT[J])*XHMIN[J]/state->RHO[J];
+    H = HMINBF[0] * 1.e-18 * (1. - state->EHVKT[J]) * state->FRACT[J][iHmin] * state->PARTITION_FUNCTIONS[J][iHmin] / state->RHO[J];
     ahmin[J] = H + HMINFF;
   }
   return;
 }
 
-void HE1OP(double *ahe1, int iHe1, int iHe2, struct GlobalState state) /* REQUIRES FUNCTION COULFF. Needs update!!! */
+void HE1OP(double *ahe1, int iHe1, int iHe2,  GlobalState * state) /* REQUIRES FUNCTION COULFF. Needs update!!! */
 {
   double BOLT[MOSIZE][10], EXLIM[MOSIZE], BOLTEX[MOSIZE], FREET[MOSIZE], TRANS[10];
   double FREQ3, CFREE, C, HE1, EX, XRLOG;
@@ -2032,19 +2120,19 @@ void HE1OP(double *ahe1, int iHe1, int iHe2, struct GlobalState state) /* REQUIR
                            23.073, 23.086};
   int J, N, NMIN, IMIN;
 
-  for (J = 0; J < state.NRHOX; J++)
+  for (J = 0; J < state->NRHOX; J++)
   {
     for (N = 0; N < 10; N++)
     {
-      BOLT[J][N] = exp(-CHI[N] / state.TKEV[J] + log(state.FRACT[J][iHe1]) - log(state.RHO[J])) * G[N];
+      BOLT[J][N] = exp(-CHI[N] / state->TKEV[J] + log(state->FRACT[J][iHe1]) - log(state->RHO[J])) * G[N];
     }
-    FREET[J] = state.XNE[J] * 1.e-10 * state.FRACT[J][iHe2] * 1.e-10 / state.RHO[J] / sqrt(state.T[J]) * 1.e-10;
-    /*    XRLOG=log(state.FRACT[J][iHe1]*(4/2/13.595)*state.TKEV[J]/state.RHO[J]); */
-    XRLOG = log(state.FRACT[J][iHe1] * (2. / 13.595) * state.TKEV[J] / state.RHO[J]);
-    BOLTEX[J] = exp(-23.730 / state.TKEV[J] + XRLOG);
-    EXLIM[J] = exp(-24.587 / state.TKEV[J] + XRLOG);
+    FREET[J] = state->XNE[J] * 1.e-10 * state->FRACT[J][iHe2] * 1.e-10 / state->RHO[J] / sqrt(state->T[J]) * 1.e-10;
+    /*    XRLOG=log(state->FRACT[J][iHe1]*(4/2/13.595)*state->TKEV[J]/state->RHO[J]); */
+    XRLOG = log(state->FRACT[J][iHe1] * (2. / 13.595) * state->TKEV[J] / state->RHO[J]);
+    BOLTEX[J] = exp(-23.730 / state->TKEV[J] + XRLOG);
+    EXLIM[J] = exp(-24.587 / state->TKEV[J] + XRLOG);
   }
-  FREQ3 = state.FREQ * 1.e-10;
+  FREQ3 = state->FREQ * 1.e-10;
   FREQ3 = FREQ3 * FREQ3 * FREQ3;
   CFREE = 3.6919e8 / FREQ3;
   C = 2.815e-1 / FREQ3;
@@ -2052,45 +2140,45 @@ void HE1OP(double *ahe1, int iHe1, int iHe2, struct GlobalState state) /* REQUIR
   {
     TRANS[NMIN] = 0;
     IMIN = NMIN;
-    if (HEFREQ[NMIN] <= state.FREQ)
+    if (HEFREQ[NMIN] <= state->FREQ)
       break;
   }
 
   switch (IMIN)
   {
   case 0:
-    TRANS[0] = exp(33.32e0 - 2.e0 * state.FREQLG);
+    TRANS[0] = exp(33.32e0 - 2.e0 * state->FREQLG);
   case 1:
-    TRANS[1] = exp(-390.026e0 + (21.035e0 - 0.318e0 * state.FREQLG) * state.FREQLG);
+    TRANS[1] = exp(-390.026e0 + (21.035e0 - 0.318e0 * state->FREQLG) * state->FREQLG);
   case 2:
-    TRANS[2] = exp(26.83e0 - 1.91e0 * state.FREQLG);
+    TRANS[2] = exp(26.83e0 - 1.91e0 * state->FREQLG);
   case 3:
-    TRANS[3] = exp(61.21e0 - 2.9e0 * state.FREQLG);
+    TRANS[3] = exp(61.21e0 - 2.9e0 * state->FREQLG);
   case 4:
-    TRANS[4] = exp(81.35e0 - 3.5e0 * state.FREQLG);
+    TRANS[4] = exp(81.35e0 - 3.5e0 * state->FREQLG);
   case 5:
-    TRANS[5] = exp(12.69e0 - 1.54e0 * state.FREQLG);
+    TRANS[5] = exp(12.69e0 - 1.54e0 * state->FREQLG);
   case 6:
-    TRANS[6] = exp(23.85e0 - 1.86e0 * state.FREQLG);
+    TRANS[6] = exp(23.85e0 - 1.86e0 * state->FREQLG);
   case 7:
-    TRANS[7] = exp(49.30e0 - 2.60e0 * state.FREQLG);
+    TRANS[7] = exp(49.30e0 - 2.60e0 * state->FREQLG);
   case 8:
-    TRANS[8] = exp(85.20e0 - 3.69e0 * state.FREQLG);
+    TRANS[8] = exp(85.20e0 - 3.69e0 * state->FREQLG);
   case 9:
-    TRANS[9] = exp(58.81e0 - 2.89e0 * state.FREQLG);
+    TRANS[9] = exp(58.81e0 - 2.89e0 * state->FREQLG);
   default:
     break;
   }
 
-  for (J = 0; J < state.NRHOX; J++)
+  for (J = 0; J < state->NRHOX; J++)
   {
     EX = BOLTEX[J];
-    if (state.FREQ < 2.055e14)
-      EX = EXLIM[J] / state.EHVKT[J];
+    if (state->FREQ < 2.055e14)
+      EX = EXLIM[J] / state->EHVKT[J];
     HE1 = (EX - EXLIM[J]) * C;
     for (N = 0; N < 10; N++)
       HE1 += TRANS[N] * BOLT[J][N];
-    ahe1[J] = (HE1 + COULFF(J, 1, state) * FREET[J] * CFREE) * state.STIM[J];
+    ahe1[J] = (HE1 + COULFF(J, 1, state) * FREET[J] * CFREE) * state->STIM[J];
   }
   return;
 }
@@ -2293,7 +2381,7 @@ double HE12p3P(double FREQ)
   return pow10(X);
 }
 
-void HE1OP_new(double *ahe1, int iHe1, int iHe2, struct GlobalState state)
+void HE1OP_new(double *ahe1, int iHe1, int iHe2,  GlobalState * state)
 {
   static double G[10] = {1., 3., 1., 9., 3., 3., 1., 9., 20., 3.},
                 HEFREQ[10] = {5.945209e15, 1.152844e15, .9603331e15,
@@ -2308,22 +2396,22 @@ void HE1OP_new(double *ahe1, int iHe1, int iHe2, struct GlobalState state)
   int J, N, IMIN, NMIN;
 
   RYD = 109722.273 * CLIGHTcm;
-  for (J = 0; J < state.NRHOX; J++)
+  for (J = 0; J < state->NRHOX; J++)
   {
     for (N = 0; N < 10; N++)
-      BOLT[N][J] = exp(-CHI[N] / state.TKEV[J]) * G[N] * state.FRACT[J][iHe1] / state.RHO[J];
+      BOLT[N][J] = exp(-CHI[N] / state->TKEV[J]) * G[N] * state->FRACT[J][iHe1] / state->RHO[J];
     for (N = 3; N < 27; N++)
-      BOLTN[N][J] = exp(-24.587 * (1. - 1. / (N * N)) / state.TKEV[J]) * 4. * N * N * state.FRACT[J][iHe1] / state.RHO[J];
-    //  FREET[J]=state.XNE[J]*XNF(J,4)/state.RHO(J)/SQRT(state.T(J))
-    FREET[J] = state.XNE[J] * 1.e-10 * state.FRACT[J][iHe2] * state.PARTITION_FUNCTIONS[J][iHe2] *
-               1.e-10 / state.RHO[J] / sqrt(state.T[J]) * 1.e-10;
-    //  XR=XNFP(J,3)*(4./2./13.595)*state.TKEV(J)/state.RHO(J)
-    XRLOG = log(state.FRACT[J][iHe1] * (2. / 13.595) * state.TKEV[J] / state.RHO[J]);
-    BOLTEX[J] = exp(-23.730 / state.TKEV[J] + XRLOG);
-    EXLIM[J] = exp(-24.587 / state.TKEV[J] + XRLOG);
+      BOLTN[N][J] = exp(-24.587 * (1. - 1. / (N * N)) / state->TKEV[J]) * 4. * N * N * state->FRACT[J][iHe1] / state->RHO[J];
+    //  FREET[J]=state->XNE[J]*XNF(J,4)/state->RHO(J)/SQRT(state->T(J))
+    FREET[J] = state->XNE[J] * 1.e-10 * state->FRACT[J][iHe2] * state->PARTITION_FUNCTIONS[J][iHe2] *
+               1.e-10 / state->RHO[J] / sqrt(state->T[J]) * 1.e-10;
+    //  XR=XNFP(J,3)*(4./2./13.595)*state->TKEV(J)/state->RHO(J)
+    XRLOG = log(state->FRACT[J][iHe1] * (2. / 13.595) * state->TKEV[J] / state->RHO[J]);
+    BOLTEX[J] = exp(-23.730 / state->TKEV[J] + XRLOG);
+    EXLIM[J] = exp(-24.587 / state->TKEV[J] + XRLOG);
     //    ahe1[J]=0.1;
   }
-  FREQ3 = state.FREQ * 1.e-10;
+  FREQ3 = state->FREQ * 1.e-10;
   FREQ3 = FREQ3 * FREQ3 * FREQ3;
   CFREE = 3.6919e8 / FREQ3;
   C = 2.815e-1 / FREQ3;
@@ -2332,7 +2420,7 @@ void HE1OP_new(double *ahe1, int iHe1, int iHe2, struct GlobalState state)
   {
     TRANS[NMIN] = 0;
     IMIN = NMIN + 1;
-    if (HEFREQ[NMIN] <= state.FREQ)
+    if (HEFREQ[NMIN] <= state->FREQ)
       break;
     IMIN = 0;
   }
@@ -2340,211 +2428,211 @@ void HE1OP_new(double *ahe1, int iHe1, int iHe2, struct GlobalState state)
   {
   case 0:
   {
-    for (J = 0; J < state.NRHOX; J++)
+    for (J = 0; J < state->NRHOX; J++)
     {
-      EX = (state.FREQ < 2.055e14) ? EXLIM[J] / state.EHVKT[J] : BOLTEX[J];
+      EX = (state->FREQ < 2.055e14) ? EXLIM[J] / state->EHVKT[J] : BOLTEX[J];
       HE1 = (EX - EXLIM[J]) * C;
-      ahe1[J] = (HE1 + COULFF(J, 1, state) * FREET[J] * CFREE) * state.STIM[J];
+      ahe1[J] = (HE1 + COULFF(J, 1, state) * FREET[J] * CFREE) * state->STIM[J];
     }
     return;
   }
   case 1:
-    TRANS[0] = CROSSHE(state.FREQ);
+    TRANS[0] = CROSSHE(state->FREQ);
   case 2:
-    TRANS[1] = HE12s3S(state.FREQ);
+    TRANS[1] = HE12s3S(state->FREQ);
   case 3:
-    TRANS[2] = HE12s1S(state.FREQ);
+    TRANS[2] = HE12s1S(state->FREQ);
   case 4:
-    TRANS[3] = HE12p3P(state.FREQ);
+    TRANS[3] = HE12p3P(state->FREQ);
   case 5:
-    TRANS[4] = HE12p1P(state.FREQ);
+    TRANS[4] = HE12p1P(state->FREQ);
   case 6:
-    TRANS[5] = XKARZAS(state.FREQ, 1.236439e0, 3, 0); // 1s3s 3S
+    TRANS[5] = XKARZAS(state->FREQ, 1.236439e0, 3, 0); // 1s3s 3S
   case 7:
-    TRANS[6] = XKARZAS(state.FREQ, 1.102898e0, 3, 0); // 1s3s 1S
+    TRANS[6] = XKARZAS(state->FREQ, 1.102898e0, 3, 0); // 1s3s 1S
   case 8:
-    TRANS[7] = XKARZAS(state.FREQ, 1.045499e0, 3, 1); // 1s3p 3P
+    TRANS[7] = XKARZAS(state->FREQ, 1.045499e0, 3, 1); // 1s3p 3P
   case 9:
-    TRANS[8] = XKARZAS(state.FREQ, 1.001427e0, 3, 2); // 1s3d 3D+1D
+    TRANS[8] = XKARZAS(state->FREQ, 1.001427e0, 3, 2); // 1s3d 3D+1D
   case 10:
-    TRANS[9] = XKARZAS(state.FREQ, 0.9926e0, 3, 1); // 1s3p 1P
+    TRANS[9] = XKARZAS(state->FREQ, 0.9926e0, 3, 1); // 1s3p 1P
   default:
     break;
   }
   // HeII n=2
   ELIM = 527490.06e0;
   FREQHE = (ELIM - 171135.00e0) * CLIGHTcm;
-  if (state.FREQ >= FREQHE)
+  if (state->FREQ >= FREQHE)
   {
     ZEFF2 = FREQHE / RYD;
-    TRANS[4] += XKARZAS(state.FREQ, ZEFF2, 1, 0);
+    TRANS[4] += XKARZAS(state->FREQ, ZEFF2, 1, 0);
     FREQHE = (ELIM - 169087.e0) * CLIGHTcm;
   }
-  if (state.FREQ >= FREQHE)
+  if (state->FREQ >= FREQHE)
   {
     ZEFF2 = FREQHE / RYD;
-    TRANS[3] += XKARZAS(state.FREQ, ZEFF2, 1, 0);
+    TRANS[3] += XKARZAS(state->FREQ, ZEFF2, 1, 0);
     FREQHE = (ELIM - 166277.546e0) * CLIGHTcm;
   }
-  if (state.FREQ >= FREQHE)
+  if (state->FREQ >= FREQHE)
   {
     ZEFF2 = FREQHE / RYD;
-    TRANS[2] += XKARZAS(state.FREQ, ZEFF2, 1, 0);
+    TRANS[2] += XKARZAS(state->FREQ, ZEFF2, 1, 0);
     FREQHE = (ELIM - 159856.069e0) * CLIGHTcm;
   }
-  if (state.FREQ < FREQHE)
+  if (state->FREQ < FREQHE)
   {
     ZEFF2 = FREQHE / RYD;
-    TRANS[1] += XKARZAS(state.FREQ, ZEFF2, 1, 0);
+    TRANS[1] += XKARZAS(state->FREQ, ZEFF2, 1, 0);
   }
 
   // HeII n=3
   ELIM = 588451.59e0;
   FREQHE = (ELIM - 186209.471e0) * CLIGHTcm;
-  if (state.FREQ >= FREQHE)
+  if (state->FREQ >= FREQHE)
   {
     ZEFF2 = FREQHE / RYD;
-    TRANS[9] += XKARZAS(state.FREQ, ZEFF2, 1, 0);
+    TRANS[9] += XKARZAS(state->FREQ, ZEFF2, 1, 0);
     FREQHE = (ELIM - 186101.e0) * CLIGHTcm;
   }
-  if (state.FREQ >= FREQHE)
+  if (state->FREQ >= FREQHE)
   {
     ZEFF2 = FREQHE / RYD;
-    TRANS[8] += XKARZAS(state.FREQ, ZEFF2, 1, 0);
+    TRANS[8] += XKARZAS(state->FREQ, ZEFF2, 1, 0);
     FREQHE = (ELIM - 185564.e0) * CLIGHTcm;
   }
-  if (state.FREQ >= FREQHE)
+  if (state->FREQ >= FREQHE)
   {
     ZEFF2 = FREQHE / RYD;
-    TRANS[7] += XKARZAS(state.FREQ, ZEFF2, 1, 0);
+    TRANS[7] += XKARZAS(state->FREQ, ZEFF2, 1, 0);
     FREQHE = (ELIM - 184864.e0) * CLIGHTcm;
   }
-  if (state.FREQ >= FREQHE)
+  if (state->FREQ >= FREQHE)
   {
     ZEFF2 = FREQHE / RYD;
-    TRANS[6] += XKARZAS(state.FREQ, ZEFF2, 1, 0);
+    TRANS[6] += XKARZAS(state->FREQ, ZEFF2, 1, 0);
     FREQHE = (ELIM - 183236.e0) * CLIGHTcm;
   }
-  if (state.FREQ >= FREQHE)
+  if (state->FREQ >= FREQHE)
   {
     ZEFF2 = FREQHE / RYD;
-    TRANS[5] += XKARZAS(state.FREQ, ZEFF2, 1, 0);
-    if (state.FREQ >= 1.25408e16)
+    TRANS[5] += XKARZAS(state->FREQ, ZEFF2, 1, 0);
+    if (state->FREQ >= 1.25408e16)
     {
       for (N = 4; N < 28; N++)
       {
         ZEFF2 = 4.e0 - 3.e0 / (N * N);
-        TRANSN[N - 1] = XKARZAS(state.FREQ, ZEFF2, 1, 0);
+        TRANSN[N - 1] = XKARZAS(state->FREQ, ZEFF2, 1, 0);
       }
     }
   }
-  //  printf("IMIN=%d, state.FREQ=%g\n",IMIN,state.FREQ);
+  //  printf("IMIN=%d, state->FREQ=%g\n",IMIN,state->FREQ);
   //  return;
-  for (J = 0; J < state.NRHOX; J++)
+  for (J = 0; J < state->NRHOX; J++)
   {
-    EX = (state.FREQ < 2.055e14) ? EXLIM[J] / state.EHVKT[J] : BOLTEX[J];
+    EX = (state->FREQ < 2.055e14) ? EXLIM[J] / state->EHVKT[J] : BOLTEX[J];
     HE1 = (EX - EXLIM[J]) * C;
     for (N = IMIN - 1; N < 10; N++)
       HE1 += TRANS[N] * BOLT[N][J];
-    if (state.FREQ >= 1.25408e16)
+    if (state->FREQ >= 1.25408e16)
     {
       for (N = 3; N < 27; N++)
         HE1 += TRANSN[N] * BOLTN[N][J];
     }
-    ahe1[J] = (HE1 + COULFF(J, 1, state) * FREET[J] * CFREE) * state.STIM[J];
+    ahe1[J] = (HE1 + COULFF(J, 1, state) * FREET[J] * CFREE) * state->STIM[J];
   }
 }
 
-void HE2OP(double *ahe2, int iHe2, int iHe3, struct GlobalState state) /*  REQUIRES FUNCTIONS COULX AND COULFF */
+void HE2OP(double *ahe2, int iHe2, int iHe3,  GlobalState * state) /*  REQUIRES FUNCTIONS COULX AND COULFF */
 {
-  /* FREQUENCIES ARE 4X HYDROGEN, CHI ARE FOR state.ION POT=54.403 */
+  /* FREQUENCIES ARE 4X HYDROGEN, CHI ARE FOR state->ION POT=54.403 */
   double HE2, C, CFREE, EX, FREQ3, BLTARG, BLTLOG, EXLLOG,
       XRLOG;
   double CONT[9], BOLT[MOSIZE][9], EXLIM[MOSIZE], FREET[MOSIZE], BOLTEX[MOSIZE];
   int J, N;
 
-  for (J = 0; J < state.NRHOX; J++)
+  for (J = 0; J < state->NRHOX; J++)
   {
     for (N = 0; N < 9; N++)
     {
-      BLTARG = (54.403 - 54.403 / (N + 1) / (N + 1)) / state.TKEV[J] + log(state.RHO[J]);
-      BOLT[J][N] = (state.FRACT[J][iHe2] == 0.0 || BLTARG > 80.) ? 0. : exp(-BLTARG) * 2. * (N + 1) * (N + 1) * state.FRACT[J][iHe2];
+      BLTARG = (54.403 - 54.403 / (N + 1) / (N + 1)) / state->TKEV[J] + log(state->RHO[J]);
+      BOLT[J][N] = (state->FRACT[J][iHe2] == 0.0 || BLTARG > 80.) ? 0. : exp(-BLTARG) * 2. * (N + 1) * (N + 1) * state->FRACT[J][iHe2];
     }
-    FREET[J] = state.XNE[J] * state.FRACT[J][iHe3] / sqrt(state.T[J]) / state.RHO[J];
-    /*    XRLOG=log(state.TKEV[J]*(2/2/13.595)/state.RHO[J]); */
-    XRLOG = log(state.TKEV[J] / 13.595 / state.RHO[J]);
-    BLTLOG = 53.859 / state.TKEV[J] - XRLOG;
-    BOLTEX[J] = (state.FRACT[J][iHe2] == 0.0 || BLTLOG > 80.) ? 0. : state.FRACT[J][iHe2] * exp(-BLTLOG);
-    EXLLOG = 54.403 / state.TKEV[J] - XRLOG;
-    EXLIM[J] = (state.FRACT[J][iHe2] == 0.0 || EXLLOG > 80.) ? 0. : state.FRACT[J][iHe2] * exp(-EXLLOG);
+    FREET[J] = state->XNE[J] * state->FRACT[J][iHe3] / sqrt(state->T[J]) / state->RHO[J];
+    /*    XRLOG=log(state->TKEV[J]*(2/2/13.595)/state->RHO[J]); */
+    XRLOG = log(state->TKEV[J] / 13.595 / state->RHO[J]);
+    BLTLOG = 53.859 / state->TKEV[J] - XRLOG;
+    BOLTEX[J] = (state->FRACT[J][iHe2] == 0.0 || BLTLOG > 80.) ? 0. : state->FRACT[J][iHe2] * exp(-BLTLOG);
+    EXLLOG = 54.403 / state->TKEV[J] - XRLOG;
+    EXLIM[J] = (state->FRACT[J][iHe2] == 0.0 || EXLLOG > 80.) ? 0. : state->FRACT[J][iHe2] * exp(-EXLLOG);
   }
-  //  for(N=0; N<9; N++) CONT[N]=COULX(N, state.FREQ, 2.);
+  //  for(N=0; N<9; N++) CONT[N]=COULX(N, state->FREQ, 2.);
   for (N = 0; N < 9; N++)
-    CONT[N] = XKARZAS(state.FREQ, 4.e0, N + 1, N + 1);
-  FREQ3 = (state.FREQ * 1.e-05);
+    CONT[N] = XKARZAS(state->FREQ, 4.e0, N + 1, N + 1);
+  FREQ3 = (state->FREQ * 1.e-05);
   FREQ3 = FREQ3 * FREQ3 * FREQ3;
   CFREE = 3.6919e-07 / FREQ3 * 4.;
   C = 2.815e14 * 2. * 2. / FREQ3;
-  for (J = 0; J < state.NRHOX; J++)
+  for (J = 0; J < state->NRHOX; J++)
   {
     EX = BOLTEX[J];
-    if (state.FREQ < 1.31522e14)
-      EX = EXLIM[J] / state.EHVKT[J];
+    if (state->FREQ < 1.31522e14)
+      EX = EXLIM[J] / state->EHVKT[J];
     HE2 = (EX - EXLIM[J]) * C;
     for (N = 0; N < 9; N++)
       HE2 = HE2 + CONT[N] * BOLT[J][N];
-    HE2 = (HE2 + COULFF(J, 2, state) * CFREE * FREET[J]) * state.STIM[J];
+    HE2 = (HE2 + COULFF(J, 2, state) * CFREE * FREET[J]) * state->STIM[J];
     ahe2[J] = (HE2 < 1.e-30) ? 0. : HE2;
   }
   return;
 }
 
-void HEMIOP(double *ahemin, int iHe1, struct GlobalState state)
+void HEMIOP(double *ahemin, int iHe1,  GlobalState * state)
 {
   double A, B, C;
   int J;
 
-  A = 3.397e-26 + (-5.216e-11 + 7.039e05 / state.FREQ) / state.FREQ;
-  B = -4.116e-22 + (1.067e-06 + 8.135e09 / state.FREQ) / state.FREQ;
-  C = 5.081e-17 + (-8.724e-03 - 5.659e12 / state.FREQ) / state.FREQ;
-  for (J = 0; J < state.NRHOX; J++)
-    ahemin[J] = (A * state.T[J] + B + C / state.T[J]) * state.XNE[J] * state.FRACT[J][iHe1] / state.RHO[J] * 1.E-20;
+  A = 3.397e-26 + (-5.216e-11 + 7.039e05 / state->FREQ) / state->FREQ;
+  B = -4.116e-22 + (1.067e-06 + 8.135e09 / state->FREQ) / state->FREQ;
+  C = 5.081e-17 + (-8.724e-03 - 5.659e12 / state->FREQ) / state->FREQ;
+  for (J = 0; J < state->NRHOX; J++)
+    ahemin[J] = (A * state->T[J] + B + C / state->T[J]) * state->XNE[J] * state->FRACT[J][iHe1] / state->RHO[J] * 1.E-20;
   return;
 }
 
-void HERAOP(double *sighe, int iHe1, struct GlobalState state)
+void HERAOP(double *sighe, int iHe1,  GlobalState * state)
 {
   double WAVE, WW, SIG, S1;
   int J;
 
-  WAVE = 2.997925e3 / min(state.FREQ * 1.e-15, 5.15); // wavelength in Angstroems
+  WAVE = 2.997925e3 / min(state->FREQ * 1.e-15, 5.15); // wavelength in Angstroems
   WW = WAVE * WAVE;
   S1 = 1. + (2.44e5 + 5.94e10 / (WW - 2.90e5)) / WW;
   SIG = 5.484e-14 / WW / WW * S1 * S1;
-  for (J = 0; J < state.NRHOX; J++)
-    sighe[J] = SIG * state.FRACT[J][iHe1] / state.RHO[J];
+  for (J = 0; J < state->NRHOX; J++)
+    sighe[J] = SIG * state->FRACT[J][iHe1] / state->RHO[J];
   return;
 }
 
-double C1OP(int J, struct GlobalState state) /* CROSS-SECTION */
+double C1OP(int J,  GlobalState * state) /* CROSS-SECTION */
 {
   double C1240, C1444, X1240, X1444, X1100;
 
-  C1240 = 5. * exp(-1.264 / state.TKEV[J]);
-  C1444 = exp(-2.683 / state.TKEV[J]);
+  C1240 = 5. * exp(-1.264 / state->TKEV[J]);
+  C1444 = exp(-2.683 / state->TKEV[J]);
   X1444 = 0.;
   X1240 = 0.;
   X1100 = 0.;
-  if (state.FREQ >= 2.7254e15)
-    X1100 = SEATON(state.FREQ, 2.7254e15, 1.219e-17, 2.0, 3.317);
-  if (state.FREQ >= 2.4196e15)
-    X1240 = SEATON(state.FREQ, 2.4196e15, 1.030e-17, 1.5, 2.789);
-  if (state.FREQ >= 2.0761e15)
-    X1444 = SEATON(state.FREQ, 2.0761e15, 9.590e-18, 1.5, 3.501);
+  if (state->FREQ >= 2.7254e15)
+    X1100 = SEATON(state->FREQ, 2.7254e15, 1.219e-17, 2.0, 3.317);
+  if (state->FREQ >= 2.4196e15)
+    X1240 = SEATON(state->FREQ, 2.4196e15, 1.030e-17, 1.5, 2.789);
+  if (state->FREQ >= 2.0761e15)
+    X1444 = SEATON(state->FREQ, 2.0761e15, 9.590e-18, 1.5, 3.501);
   return X1100 * 9. + X1240 * C1240 + X1444 * C1444;
 }
 
-double C1OP_new(int J, struct GlobalState state) /* Cross-section                                */
+double C1OP_new(int J,  GlobalState * state) /* Cross-section                                */
 {                      /* This routine is based on R.L. Kurucz Atlas12 */
   static double ELEV[25] = {79314.86, 78731.27, 78529.62, 78309.76, 78226.35,
                             77679.82, 73975.91, 72610.72, 71374.90, 70743.95,
@@ -2558,16 +2646,16 @@ double C1OP_new(int J, struct GlobalState state) /* Cross-section               
   double A, B, EPS, XS0, XS1, XD0, XD1, XD2, GFACTOR, H;
   int i, DEGEN;
 
-  HCKT = state.HKT[J] * CLIGHTcm;
+  HCKT = state->HKT[J] * CLIGHTcm;
   for (i = 0; i < 25; i++)
   {
     BOLT[i] = GLEV[i] * exp(-ELEV[i] * HCKT);
     X[i] = 0.;
   }
-  WAVENO = state.FREQ / CLIGHTcm;
+  WAVENO = state->FREQ / CLIGHTcm;
   Z = 1.;
-  FREQ3 = 2.815e29 / state.FREQ / state.FREQ / state.FREQ * Z * Z * Z * Z;
-  Z2FREQ = 1.e20 * state.FREQ / (Z * Z);
+  FREQ3 = 2.815e29 / state->FREQ / state->FREQ / state->FREQ * Z * Z * Z * Z;
+  Z2FREQ = 1.e20 * state->FREQ / (Z * Z);
   //  ELIM=90820.42
   //  C II 2P average
   ELIM = 90862.70;
@@ -2579,7 +2667,7 @@ double C1OP_new(int J, struct GlobalState state) /* Cross-section               
       break;
     //  GLEV=9.
     ZEFF2 = 9. / RYD * (ELIM - ELEV[0]);
-    X[0] = XKARZAS(state.FREQ, ZEFF2, 3, 2);
+    X[0] = XKARZAS(state->FREQ, ZEFF2, 3, 2);
     //  2s2 2p3d 1P
     //  ELEV=78731.27
     if (WAVENO < ELIM - ELEV[1])
@@ -2587,7 +2675,7 @@ double C1OP_new(int J, struct GlobalState state) /* Cross-section               
 
     //  GLEV=3.
     ZEFF2 = 9. / RYD * (ELIM - ELEV[1]);
-    X[1] = XKARZAS(state.FREQ, ZEFF2, 3, 2);
+    X[1] = XKARZAS(state->FREQ, ZEFF2, 3, 2);
     //  2s2 2p3d 1F
     //  ELEV=78529.62
     if (WAVENO < ELIM - ELEV[2])
@@ -2595,7 +2683,7 @@ double C1OP_new(int J, struct GlobalState state) /* Cross-section               
 
     //  GLEV=7.
     ZEFF2 = 9. / RYD * (ELIM - ELEV[2]);
-    X[2] = XKARZAS(state.FREQ, ZEFF2, 3, 2);
+    X[2] = XKARZAS(state->FREQ, ZEFF2, 3, 2);
     //  2s2 2p3d 3D
     //  ELEV=78309.76
     if (WAVENO < ELIM - ELEV[3])
@@ -2603,7 +2691,7 @@ double C1OP_new(int J, struct GlobalState state) /* Cross-section               
 
     //  GLEV=15.
     ZEFF2 = 9. / RYD * (ELIM - ELEV[3]);
-    X[3] = XKARZAS(state.FREQ, ZEFF2, 3, 2);
+    X[3] = XKARZAS(state->FREQ, ZEFF2, 3, 2);
     //  2s2 2p3d 3F
     //  ELEV=78226.35
     if (WAVENO < ELIM - ELEV[4])
@@ -2611,7 +2699,7 @@ double C1OP_new(int J, struct GlobalState state) /* Cross-section               
 
     //  GLEV=21.
     ZEFF2 = 9. / RYD * (ELIM - ELEV[4]);
-    X[4] = XKARZAS(state.FREQ, ZEFF2, 3, 2);
+    X[4] = XKARZAS(state->FREQ, ZEFF2, 3, 2);
     //  2s2 2p3d 1D
     //  ELEV=77679.82
     if (WAVENO < ELIM - ELEV[5])
@@ -2619,7 +2707,7 @@ double C1OP_new(int J, struct GlobalState state) /* Cross-section               
 
     //  GLEV=5.
     ZEFF2 = 9. / RYD * (ELIM - ELEV[5]);
-    X[5] = XKARZAS(state.FREQ, ZEFF2, 3, 2);
+    X[5] = XKARZAS(state->FREQ, ZEFF2, 3, 2);
     //  2s2 2p3p 1S
     //  ELEV=73975.91
     if (WAVENO < ELIM - ELEV[6])
@@ -2627,7 +2715,7 @@ double C1OP_new(int J, struct GlobalState state) /* Cross-section               
 
     //  GLEV=1.
     ZEFF2 = 9. / RYD * (ELIM - ELEV[6]);
-    X[6] = XKARZAS(state.FREQ, ZEFF2, 3, 1);
+    X[6] = XKARZAS(state->FREQ, ZEFF2, 3, 1);
     //  2s2 2p3p 1D
     //  ELEV=72610.72
     if (WAVENO < ELIM - ELEV[7])
@@ -2635,7 +2723,7 @@ double C1OP_new(int J, struct GlobalState state) /* Cross-section               
 
     //  GLEV=5.
     ZEFF2 = 9. / RYD * (ELIM - ELEV[7]);
-    X[7] = XKARZAS(state.FREQ, ZEFF2, 3, 1);
+    X[7] = XKARZAS(state->FREQ, ZEFF2, 3, 1);
     //  2s2 2p3p 3P
     //  ELEV=71374.90
     if (WAVENO < ELIM - ELEV[8])
@@ -2643,7 +2731,7 @@ double C1OP_new(int J, struct GlobalState state) /* Cross-section               
 
     //  GLEV=9.
     ZEFF2 = 9. / RYD * (ELIM - ELEV[8]);
-    X[8] = XKARZAS(state.FREQ, ZEFF2, 3, 1);
+    X[8] = XKARZAS(state->FREQ, ZEFF2, 3, 1);
     //  2s2 2p3p 3S
     //  ELEV=70743.95
     if (WAVENO < ELIM - ELEV[9])
@@ -2651,7 +2739,7 @@ double C1OP_new(int J, struct GlobalState state) /* Cross-section               
 
     //  GLEV=3.
     ZEFF2 = 9. / RYD * (ELIM - ELEV[9]);
-    X[9] = XKARZAS(state.FREQ, ZEFF2, 3, 1);
+    X[9] = XKARZAS(state->FREQ, ZEFF2, 3, 1);
     //  2s2 2p3p 3D
     //  ELEV=69722.00
     if (WAVENO < ELIM - ELEV[10])
@@ -2659,7 +2747,7 @@ double C1OP_new(int J, struct GlobalState state) /* Cross-section               
 
     //  GLEV=15.
     ZEFF2 = 9. / RYD * (ELIM - ELEV[10]);
-    X[10] = XKARZAS(state.FREQ, ZEFF2, 3, 1);
+    X[10] = XKARZAS(state->FREQ, ZEFF2, 3, 1);
     //  2s2 2p3p 1P
     //  ELEV=68856.33
     if (WAVENO < ELIM - ELEV[11])
@@ -2667,7 +2755,7 @@ double C1OP_new(int J, struct GlobalState state) /* Cross-section               
 
     //  GLEV=3.
     ZEFF2 = 9. / RYD * (ELIM - ELEV[11]);
-    X[11] = XKARZAS(state.FREQ, ZEFF2, 3, 1);
+    X[11] = XKARZAS(state->FREQ, ZEFF2, 3, 1);
     //  2s2 2p3s 1P
     //  ELEV=61981.82
     if (WAVENO < ELIM - ELEV[12])
@@ -2675,7 +2763,7 @@ double C1OP_new(int J, struct GlobalState state) /* Cross-section               
 
     //  GLEV=3.
     ZEFF2 = 9. / RYD * (ELIM - ELEV[12]);
-    X[12] = XKARZAS(state.FREQ, ZEFF2, 3, 0);
+    X[12] = XKARZAS(state->FREQ, ZEFF2, 3, 0);
     //  2s2 2p3s 3P
     //  ELEV=60373.00
     if (WAVENO < ELIM - ELEV[13])
@@ -2683,7 +2771,7 @@ double C1OP_new(int J, struct GlobalState state) /* Cross-section               
 
     //  GLEV=9.
     ZEFF2 = 9. / RYD * (ELIM - ELEV[13]);
-    X[13] = XKARZAS(state.FREQ, ZEFF2, 3, 0);
+    X[13] = XKARZAS(state->FREQ, ZEFF2, 3, 0);
     break;
   }
 
@@ -2703,7 +2791,7 @@ double C1OP_new(int J, struct GlobalState state) /* Cross-section               
     EPS = (WAVENO - 97700.) * 2. / 2743.;
     A = 68.e-18;
     B = 118.e-18;
-    // Fit to Burke, P.G. and Taylor, K.state.T. 1979, J. Phys. B, 12, 2971-2984.
+    // Fit to Burke, P.G. and Taylor, K.state->T. 1979, J. Phys. B, 12, 2971-2984.
     XS1 = (A * EPS + B) / (EPS * EPS + 1.);
     X[14] = (XS0 + XS1) / 3.;
     //  2s2 2p2 1D
@@ -2715,12 +2803,12 @@ double C1OP_new(int J, struct GlobalState state) /* Cross-section               
     // Luo, D. and Pradhan, A.K. 1989, J.Phys. B, 22, 3377-3395.
     //     XD0=10.^(-16.80-(WAVENO-80627.760)/3.00/RYD)
     XD0 = pow10(-16.80 - (WAVENO - ELIM + ELEV[15]) / 3.00 / RYD);
-    // Fit to Burke, P.G. and Taylor, K.state.T. 1979, J. Phys. B, 12, 2971-2984.
+    // Fit to Burke, P.G. and Taylor, K.state->T. 1979, J. Phys. B, 12, 2971-2984.
     EPS = (WAVENO - 93917.) * 2. / 9230.;
     A = 22.e-18;
     B = 26.e-18;
     XD1 = (A * EPS + B) / (EPS * EPS + 1.);
-    // Fit to Burke, P.G. and Taylor, K.state.T. 1979, J. Phys. B, 12, 2971-2984.
+    // Fit to Burke, P.G. and Taylor, K.state->T. 1979, J. Phys. B, 12, 2971-2984.
     EPS = (WAVENO - 111130.) * 2. / 2743.;
     A = -10.5e-18;
     B = 46.e-18;
@@ -2772,7 +2860,7 @@ double C1OP_new(int J, struct GlobalState state) /* Cross-section               
     EPS = (WAVENO - 97700.) * 2. / 2743.;
     A = 68.e-18;
     B = 118.e-18;
-    // Fit to Burke, P.G. and Taylor, K.state.T. 1979, J. Phys. B, 12, 2971-2984.
+    // Fit to Burke, P.G. and Taylor, K.state->T. 1979, J. Phys. B, 12, 2971-2984.
     XS1 = (A * EPS + B) / (EPS * EPS + 1.);
     X[14] += (XS0 + XS1) * 2. / 3.;
     //  2s2 2p2 1D
@@ -2784,12 +2872,12 @@ double C1OP_new(int J, struct GlobalState state) /* Cross-section               
     // Luo, D. and Pradhan, A.K. 1989, J.Phys. B, 22, 3377-3395.
     //     XD0=10.^(-16.80-(WAVENO-80627.760)/3.00/RYD)
     XD0 = pow10(-16.80 - (WAVENO - ELIM + ELEV[15]) / 3.00 / RYD);
-    // Fit to Burke, P.G. and Taylor, K.state.T. 1979, J. Phys. B, 12, 2971-2984.
+    // Fit to Burke, P.G. and Taylor, K.state->T. 1979, J. Phys. B, 12, 2971-2984.
     EPS = (WAVENO - 93917.) * 2. / 9230.;
     A = 22.e-18;
     B = 26.e-18;
     XD1 = (A * EPS + B) / (EPS * EPS + 1.);
-    // Fit to Burke, P.G. and Taylor, K.state.T. 1979, J. Phys. B, 12, 2971-2984.
+    // Fit to Burke, P.G. and Taylor, K.state->T. 1979, J. Phys. B, 12, 2971-2984.
     EPS = (WAVENO - 111130.) * 2. / 2743.;
     A = -10.5e-18;
     B = 46.e-18;
@@ -2838,7 +2926,7 @@ double C1OP_new(int J, struct GlobalState state) /* Cross-section               
     //  GLEV=3.
     DEGEN = 3;
     ZEFF2 = 4. / RYD * (ELIM - ELEV[19]);
-    X[19] = XKARZAS(state.FREQ, ZEFF2, 2, 1) * DEGEN;
+    X[19] = XKARZAS(state->FREQ, ZEFF2, 2, 1) * DEGEN;
     //  2s2p3 3S
     //  ELEV=105798.7
     if (WAVENO < ELIM - ELEV[20])
@@ -2847,7 +2935,7 @@ double C1OP_new(int J, struct GlobalState state) /* Cross-section               
     //  GLEV=3.
     DEGEN = 3;
     ZEFF2 = 4. / RYD * (ELIM - ELEV[20]);
-    X[20] = XKARZAS(state.FREQ, ZEFF2, 2, 1) * DEGEN;
+    X[20] = XKARZAS(state->FREQ, ZEFF2, 2, 1) * DEGEN;
     //  2s2p3 1D
     //  ELEV=97878.
     if (WAVENO < ELIM - ELEV[21])
@@ -2856,7 +2944,7 @@ double C1OP_new(int J, struct GlobalState state) /* Cross-section               
     //  GLEV=5.
     DEGEN = 3;
     ZEFF2 = 4. / RYD * (ELIM - ELEV[21]);
-    X[21] = XKARZAS(state.FREQ, ZEFF2, 2, 1) * DEGEN;
+    X[21] = XKARZAS(state->FREQ, ZEFF2, 2, 1) * DEGEN;
     //  2s2p3 3P
     //  ELEV=75254.93
     if (WAVENO < ELIM - ELEV[22])
@@ -2865,7 +2953,7 @@ double C1OP_new(int J, struct GlobalState state) /* Cross-section               
     //  GLEV=12.
     DEGEN = 3;
     ZEFF2 = 4. / RYD * (ELIM - ELEV[22]);
-    X[22] = XKARZAS(state.FREQ, ZEFF2, 2, 1) * DEGEN;
+    X[22] = XKARZAS(state->FREQ, ZEFF2, 2, 1) * DEGEN;
     //  2s2p3 3D
     //  ELEV=64088.85
     if (WAVENO < ELIM - ELEV[23])
@@ -2874,7 +2962,7 @@ double C1OP_new(int J, struct GlobalState state) /* Cross-section               
     //  GLEV=15.
     DEGEN = 3;
     ZEFF2 = 4. / RYD * (ELIM - ELEV[23]);
-    X[23] = XKARZAS(state.FREQ, ZEFF2, 2, 1) * DEGEN;
+    X[23] = XKARZAS(state->FREQ, ZEFF2, 2, 1) * DEGEN;
     //  2s2p3 5S
     //  ELEV=33735.20
     if (WAVENO < ELIM - ELEV[24])
@@ -2883,7 +2971,7 @@ double C1OP_new(int J, struct GlobalState state) /* Cross-section               
     //  GLEV=5.
     DEGEN = 3;
     ZEFF2 = 4. / RYD * (ELIM - ELEV[24]);
-    X[24] = XKARZAS(state.FREQ, ZEFF2, 2, 1) * DEGEN;
+    X[24] = XKARZAS(state->FREQ, ZEFF2, 2, 1) * DEGEN;
     break;
   }
 
@@ -2900,7 +2988,7 @@ double C1OP_new(int J, struct GlobalState state) /* Cross-section               
   return H;
 }
 
-double MG1OP(int J, struct GlobalState state) // CROSS-SECTION TIMES THE PARTITION FUNCTION
+double MG1OP(int J,  GlobalState * state) // CROSS-SECTION TIMES THE PARTITION FUNCTION
 {
   static double PEACH[15][7] =
       {
@@ -2930,14 +3018,14 @@ double MG1OP(int J, struct GlobalState state) // CROSS-SECTION TIMES THE PARTITI
   double XWL1, XWL2, D, D1, DT;
   int N, NT;
 
-  NT = min(6, (int)floor(state.T[J] / 1000.) - 3);
+  NT = min(6, (int)floor(state->T[J] / 1000.) - 3);
   if (NT < 1)
     NT = 1;
-  DT = (state.TLOG[J] - TLG[NT - 1]) / (TLG[NT] - TLG[NT - 1]);
+  DT = (state->TLOG[J] - TLG[NT - 1]) / (TLG[NT] - TLG[NT - 1]);
   for (N = 0; N < 7; N++)
-    if (state.FREQ > FREQMG[N])
+    if (state->FREQ > FREQMG[N])
       break;
-  D = (state.FREQLG - FLOG[N]) / (FLOG[N + 1] - FLOG[N]);
+  D = (state->FREQLG - FLOG[N]) / (FLOG[N + 1] - FLOG[N]);
   if (N > 1)
     N = 2 * N - 1;
   D1 = 1.0 - D;
@@ -2946,7 +3034,7 @@ double MG1OP(int J, struct GlobalState state) // CROSS-SECTION TIMES THE PARTITI
   return exp(XWL1 * (1.0 - DT) + XWL2 * DT);
 }
 
-double MG1OP_new(int J, struct GlobalState state) /* Cross-section                                */
+double MG1OP_new(int J,  GlobalState * state) /* Cross-section                                */
 {                       /* This routine is based on R.L. Kurucz Atlas12 */
   static double ELEV[15] = {54676.710, 54676.438, 54192.284, 53134.642, 49346.729,
                             47957.034, 47847.797, 46403.065, 43503.333, 41197.043,
@@ -2956,14 +3044,14 @@ double MG1OP_new(int J, struct GlobalState state) /* Cross-section              
   double BOLT[15], X[15], FREQ3, WAVENO, H, HCKT, ZEFF2;
   int i;
 
-  HCKT = state.HKT[J] * CLIGHTcm;
+  HCKT = state->HKT[J] * CLIGHTcm;
   for (i = 0; i < 15; i++)
   {
     BOLT[i] = GLEV[i] * exp(-ELEV[i] * HCKT);
     X[i] = 0.;
   }
-  FREQ3 = 2.815e29 / state.FREQ / state.FREQ / state.FREQ * Z * Z * Z * Z;
-  WAVENO = state.FREQ / CLIGHTcm;
+  FREQ3 = 2.815e29 / state->FREQ / state->FREQ / state->FREQ * Z * Z * Z * Z;
+  WAVENO = state->FREQ / CLIGHTcm;
 
   //  3s4f 3F
   //     ELEV=54676.710
@@ -2977,7 +3065,7 @@ double MG1OP_new(int J, struct GlobalState state) /* Cross-section              
   }
   //     GLEV=21.
   ZEFF2 = 16. / RYD * (ELIM - ELEV[0]);
-  X[0] = XKARZAS(state.FREQ, ZEFF2, 4, 3);
+  X[0] = XKARZAS(state->FREQ, ZEFF2, 4, 3);
   //  3s4f 1F
   //     ELEV=54676.438
   if (WAVENO < ELIM - ELEV[1])
@@ -2990,7 +3078,7 @@ double MG1OP_new(int J, struct GlobalState state) /* Cross-section              
   }
   //     GLEV=7.
   ZEFF2 = 16. / RYD * (ELIM - ELEV[1]);
-  X[1] = XKARZAS(state.FREQ, ZEFF2, 4, 3);
+  X[1] = XKARZAS(state->FREQ, ZEFF2, 4, 3);
   //  3s4d 3D
   //     ELEV=54192.284
   if (WAVENO < ELIM - ELEV[2])
@@ -3003,7 +3091,7 @@ double MG1OP_new(int J, struct GlobalState state) /* Cross-section              
   }
   //     GLEV=15.
   ZEFF2 = 16. / RYD * (ELIM - ELEV[2]);
-  X[2] = XKARZAS(state.FREQ, ZEFF2, 4, 2);
+  X[2] = XKARZAS(state->FREQ, ZEFF2, 4, 2);
   //  3s4d 1D
   //     ELEV=53134.642
   if (WAVENO < ELIM - ELEV[3])
@@ -3016,7 +3104,7 @@ double MG1OP_new(int J, struct GlobalState state) /* Cross-section              
   }
   //     GLEV=5.
   ZEFF2 = 16. / RYD * (ELIM - ELEV[3]);
-  X[3] = XKARZAS(state.FREQ, ZEFF2, 4, 2);
+  X[3] = XKARZAS(state->FREQ, ZEFF2, 4, 2);
   //  3s4p 1P
   //     ELEV=49346.729
   if (WAVENO < ELIM - ELEV[4])
@@ -3029,7 +3117,7 @@ double MG1OP_new(int J, struct GlobalState state) /* Cross-section              
   }
   //     GLEV=3.
   ZEFF2 = 16. / RYD * (ELIM - ELEV[4]);
-  X[4] = XKARZAS(state.FREQ, ZEFF2, 4, 1);
+  X[4] = XKARZAS(state->FREQ, ZEFF2, 4, 1);
   //  3s3d 3D
   //     ELEV=47957.034
   if (WAVENO < ELIM - ELEV[5])
@@ -3164,16 +3252,16 @@ double MG1OP_new(int J, struct GlobalState state) /* Cross-section              
   return H;
 }
 
-double AL1OP(int J, struct GlobalState state)
+double AL1OP(int J,  GlobalState * state)
 {
-  return (state.FREQ >= 1.443e15) ? 2.1e-17 * pow(1.443e15 / state.FREQ, 3.) * 6 : 0.;
+  return (state->FREQ >= 1.443e15) ? 2.1e-17 * pow(1.443e15 / state->FREQ, 3.) * 6 : 0.;
 }
 
-double AL1OP_new(int J, struct GlobalState state) /* Cross-section                                */
+double AL1OP_new(int J,  GlobalState * state) /* Cross-section                                */
 {                       /* This routine is based on R.L. Kurucz Atlas12 */
   double ELIM, WAVENO, F1, F2, al1op;
 
-  WAVENO = state.FREQ / CLIGHTcm;
+  WAVENO = state->FREQ / CLIGHTcm;
   ELIM = 48278.37e0;
 
   if (WAVENO < (ELIM - 112.061e0))
@@ -3202,7 +3290,7 @@ double AL1OP_new(int J, struct GlobalState state) /* Cross-section              
   return al1op;
 }
 
-double SI1OP(int J, struct GlobalState state) /* Cross-section                                */
+double SI1OP(int J,  GlobalState * state) /* Cross-section                                */
 {
   static double PEACH[19][9] =
       /* TEMP:4000   5000   6000   7000   8000   9000  10000  11000  12000   WAVE(A)*/
@@ -3237,14 +3325,14 @@ double SI1OP(int J, struct GlobalState state) /* Cross-section                  
   double D, DT, DD, XWL1, XWL2;
   int NT, N;
 
-  NT = min(8, (int)floor(state.T[J] / 1000.) - 3);
+  NT = min(8, (int)floor(state->T[J] / 1000.) - 3);
   if (NT < 1)
     NT = 1;
-  DT = (state.TLOG[J] - TLG[NT - 1]) / (TLG[NT] - TLG[NT - 1]);
+  DT = (state->TLOG[J] - TLG[NT - 1]) / (TLG[NT] - TLG[NT - 1]);
   for (N = 0; N < 9; N++)
-    if (state.FREQ > FREQSI[N])
+    if (state->FREQ > FREQSI[N])
       break;
-  D = (state.FREQLG - FLOG[N]) / (FLOG[N + 1] - FLOG[N]);
+  D = (state->FREQLG - FLOG[N]) / (FLOG[N + 1] - FLOG[N]);
   if (N > 1)
     N = 2 * N - 1;
   DD = 1. - D;
@@ -3253,7 +3341,7 @@ double SI1OP(int J, struct GlobalState state) /* Cross-section                  
   return exp(-(XWL1 * (1. - DT) + XWL2 * DT)) * 9.;
 }
 
-double SI1OP_new(int J, struct GlobalState state) /* Cross-section                                */
+double SI1OP_new(int J,  GlobalState * state) /* Cross-section                                */
 {                       /* This routine is based on R.L. Kurucz Atlas12 */
   static double ELEV[33] = {
       59962.284, 59100., 59077.112, 58893.40, 58801.529,
@@ -3270,9 +3358,9 @@ double SI1OP_new(int J, struct GlobalState state) /* Cross-section              
       DEGEN, GFACTOR, aSi1op;
   int I;
 
-  HCKT = state.HKT[J] * CLIGHTcm;
-  FREQ3 = 2.815E29 / state.FREQ / state.FREQ / state.FREQ;
-  WAVENO = state.FREQ / CLIGHTcm;
+  HCKT = state->HKT[J] * CLIGHTcm;
+  FREQ3 = 2.815E29 / state->FREQ / state->FREQ / state->FREQ;
+  WAVENO = state->FREQ / CLIGHTcm;
   RYD = 109732.298e0;
 
   for (I = 0; I < 33; I++)
@@ -3293,7 +3381,7 @@ double SI1OP_new(int J, struct GlobalState state) /* Cross-section              
 
     // GLEV=9.
     ZEFF2 = 16. / RYD * (ELIM - ELEV[0]);
-    X[0] = XKARZAS(state.FREQ, ZEFF2, 4, 2);
+    X[0] = XKARZAS(state->FREQ, ZEFF2, 4, 2);
     // 3s2 3p4f (2P3/2)4f
     // ELEV=59100.
     if (WAVENO < ELIM - ELEV[1])
@@ -3301,7 +3389,7 @@ double SI1OP_new(int J, struct GlobalState state) /* Cross-section              
 
     // GLEV=56.
     ZEFF2 = 16. / RYD * (ELIM - ELEV[1]);
-    X[1] = XKARZAS(state.FREQ, ZEFF2, 4, 3);
+    X[1] = XKARZAS(state->FREQ, ZEFF2, 4, 3);
     // 3s2 3p4d 3D
     // ELEV=59077.112
     if (WAVENO < ELIM - ELEV[2])
@@ -3309,7 +3397,7 @@ double SI1OP_new(int J, struct GlobalState state) /* Cross-section              
 
     // GLEV=15.
     ZEFF2 = 16. / RYD * (ELIM - ELEV[2]);
-    X[2] = XKARZAS(state.FREQ, ZEFF2, 4, 2);
+    X[2] = XKARZAS(state->FREQ, ZEFF2, 4, 2);
     // 3s2 3p4d 1F
     // ELEV=58893.40
     if (WAVENO < ELIM - ELEV[3])
@@ -3317,7 +3405,7 @@ double SI1OP_new(int J, struct GlobalState state) /* Cross-section              
 
     // GLEV=7.
     ZEFF2 = 16. / RYD * (ELIM - ELEV[3]);
-    X[3] = XKARZAS(state.FREQ, ZEFF2, 4, 2);
+    X[3] = XKARZAS(state->FREQ, ZEFF2, 4, 2);
     // 3s2 3p4d 1P
     // ELEV=58801.529
     if (WAVENO < ELIM - ELEV[4])
@@ -3325,7 +3413,7 @@ double SI1OP_new(int J, struct GlobalState state) /* Cross-section              
 
     // GLEV=3.
     ZEFF2 = 16. / RYD * (ELIM - ELEV[4]);
-    X[4] = XKARZAS(state.FREQ, ZEFF2, 4, 2);
+    X[4] = XKARZAS(state->FREQ, ZEFF2, 4, 2);
     // 3s2 3p4f (2P1/2)4f
     // ELEV=58777.
     if (WAVENO < ELIM - ELEV[5])
@@ -3333,7 +3421,7 @@ double SI1OP_new(int J, struct GlobalState state) /* Cross-section              
 
     // GLEV=28.
     ZEFF2 = 16. / RYD * (ELIM - ELEV[5]);
-    X[5] = XKARZAS(state.FREQ, ZEFF2, 4, 3);
+    X[5] = XKARZAS(state->FREQ, ZEFF2, 4, 3);
     // 3s2 3p4d 3F
     // ELEV=57488.974
     if (WAVENO < ELIM - ELEV[6])
@@ -3341,7 +3429,7 @@ double SI1OP_new(int J, struct GlobalState state) /* Cross-section              
 
     // GLEV=21.
     ZEFF2 = 16. / RYD * (ELIM - ELEV[6]);
-    X[6] = XKARZAS(state.FREQ, ZEFF2, 4, 2);
+    X[6] = XKARZAS(state->FREQ, ZEFF2, 4, 2);
     // 3s2 3p4d 1D
     // ELEV=56503.346
     if (WAVENO < ELIM - ELEV[7])
@@ -3349,7 +3437,7 @@ double SI1OP_new(int J, struct GlobalState state) /* Cross-section              
 
     // GLEV=5.
     ZEFF2 = 16. / RYD * (ELIM - ELEV[7]);
-    X[7] = XKARZAS(state.FREQ, ZEFF2, 4, 2);
+    X[7] = XKARZAS(state->FREQ, ZEFF2, 4, 2);
     // 3s2 3p3d 3D
     // ELEV=54225.621
     if (WAVENO < ELIM - ELEV[8])
@@ -3357,7 +3445,7 @@ double SI1OP_new(int J, struct GlobalState state) /* Cross-section              
 
     // GLEV=15.
     ZEFF2 = 9. / RYD * (ELIM - ELEV[8]);
-    X[8] = XKARZAS(state.FREQ, ZEFF2, 3, 2);
+    X[8] = XKARZAS(state->FREQ, ZEFF2, 3, 2);
     // 3s2 3p3d 1P
     // ELEV=53387.34
     if (WAVENO < ELIM - ELEV[9])
@@ -3365,7 +3453,7 @@ double SI1OP_new(int J, struct GlobalState state) /* Cross-section              
 
     // GLEV=3.
     ZEFF2 = 9. / RYD * (ELIM - ELEV[9]);
-    X[9] = XKARZAS(state.FREQ, ZEFF2, 3, 2);
+    X[9] = XKARZAS(state->FREQ, ZEFF2, 3, 2);
     // 3s2 3p3d 1F
     // ELEV=53362.24
     if (WAVENO < ELIM - ELEV[10])
@@ -3373,7 +3461,7 @@ double SI1OP_new(int J, struct GlobalState state) /* Cross-section              
 
     // GLEV=7.
     ZEFF2 = 9. / RYD * (ELIM - ELEV[10]);
-    X[10] = XKARZAS(state.FREQ, ZEFF2, 3, 2);
+    X[10] = XKARZAS(state->FREQ, ZEFF2, 3, 2);
     // 3s2 3p4p 1S
     // ELEV=51612.012
     if (WAVENO < ELIM - ELEV[11])
@@ -3381,7 +3469,7 @@ double SI1OP_new(int J, struct GlobalState state) /* Cross-section              
 
     // GLEV=1.
     ZEFF2 = 16. / RYD * (ELIM - ELEV[11]);
-    X[11] = XKARZAS(state.FREQ, ZEFF2, 4, 1);
+    X[11] = XKARZAS(state->FREQ, ZEFF2, 4, 1);
     // 3s2 3p3d 3P
     // ELEV=50533.424
     if (WAVENO < ELIM - ELEV[12])
@@ -3389,7 +3477,7 @@ double SI1OP_new(int J, struct GlobalState state) /* Cross-section              
 
     // GLEV=9.
     ZEFF2 = 9. / RYD * (ELIM - ELEV[12]);
-    X[12] = XKARZAS(state.FREQ, ZEFF2, 3, 2);
+    X[12] = XKARZAS(state->FREQ, ZEFF2, 3, 2);
     // 3s2 3p4p 1D
     // ELEV=50189.389
     if (WAVENO < ELIM - ELEV[13])
@@ -3397,7 +3485,7 @@ double SI1OP_new(int J, struct GlobalState state) /* Cross-section              
 
     // GLEV=5.
     ZEFF2 = 16. / RYD * (ELIM - ELEV[13]);
-    X[13] = XKARZAS(state.FREQ, ZEFF2, 4, 1);
+    X[13] = XKARZAS(state->FREQ, ZEFF2, 4, 1);
     // 3s2 3p3d 3F
     // ELEV=49965.894
     if (WAVENO < ELIM - ELEV[14])
@@ -3405,7 +3493,7 @@ double SI1OP_new(int J, struct GlobalState state) /* Cross-section              
 
     // GLEV=21.
     ZEFF2 = 9. / RYD * (ELIM - ELEV[14]);
-    X[14] = XKARZAS(state.FREQ, ZEFF2, 3, 2);
+    X[14] = XKARZAS(state->FREQ, ZEFF2, 3, 2);
     // 3s2 3p4p 3S
     // ELEV=49399.670
     if (WAVENO < ELIM - ELEV[15])
@@ -3413,7 +3501,7 @@ double SI1OP_new(int J, struct GlobalState state) /* Cross-section              
 
     // GLEV=3.
     ZEFF2 = 16. / RYD * (ELIM - ELEV[15]);
-    X[15] = XKARZAS(state.FREQ, ZEFF2, 4, 1);
+    X[15] = XKARZAS(state->FREQ, ZEFF2, 4, 1);
     // 3s2 3p4p 3P
     // ELEV=49128.131
     if (WAVENO < ELIM - ELEV[16])
@@ -3421,7 +3509,7 @@ double SI1OP_new(int J, struct GlobalState state) /* Cross-section              
 
     // GLEV=9.
     ZEFF2 = 16. / RYD * (ELIM - ELEV[16]);
-    X[16] = XKARZAS(state.FREQ, ZEFF2, 4, 1);
+    X[16] = XKARZAS(state->FREQ, ZEFF2, 4, 1);
     // 3s2 3p4p 3D
     // ELEV=48161.459
     if (WAVENO < ELIM - ELEV[17])
@@ -3429,7 +3517,7 @@ double SI1OP_new(int J, struct GlobalState state) /* Cross-section              
 
     // GLEV=15.
     ZEFF2 = 16. / RYD * (ELIM - ELEV[17]);
-    X[17] = XKARZAS(state.FREQ, ZEFF2, 4, 1);
+    X[17] = XKARZAS(state->FREQ, ZEFF2, 4, 1);
     // 3s2 3p3d 1D
     // ELEV=47351.554
     if (WAVENO < ELIM - ELEV[18])
@@ -3437,7 +3525,7 @@ double SI1OP_new(int J, struct GlobalState state) /* Cross-section              
 
     // GLEV=5.
     ZEFF2 = 9. / RYD * (ELIM - ELEV[18]);
-    X[18] = XKARZAS(state.FREQ, ZEFF2, 3, 2);
+    X[18] = XKARZAS(state->FREQ, ZEFF2, 3, 2);
     // 2s2 3p4p 1P
     // ELEV=47284.061
     if (WAVENO < ELIM - ELEV[19])
@@ -3445,7 +3533,7 @@ double SI1OP_new(int J, struct GlobalState state) /* Cross-section              
 
     // GLEV=3.
     ZEFF2 = 16. / RYD * (ELIM - ELEV[19]);
-    X[19] = XKARZAS(state.FREQ, ZEFF2, 4, 1);
+    X[19] = XKARZAS(state->FREQ, ZEFF2, 4, 1);
     // 3s2 3p4s 1P
     // ELEV=40991.884
     if (WAVENO < ELIM - ELEV[20])
@@ -3453,7 +3541,7 @@ double SI1OP_new(int J, struct GlobalState state) /* Cross-section              
 
     // GLEV=3.
     ZEFF2 = 16. / RYD * (ELIM - ELEV[20]);
-    X[20] = XKARZAS(state.FREQ, ZEFF2, 4, 0);
+    X[20] = XKARZAS(state->FREQ, ZEFF2, 4, 0);
     // 3s2 3p4s 3P
     // ELEV=39859.920
     if (WAVENO < ELIM - ELEV[21])
@@ -3461,7 +3549,7 @@ double SI1OP_new(int J, struct GlobalState state) /* Cross-section              
 
     // GLEV=9.
     ZEFF2 = 16. / RYD * (ELIM - ELEV[21]);
-    X[21] = XKARZAS(state.FREQ, ZEFF2, 4, 0);
+    X[21] = XKARZAS(state->FREQ, ZEFF2, 4, 0);
     break;
   }
 
@@ -3599,7 +3687,7 @@ double SI1OP_new(int J, struct GlobalState state) /* Cross-section              
     // GLEV=3.
     DEGEN = 3.;
     ZEFF2 = 9. / RYD * (ELIM - ELEV[27]);
-    X[27] = XKARZAS(state.FREQ, ZEFF2, 3, 1) * DEGEN;
+    X[27] = XKARZAS(state->FREQ, ZEFF2, 3, 1) * DEGEN;
     // 3s3p3 3S
     // guess
     // ELEV=79664.0
@@ -3609,7 +3697,7 @@ double SI1OP_new(int J, struct GlobalState state) /* Cross-section              
     // GLEV=3.
     DEGEN = 3.;
     ZEFF2 = 9. / RYD * (ELIM - ELEV[28]);
-    X[28] = XKARZAS(state.FREQ, ZEFF2, 3, 1) * DEGEN;
+    X[28] = XKARZAS(state->FREQ, ZEFF2, 3, 1) * DEGEN;
     // 3s3p3 1D
     // guess
     // ELEV=72000.
@@ -3618,7 +3706,7 @@ double SI1OP_new(int J, struct GlobalState state) /* Cross-section              
 
     // GLEV=5.
     ZEFF2 = 9. / RYD * (ELIM - ELEV[29]);
-    X[29] = XKARZAS(state.FREQ, ZEFF2, 3, 1) * DEGEN;
+    X[29] = XKARZAS(state->FREQ, ZEFF2, 3, 1) * DEGEN;
     // 3s3p3 3P
     // ELEV=56698.738
     if (WAVENO < ELIM - ELEV[30])
@@ -3626,7 +3714,7 @@ double SI1OP_new(int J, struct GlobalState state) /* Cross-section              
 
     // GLEV=12.
     ZEFF2 = 9. / RYD * (ELIM - ELEV[30]);
-    X[30] = XKARZAS(state.FREQ, ZEFF2, 3, 1) * DEGEN;
+    X[30] = XKARZAS(state->FREQ, ZEFF2, 3, 1) * DEGEN;
     // 2s2p3 3D
     // ELEV=45303.310
     if (WAVENO < ELIM - ELEV[31])
@@ -3634,7 +3722,7 @@ double SI1OP_new(int J, struct GlobalState state) /* Cross-section              
 
     // GLEV=15.
     ZEFF2 = 9. / RYD * (ELIM - ELEV[31]);
-    X[31] = XKARZAS(state.FREQ, ZEFF2, 3, 1) * DEGEN;
+    X[31] = XKARZAS(state->FREQ, ZEFF2, 3, 1) * DEGEN;
     // 2s2p3 5S
     // ELEV=33326.053
     if (WAVENO < ELIM - ELEV[32])
@@ -3642,7 +3730,7 @@ double SI1OP_new(int J, struct GlobalState state) /* Cross-section              
 
     // GLEV=5.
     ZEFF2 = 9. / RYD * (ELIM - ELEV[32]);
-    X[32] = XKARZAS(state.FREQ, ZEFF2, 3, 1) * DEGEN;
+    X[32] = XKARZAS(state->FREQ, ZEFF2, 3, 1) * DEGEN;
     break;
   }
 
@@ -3657,7 +3745,7 @@ double SI1OP_new(int J, struct GlobalState state) /* Cross-section              
   return aSi1op;
 }
 
-double FE1OP(int J, struct GlobalState state)
+double FE1OP(int J,  GlobalState * state)
 {
   /* 
   Cross-section time partition functions 
@@ -3684,13 +3772,13 @@ double FE1OP(int J, struct GlobalState state)
   double BOLT, XSECT, WAVENO, FE1OPACITY, XXX;
   int I;
 
-  WAVENO = state.FREQ / CLIGHTcm;
+  WAVENO = state->FREQ / CLIGHTcm;
   if (WAVENO < 21000.)
     return 0.;
   FE1OPACITY = 0.;
   for (I = 0; I < 48; I++)
   {
-    BOLT = G[I] * exp(-E[I] * CLIGHTcm * state.HKT[J]);
+    BOLT = G[I] * exp(-E[I] * CLIGHTcm * state->HKT[J]);
     if (WNO[I] < WAVENO)
     {
       XXX = ((WNO[I] + 3000. - WAVENO) / WNO[I] / .1);
@@ -3703,7 +3791,7 @@ double FE1OP(int J, struct GlobalState state)
   return FE1OPACITY;
 }
 
-double FE1OP_new(int J, struct GlobalState state)
+double FE1OP_new(int J,  GlobalState * state)
 {
   /*
   Cross-sections of Fe 1 photoionization time
@@ -3724,43 +3812,43 @@ double FE1OP_new(int J, struct GlobalState state)
     float delta;
     FILE *fe1op_data;
 
-    strncpy(path, state.PATH, state.PATHLEN + 1);
+    strncpy(path, state->PATH, state->PATHLEN + 1);
     strcat(path, DATAFILE_FE);
     fe1op_data = fopen(path, "rb");
 
     i = fread(&headlen, sizeof(int), 1, fe1op_data);
-    if (state.change_byte_order)
+    if (state->change_byte_order)
       headlen = *(int *)ByteSwap((char *)&headlen, 4);
     i = fread(head, 1, headlen, fe1op_data);
 
     i = fread(&delta, sizeof(float), 1, fe1op_data);
-    if (state.change_byte_order)
+    if (state->change_byte_order)
       delta = *(float *)ByteSwap((char *)&delta, 4);
 
     i = fread(&n_Ebin, sizeof(int), 1, fe1op_data);
-    if (state.change_byte_order)
+    if (state->change_byte_order)
       n_Ebin = *(int *)ByteSwap((char *)&n_Ebin, 4);
     i = fread(Ebin, sizeof(double), n_Ebin, fe1op_data);
-    if (state.change_byte_order)
+    if (state->change_byte_order)
     {
       for (i_en = 0; i_en < n_Ebin; i_en++)
         Ebin[i_en] = *(double *)ByteSwap((char *)(Ebin + i_en), 8);
     }
 
     i = fread(&n_WN, sizeof(int), 1, fe1op_data);
-    if (state.change_byte_order)
+    if (state->change_byte_order)
       n_WN = *(int *)ByteSwap((char *)&n_WN, 4);
 
     i = fread(&WN0, sizeof(double), 1, fe1op_data);
-    if (state.change_byte_order)
+    if (state->change_byte_order)
       WN0 = *(double *)ByteSwap((char *)&WN0, 8);
 
     i = fread(&WNSTEP, sizeof(double), 1, fe1op_data);
-    if (state.change_byte_order)
+    if (state->change_byte_order)
       WNSTEP = *(double *)ByteSwap((char *)&WNSTEP, 8);
 
     i = fread(GCROSS, sizeof(double), n_Ebin * n_WN, fe1op_data);
-    if (state.change_byte_order)
+    if (state->change_byte_order)
     {
       for (i_en = 0; i_en < n_Ebin; i_en++)
         for (i_wn = 0; i_wn < n_WN; i_wn++)
@@ -3770,8 +3858,8 @@ double FE1OP_new(int J, struct GlobalState state)
     first = 0;
   }
 
-  WAVENO = state.FREQ / CLIGHTcm;
-  kT_eV = state.TK[J] / 1.602176565e-12; // Changing kT from erg/K to eV/K
+  WAVENO = state->FREQ / CLIGHTcm;
+  kT_eV = state->TK[J] / 1.602176565e-12; // Changing kT from erg/K to eV/K
   if (WAVENO < WN0 || WAVENO > WN0 + WNSTEP * (n_WN - 1))
     return 0.;
   i_wn = (WAVENO - WN0) / WNSTEP;
@@ -3782,10 +3870,10 @@ double FE1OP_new(int J, struct GlobalState state)
     BOLT = exp(-Ebin[i_en] / kT_eV);
     fe1op += ((GCROSS[i_wn + 1][i_en] - GCROSS[i_wn][i_en]) * FACTOR + GCROSS[i_wn][i_en]) * BOLT;
   }
-  return fe1op; ///state.PARTITION_FUNCTIONS[J][state.IXFE1];
+  return fe1op; ///state->PARTITION_FUNCTIONS[J][state->IXFE1];
 }
 
-double CHOP(int J, struct GlobalState state) /* Cross-section for CH molecule */
+double CHOP(int J,  GlobalState * state) /* Cross-section for CH molecule */
 {
   static double CROSSCH[105][15] =
       {{-38.000, -38.000, -38.000, -38.000, -38.000, -38.000, -38.000,            // 0.1
@@ -4002,25 +4090,25 @@ double CHOP(int J, struct GlobalState state) /* Cross-section for CH molecule */
   double WAVENO, EVOLT, EN, TN, CROSSCHT[15], CHop;
   int N, IT;
 
-  WAVENO = state.FREQ / CLIGHTcm;
+  WAVENO = state->FREQ / CLIGHTcm;
   EVOLT = WAVENO / 8065.479e0;
   N = EVOLT * 10.;
   if (N < 20 || N >= 105)
     return 0.;
-  if (state.T[J] >= 9000.)
+  if (state->T[J] >= 9000.)
     return 0.;
 
   EN = N * 0.1;
   for (IT = 0; IT < 15; IT++)
     CROSSCHT[IT] = CROSSCH[N - 1][IT] + (CROSSCH[N][IT] - CROSSCH[N - 1][IT]) * (EVOLT - EN) / 0.1;
-  IT = (state.T[J] - 2000.) / 500.;
+  IT = (state->T[J] - 2000.) / 500.;
   IT = max(IT, 0);
   TN = (IT + 1) * 500. + 1500.;
-  CHop = pow10(CROSSCHT[IT] + (CROSSCHT[IT + 1] - CROSSCHT[IT]) * (state.T[J] - TN) / 500.);
-  return CHop * state.PARTITION_FUNCTIONS[J][state.IXCH];
+  CHop = pow10(CROSSCHT[IT] + (CROSSCHT[IT + 1] - CROSSCHT[IT]) * (state->T[J] - TN) / 500.);
+  return CHop * state->PARTITION_FUNCTIONS[J][state->IXCH];
 }
 
-double NHOP(int J, struct GlobalState state)
+double NHOP(int J,  GlobalState * state)
 {
   /*
   Cross-sections of Fe 1 photoionization time
@@ -4041,48 +4129,48 @@ double NHOP(int J, struct GlobalState state)
     char head[2048];
     float gauss_fwhm;
 
-    strncpy(path, state.PATH, state.PATHLEN + 1);
+    strncpy(path, state->PATH, state->PATHLEN + 1);
     strcat(path, DATAFILE_NH);
     NHop_data = fopen(path, "rb");
 
     i = fread(&headlen, sizeof(int), 1, NHop_data);
-    if (state.change_byte_order)
+    if (state->change_byte_order)
       headlen = *(int *)ByteSwap((char *)&headlen, 4);
 
     i = fread(head, 1, headlen, NHop_data);
 
     i = fread(&gauss_fwhm, sizeof(float), 1, NHop_data);
-    if (state.change_byte_order)
+    if (state->change_byte_order)
       gauss_fwhm = *(float *)ByteSwap((char *)&gauss_fwhm, 4);
 
     i = fread(&n_etrans, sizeof(int), 1, NHop_data);
-    if (state.change_byte_order)
+    if (state->change_byte_order)
       n_etrans = *(int *)ByteSwap((char *)&n_etrans, 4);
 
     i = fread(&n_Temp, sizeof(int), 1, NHop_data);
-    if (state.change_byte_order)
+    if (state->change_byte_order)
       n_Temp = *(int *)ByteSwap((char *)&n_Temp, 4);
 
     i = fread(&n_WL, sizeof(int), 1, NHop_data);
-    if (state.change_byte_order)
+    if (state->change_byte_order)
       n_WL = *(int *)ByteSwap((char *)&n_WL, 4);
 
     i = fread(&WL0, sizeof(double), 1, NHop_data);
-    if (state.change_byte_order)
+    if (state->change_byte_order)
       WL0 = *(double *)ByteSwap((char *)&WL0, 8);
 
     i = fread(&WLSTEP, sizeof(double), 1, NHop_data);
-    if (state.change_byte_order)
+    if (state->change_byte_order)
       WLSTEP = *(double *)ByteSwap((char *)&WLSTEP, 8);
 
     i = fread(T_TBL, sizeof(float), n_Temp, NHop_data);
-    if (state.change_byte_order)
+    if (state->change_byte_order)
     {
       for (i_temp = 0; i_temp < n_Temp; i_temp++)
         T_TBL[i_temp] = *(float *)ByteSwap((char *)(T_TBL + i_temp), 4);
     }
     i = fread(GCROSS, sizeof(double), n_etrans * n_Temp * n_WL, NHop_data);
-    if (state.change_byte_order)
+    if (state->change_byte_order)
     {
       ii = 0;
       for (i_wl = 0; i_wl < n_WL; i_wl++)
@@ -4097,19 +4185,19 @@ double NHOP(int J, struct GlobalState state)
     first = 0;
   }
 
-  WAVE = CLIGHT / state.FREQ;
+  WAVE = CLIGHT / state->FREQ;
   if (WAVE < WL0 || WAVE > WL0 + WLSTEP * (n_WL - 1))
     return 0.;
-  if (state.T[J] < T_TBL[0] || state.T[J] > T_TBL[n_Temp - 1])
+  if (state->T[J] < T_TBL[0] || state->T[J] > T_TBL[n_Temp - 1])
     return 0.;
 
   i_wl = (WAVE - WL0) / WLSTEP;
   factor_wl = (WAVE - WL0 - i_wl * WLSTEP) / WLSTEP;
 
   for (i_temp = 0; i_temp < n_Temp - 1; i_temp++)
-    if (T_TBL[i_temp + 1] > state.T[J])
+    if (T_TBL[i_temp + 1] > state->T[J])
       break;
-  factor_temp = (state.T[J] - T_TBL[i_temp]) / (T_TBL[i_temp + 1] - T_TBL[i_temp]);
+  factor_temp = (state->T[J] - T_TBL[i_temp]) / (T_TBL[i_temp + 1] - T_TBL[i_temp]);
 
   f1 = (GCROSS[i_wl][i_temp + 1][0] - GCROSS[i_wl][i_temp][0]) * factor_temp + GCROSS[i_wl][i_temp][0];
   f2 = (GCROSS[i_wl + 1][i_temp + 1][0] - GCROSS[i_wl + 1][i_temp][0]) * factor_temp + GCROSS[i_wl + 1][i_temp][0];
@@ -4119,15 +4207,15 @@ double NHOP(int J, struct GlobalState state)
   f2 = (GCROSS[i_wl + 1][i_temp + 1][1] - GCROSS[i_wl + 1][i_temp][1]) * factor_temp + GCROSS[i_wl + 1][i_temp][1];
   NHop += (f2 - f1) * factor_wl + f1;
 
-  factor_temp = (1. / state.T[J] - 1. / T_TBL[i_temp]) / (1. / T_TBL[i_temp + 1] - 1. / T_TBL[i_temp]);
+  factor_temp = (1. / state->T[J] - 1. / T_TBL[i_temp]) / (1. / T_TBL[i_temp + 1] - 1. / T_TBL[i_temp]);
   f1 = (GCROSS[i_wl][i_temp + 1][2] - GCROSS[i_wl][i_temp][2]) * factor_temp + GCROSS[i_wl][i_temp][2];
   f2 = (GCROSS[i_wl + 1][i_temp + 1][2] - GCROSS[i_wl + 1][i_temp][2]) * factor_temp + GCROSS[i_wl + 1][i_temp][2];
   NHop += pow10((f2 - f1) * factor_wl + f1);
 
-  return NHop * state.PARTITION_FUNCTIONS[J][state.IXNH];
+  return NHop * state->PARTITION_FUNCTIONS[J][state->IXNH];
 }
 
-double OHOP(int J, struct GlobalState state)
+double OHOP(int J,  GlobalState * state)
 {
   static double CROSSOH[130][15] =
       {{-30.855, -29.121, -27.976, -27.166, -26.566, -26.106, -25.742,              // 2.1
@@ -4394,88 +4482,88 @@ double OHOP(int J, struct GlobalState state)
   double WAVENO, EVOLT, EN, TN, CROSSOHT[15], OHop;
   int N, IT;
 
-  WAVENO = state.FREQ / CLIGHTcm;
+  WAVENO = state->FREQ / CLIGHTcm;
   EVOLT = WAVENO / 8065.479e0;
   N = EVOLT * 10. - 20.;
   if (N <= 0 || N >= 130)
     return 0.;
-  if (state.T[J] >= 9000.)
+  if (state->T[J] >= 9000.)
     return 0.;
 
   EN = N * 0.1 + 2.;
   for (IT = 0; IT < 15; IT++)
     CROSSOHT[IT] = CROSSOH[N - 1][IT] + (CROSSOH[N][IT] - CROSSOH[N - 1][IT]) * (EVOLT - EN) / 0.1;
-  IT = (state.T[J] - 2000.) / 500.;
+  IT = (state->T[J] - 2000.) / 500.;
   IT = max(IT, 0);
   TN = (IT + 1) * 500. + 1500.;
-  OHop = pow10(CROSSOHT[IT] + (CROSSOHT[IT + 1] - CROSSOHT[IT]) * (state.T[J] - TN) / 500.);
-  return OHop * state.PARTITION_FUNCTIONS[J][state.IXOH];
+  OHop = pow10(CROSSOHT[IT] + (CROSSOHT[IT + 1] - CROSSOHT[IT]) * (state->T[J] - TN) / 500.);
+  return OHop * state->PARTITION_FUNCTIONS[J][state->IXOH];
 }
 
-void COOLOP(double *acool, struct GlobalState state) /* Si1, Mg1, Al1, C1, Fe1 */
+void COOLOP(double *acool,  GlobalState * state) /* Si1, Mg1, Al1, C1, Fe1 */
 {
   int J;
 
-  if (state.PATHLEN > 0)
+  if (state->PATHLEN > 0)
   {
-    for (J = 0; J < state.NRHOX; J++)
+    for (J = 0; J < state->NRHOX; J++)
     {
-      acool[J] = (C1OP_new(J, state) * state.FRACT[J][state.IXC1] + MG1OP_new(J, state) * state.FRACT[J][state.IXMG1] + AL1OP_new(J, state) * state.FRACT[J][state.IXAL1] + SI1OP_new(J, state) * state.FRACT[J][state.IXSI1] + FE1OP_new(J, state) * state.FRACT[J][state.IXFE1] + CHOP(J, state) * state.FRACT[J][state.IXCH] + NHOP(J, state) * state.FRACT[J][state.IXNH] + OHOP(J, state) * state.FRACT[J][state.IXOH]) * state.STIM[J] / state.RHO[J];
+      acool[J] = (C1OP_new(J, state) * state->FRACT[J][state->IXC1] + MG1OP_new(J, state) * state->FRACT[J][state->IXMG1] + AL1OP_new(J, state) * state->FRACT[J][state->IXAL1] + SI1OP_new(J, state) * state->FRACT[J][state->IXSI1] + FE1OP_new(J, state) * state->FRACT[J][state->IXFE1] + CHOP(J, state) * state->FRACT[J][state->IXCH] + NHOP(J, state) * state->FRACT[J][state->IXNH] + OHOP(J, state) * state->FRACT[J][state->IXOH]) * state->STIM[J] / state->RHO[J];
     }
   }
   else
   {
-    for (J = 0; J < state.NRHOX; J++)
+    for (J = 0; J < state->NRHOX; J++)
     {
-      acool[J] = (C1OP_new(J, state) * state.FRACT[J][state.IXC1] + MG1OP_new(J, state) * state.FRACT[J][state.IXMG1] + AL1OP_new(J, state) * state.FRACT[J][state.IXAL1] + SI1OP_new(J, state) * state.FRACT[J][state.IXSI1] + FE1OP(J, state) * state.FRACT[J][state.IXFE1] + CHOP(J, state) * state.FRACT[J][state.IXCH] + OHOP(J, state) * state.FRACT[J][state.IXOH]) * state.STIM[J] / state.RHO[J];
+      acool[J] = (C1OP_new(J, state) * state->FRACT[J][state->IXC1] + MG1OP_new(J, state) * state->FRACT[J][state->IXMG1] + AL1OP_new(J, state) * state->FRACT[J][state->IXAL1] + SI1OP_new(J, state) * state->FRACT[J][state->IXSI1] + FE1OP(J, state) * state->FRACT[J][state->IXFE1] + CHOP(J, state) * state->FRACT[J][state->IXCH] + OHOP(J, state) * state->FRACT[J][state->IXOH]) * state->STIM[J] / state->RHO[J];
     }
   }
   return;
 }
 
-double N1OP(int J, struct GlobalState state) /* Cross-section */
+double N1OP(int J,  GlobalState * state) /* Cross-section */
 {
   double C1130, C1020, X1130, X1020, X853;
 
-  C1130 = 6. * exp(-3.575 / state.TKEV[J]);
-  C1020 = 10. * exp(-2.384 / state.TKEV[J]);
+  C1130 = 6. * exp(-3.575 / state->TKEV[J]);
+  C1020 = 10. * exp(-2.384 / state->TKEV[J]);
   X1130 = 0.;
   X1020 = 0.;
   X853 = 0.;
-  if (state.FREQ >= 3.517915e15)
-    X853 = SEATON(state.FREQ, 3.517915e15, 1.142e-17, 2.0, 4.29);
-  if (state.FREQ >= 2.941534e15)
-    X1020 = SEATON(state.FREQ, 2.941534e15, 4.410e-18, 1.5, 3.85);
-  if (state.FREQ >= 2.653317e15)
-    X1130 = SEATON(state.FREQ, 2.653317e15, 4.200e-18, 1.5, 4.34);
+  if (state->FREQ >= 3.517915e15)
+    X853 = SEATON(state->FREQ, 3.517915e15, 1.142e-17, 2.0, 4.29);
+  if (state->FREQ >= 2.941534e15)
+    X1020 = SEATON(state->FREQ, 2.941534e15, 4.410e-18, 1.5, 3.85);
+  if (state->FREQ >= 2.653317e15)
+    X1130 = SEATON(state->FREQ, 2.653317e15, 4.200e-18, 1.5, 4.34);
   return X853 * 4. + X1020 * C1020 + X1130 * C1130;
 }
 
-double O1OP(int J, struct GlobalState state) /*  CROSS-SECTION TIMES PARTITION FUNCTION */
+double O1OP(int J,  GlobalState * state) /*  CROSS-SECTION TIMES PARTITION FUNCTION */
 {
-  return (state.FREQ >= 3.28805e15) ? 9. * SEATON(state.FREQ, 3.28805e15, 2.94e-18, 1., 2.66) : 0;
+  return (state->FREQ >= 3.28805e15) ? 9. * SEATON(state->FREQ, 3.28805e15, 2.94e-18, 1., 2.66) : 0;
 }
 
-double MG2OP(int J, struct GlobalState state) /* CROSS-SECTION TIMES PARTITION FUNCTION */
+double MG2OP(int J,  GlobalState * state) /* CROSS-SECTION TIMES PARTITION FUNCTION */
 {
   double C1169, X1169, X824, XXX;
 
-  C1169 = 6. * exp(-4.43 / state.TKEV[J]);
+  C1169 = 6. * exp(-4.43 / state->TKEV[J]);
   X1169 = 0.;
   X824 = 0.;
 
-  if (state.FREQ >= 3.635492E15)
-    X824 = SEATON(state.FREQ, 3.635492E15, 1.40E-19, 4., 6.7);
-  if (state.FREQ >= 2.564306E15)
+  if (state->FREQ >= 3.635492E15)
+    X824 = SEATON(state->FREQ, 3.635492E15, 1.40E-19, 4., 6.7);
+  if (state->FREQ >= 2.564306E15)
   {
-    XXX = (2.564306E15 / state.FREQ);
+    XXX = (2.564306E15 / state->FREQ);
     XXX = XXX * XXX * XXX;
     X1169 = 5.11E-19 * XXX;
   }
   return X824 * 2. + X1169 * C1169;
 }
 
-double SI2OP(int J, struct GlobalState state) /* CROSS-SECTION TIMES THE PARTITION FUNCTION */
+double SI2OP(int J,  GlobalState * state) /* CROSS-SECTION TIMES THE PARTITION FUNCTION */
 {
   static double PEACH[14][6] =
       /*    10000     12000     14000     16000     18000     20000       WAVE(A) */
@@ -4503,14 +4591,14 @@ double SI2OP(int J, struct GlobalState state) /* CROSS-SECTION TIMES THE PARTITI
   double DT, D, D1, XWL1, XWL2;
   int NT, N;
 
-  NT = min(5, (int)floor(state.T[J] / 2000.) - 4);
+  NT = min(5, (int)floor(state->T[J] / 2000.) - 4);
   if (NT < 1)
     NT = 1;
-  DT = (state.TLOG[J] - TLG[NT - 1]) / (TLG[NT] - TLG[NT - 1]);
+  DT = (state->TLOG[J] - TLG[NT - 1]) / (TLG[NT] - TLG[NT - 1]);
   for (N = 0; N < 7; N++)
-    if (state.FREQ > FREQSI[N])
+    if (state->FREQ > FREQSI[N])
       break;
-  D = (state.FREQLG - FLOG[N]) / (FLOG[N + 1] - FLOG[N]);
+  D = (state->FREQLG - FLOG[N]) / (FLOG[N + 1] - FLOG[N]);
   /* 24-11-2009 Eric Stempels noted a bug when porting this subroutine from FORTRAN
    The checks below should be against 1 and 13 and not 2 and 14 as N is smaller
    by one compared to it FOTRAN counterpart */
@@ -4524,41 +4612,41 @@ double SI2OP(int J, struct GlobalState state) /* CROSS-SECTION TIMES THE PARTITI
   return exp(XWL1 * (1. - DT) + XWL2 * DT) * 6.;
 }
 
-double CA2OP(int J, struct GlobalState state) /* CROSS-SECTION TIMES THE PARTITION FUNCTION */
+double CA2OP(int J,  GlobalState * state) /* CROSS-SECTION TIMES THE PARTITION FUNCTION */
 {
   double C1218, C1420, X1218, X1420, X1044, XXX;
 
-  C1218 = 10. * exp(-1.697 / state.TKEV[J]);
-  C1420 = 6. * exp(-3.142 / state.TKEV[J]);
+  C1218 = 10. * exp(-1.697 / state->TKEV[J]);
+  C1420 = 6. * exp(-3.142 / state->TKEV[J]);
   X1044 = 0.;
   X1218 = 0.;
   X1420 = 0.;
-  if (state.FREQ >= 2.870454e15)
+  if (state->FREQ >= 2.870454e15)
   {
-    XXX = (2.870454e15 / state.FREQ);
+    XXX = (2.870454e15 / state->FREQ);
     XXX = XXX * XXX * XXX;
     X1044 = 1.08e-19 * XXX;
   }
-  if (state.FREQ >= 2.460127e15)
-    X1218 = 1.64e-17 * sqrt(2.460127e15 / state.FREQ);
-  if (state.FREQ >= 2.110779e15)
-    X1420 = SEATON(state.FREQ, 2.110779e15, 4.13e-18, 3., 0.69);
+  if (state->FREQ >= 2.460127e15)
+    X1218 = 1.64e-17 * sqrt(2.460127e15 / state->FREQ);
+  if (state->FREQ >= 2.110779e15)
+    X1420 = SEATON(state->FREQ, 2.110779e15, 4.13e-18, 3., 0.69);
   return X1044 + X1218 * C1218 + X1420 * C1420;
 }
 
-void LUKEOP(double *aluke, struct GlobalState state) /*  SI2,MG2,CA2,N1,O1 */
+void LUKEOP(double *aluke,  GlobalState * state) /*  SI2,MG2,CA2,N1,O1 */
 {
   int J;
 
-  for (J = 0; J < state.NRHOX; J++)
-    aluke[J] = (N1OP(J, state) * state.FRACT[J][state.IXN1] + O1OP(J, state) * state.FRACT[J][state.IXO1] +
-                MG2OP(J, state) * state.FRACT[J][state.IXMG2] + SI2OP(J, state) * state.FRACT[J][state.IXSI2] +
-                CA2OP(J, state) * state.FRACT[J][state.IXCA2]) *
-               state.STIM[J] / state.RHO[J];
+  for (J = 0; J < state->NRHOX; J++)
+    aluke[J] = (N1OP(J, state) * state->FRACT[J][state->IXN1] + O1OP(J, state) * state->FRACT[J][state->IXO1] +
+                MG2OP(J, state) * state->FRACT[J][state->IXMG2] + SI2OP(J, state) * state->FRACT[J][state->IXSI2] +
+                CA2OP(J, state) * state->FRACT[J][state->IXCA2]) *
+               state->STIM[J] / state->RHO[J];
   return;
 }
 
-void HOTOP(double *ahot, struct GlobalState state)
+void HOTOP(double *ahot,  GlobalState * state)
 {
   static int NUM = 60;
   static double A[420] = {
@@ -4635,11 +4723,11 @@ void HOTOP(double *ahot, struct GlobalState state)
       XNFP[MOSIZE * 21];
   int I, J, L, ID, MAXION, IONSIZ, ITAU;
 
-  for (ITAU = 0; ITAU < state.NRHOX; ITAU++)
+  for (ITAU = 0; ITAU < state->NRHOX; ITAU++)
   {
-    TEMP = state.T[ITAU];
-    XNELEC = state.XNE[ITAU];
-    XNATOM = state.XNA[ITAU];
+    TEMP = state->T[ITAU];
+    XNELEC = state->XNE[ITAU];
+    XNATOM = state->XNA[ITAU];
     J = 2;
     MAXION = IONSIZ = 6;
     I = 6;
@@ -4675,7 +4763,7 @@ void HOTOP(double *ahot, struct GlobalState state)
   }
   /* FREE-FREE */
 
-  for (J = 0; J < state.NRHOX; J++)
+  for (J = 0; J < state->NRHOX; J++)
   {
     int J2, J3, J4, J5, J6;
     J2 = J * 6 + 1;
@@ -4688,54 +4776,54 @@ void HOTOP(double *ahot, struct GlobalState state)
            COULFF(J, 3, state) * 9. * (XNFC[J4] + XNFN[J4] + XNFO[J4] + XNFNE[J4] + XNFMG[J4] + XNFSI[J4] + XNFS[J4] + XNFFE[J4]) +
            COULFF(J, 4, state) * 16. * (XNFC[J5] + XNFN[J5] + XNFO[J5] + XNFNE[J5] + XNFMG[J5] + XNFSI[J5] + XNFS[J5] + XNFFE[J5]) +
            COULFF(J, 5, state) * 25. * (XNFC[J6] + XNFN[J6] + XNFO[J6] + XNFNE[J6] + XNFMG[J6] + XNFSI[J6] + XNFS[J6]);
-    ahot[J] = FREE * 3.6919e8 / state.FREQ / state.FREQ / state.FREQ * state.XNE[J] / sqrt(state.T[J]);
+    ahot[J] = FREE * 3.6919e8 / state->FREQ / state->FREQ / state->FREQ * state->XNE[J] / sqrt(state->T[J]);
   }
   L = -7;
   for (I = 1; I <= NUM; I++)
   {
     L += 7;
-    if (state.FREQ < A[L])
+    if (state->FREQ < A[L])
       continue;
-    XSECT = A[L + 1] * (A[L + 2] + (A[L] / state.FREQ) - A[L + 2] * (A[L] / state.FREQ)) *
-            sqrt(pow(A[L] / state.FREQ, ((int)A[L + 3])));
+    XSECT = A[L + 1] * (A[L + 2] + (A[L] / state->FREQ) - A[L + 2] * (A[L] / state->FREQ)) *
+            sqrt(pow(A[L] / state->FREQ, ((int)A[L + 3])));
     ID = ((int)A[L + 6]) - 1;
-    for (J = 0; J < state.NRHOX; J++)
+    for (J = 0; J < state->NRHOX; J++)
     {
       XX = XSECT * XNFP[J * 21 + ID] * A[L + 4];
       if (XX > ahot[J] / 100.)
-        ahot[J] += XX / exp(A[L + 5] / state.TKEV[J]);
+        ahot[J] += XX / exp(A[L + 5] / state->TKEV[J]);
     }
   }
-  for (J = 0; J < state.NRHOX; J++)
+  for (J = 0; J < state->NRHOX; J++)
   {
-    ahot[J] *= state.STIM[J] / state.RHO[J];
+    ahot[J] *= state->STIM[J] / state->RHO[J];
     /*    printf("%d %f\n",J,ahot[J]); */
   }
 }
 
-void ELECOP(double *sigel, struct GlobalState state)
+void ELECOP(double *sigel,  GlobalState * state)
 {
   int J;
 
-  for (J = 0; J < state.NRHOX; J++)
-    sigel[J] = 0.6653e-24 * state.XNE[J] / state.RHO[J];
+  for (J = 0; J < state->NRHOX; J++)
+    sigel[J] = 0.6653e-24 * state->XNE[J] / state->RHO[J];
 }
 
-void H2RAOP(double *sigh2, int iH2mol, struct GlobalState state)
+void H2RAOP(double *sigh2, int iH2mol,  GlobalState * state)
 {
   double WAVE, WW, SIG, ARG;
   int J;
 
-  WAVE = CLIGHT / min(state.FREQ, 2.922e15);
+  WAVE = CLIGHT / min(state->FREQ, 2.922e15);
   WW = WAVE * WAVE;
   SIG = (8.14e-13 + 1.28e-6 / WW + 1.61 / (WW * WW)) / (WW * WW);
-  for (J = 0; J < state.NRHOX; J++)
+  for (J = 0; J < state->NRHOX; J++)
   {
-    sigh2[J] = state.FRACT[J][iH2mol] * state.PARTITION_FUNCTIONS[J][iH2mol] / state.RHO[J] * SIG;
+    sigh2[J] = state->FRACT[J][iH2mol] * state->PARTITION_FUNCTIONS[J][iH2mol] / state->RHO[J] * SIG;
   }
 }
 
-extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], struct GlobalState state) /* Returns specific cont. opacity */
+extern "C" char const *SME_DLL GetOpacity(int n, void *arg[],  GlobalState * state) /* Returns specific cont. opacity */
 {
   short i, j, nrhox, key;
   double *a1;
@@ -4743,63 +4831,63 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], struct GlobalState
 
   if (n < 3)
   {
-    strcpy(state.result, "Not enough arguments");
-    return state.result;
+    strcpy(state->result, "Not enough arguments");
+    return state->result;
   }
-  if (!state.flagCONTIN)
+  if (!state->flagCONTIN)
   {
-    strcpy(state.result, "Opacity has not been calculated");
-    return state.result;
+    strcpy(state->result, "Opacity has not been calculated");
+    return state->result;
   }
-  j = *(short *)arg[0]; /* state.IFOP number */
+  j = *(short *)arg[0]; /* state->IFOP number */
   i = *(short *)arg[1]; /* Length of IDL arrays */
-  nrhox = min(state.NRHOX, i);
+  nrhox = min(state->NRHOX, i);
   a1 = (double *)arg[2];
   switch (j)
   {
   case -3:
     for (i = 0; i < nrhox; i++)
-      a1[i] = state.COPSTD[i];
+      a1[i] = state->COPSTD[i];
     return &OK_response;
   case -2:
     for (i = 0; i < nrhox; i++)
-      a1[i] = state.COPRED[i];
+      a1[i] = state->COPRED[i];
     return &OK_response;
   case -1:
     for (i = 0; i < nrhox; i++)
-      a1[i] = state.COPBLU[i];
+      a1[i] = state->COPBLU[i];
     return &OK_response;
   case 0:
     for (i = 0; i < nrhox; i++)
-      a1[i] = state.AHYD[i];
+      a1[i] = state->AHYD[i];
     return &OK_response;
   case 1:
     for (i = 0; i < nrhox; i++)
-      a1[i] = state.AH2P[i];
+      a1[i] = state->AH2P[i];
     return &OK_response;
   case 2:
     for (i = 0; i < nrhox; i++)
-      a1[i] = state.AHMIN[i];
+      a1[i] = state->AHMIN[i];
     return &OK_response;
   case 3:
     for (i = 0; i < nrhox; i++)
-      a1[i] = state.SIGH[i];
+      a1[i] = state->SIGH[i];
     return &OK_response;
   case 4:
     for (i = 0; i < nrhox; i++)
-      a1[i] = state.AHE1[i];
+      a1[i] = state->AHE1[i];
     return &OK_response;
   case 5:
     for (i = 0; i < nrhox; i++)
-      a1[i] = state.AHE2[i];
+      a1[i] = state->AHE2[i];
     return &OK_response;
   case 6:
     for (i = 0; i < nrhox; i++)
-      a1[i] = state.AHEMIN[i];
+      a1[i] = state->AHEMIN[i];
     return &OK_response;
   case 7:
     for (i = 0; i < nrhox; i++)
-      a1[i] = state.SIGHE[i];
+      a1[i] = state->SIGHE[i];
     return &OK_response;
   case 8:
     if (n > 3)
@@ -4822,7 +4910,7 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], struct GlobalState
         {
         case 0:
           for (i = 0; i < nrhox; i++)
-            a1[i] = C1OP_new(i, state) * state.FRACT[i][state.IXC1] * state.STIM[i] / state.RHO[i];
+            a1[i] = C1OP_new(i, state) * state->FRACT[i][state->IXC1] * state->STIM[i] / state->RHO[i];
           return &OK_response;
         case 1:
           for (i = 0; i < nrhox; i++)
@@ -4834,7 +4922,7 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], struct GlobalState
           return &OK_response;
         case 3:
           for (i = 0; i < nrhox; i++)
-            a1[i] = state.FRACT[i][state.IXC1] * state.STIM[i] / state.RHO[i];
+            a1[i] = state->FRACT[i][state->IXC1] * state->STIM[i] / state->RHO[i];
           return &OK_response;
         }
       }
@@ -4844,7 +4932,7 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], struct GlobalState
         {
         case 0:
           for (i = 0; i < nrhox; i++)
-            a1[i] = MG1OP_new(i, state) * state.FRACT[i][state.IXMG1] * state.STIM[i] / state.RHO[i];
+            a1[i] = MG1OP_new(i, state) * state->FRACT[i][state->IXMG1] * state->STIM[i] / state->RHO[i];
           return &OK_response;
         case 1:
           for (i = 0; i < nrhox; i++)
@@ -4856,7 +4944,7 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], struct GlobalState
           return &OK_response;
         case 3:
           for (i = 0; i < nrhox; i++)
-            a1[i] = state.FRACT[i][state.IXMG1] * state.STIM[i] / state.RHO[i];
+            a1[i] = state->FRACT[i][state->IXMG1] * state->STIM[i] / state->RHO[i];
           return &OK_response;
         }
       }
@@ -4866,7 +4954,7 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], struct GlobalState
         {
         case 0:
           for (i = 0; i < nrhox; i++)
-            a1[i] = AL1OP_new(i, state) * state.FRACT[i][state.IXAL1] * state.STIM[i] / state.RHO[i];
+            a1[i] = AL1OP_new(i, state) * state->FRACT[i][state->IXAL1] * state->STIM[i] / state->RHO[i];
           return &OK_response;
         case 1:
           for (i = 0; i < nrhox; i++)
@@ -4878,7 +4966,7 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], struct GlobalState
           return &OK_response;
         case 3:
           for (i = 0; i < nrhox; i++)
-            a1[i] = state.FRACT[i][state.IXAL1] * state.STIM[i] / state.RHO[i];
+            a1[i] = state->FRACT[i][state->IXAL1] * state->STIM[i] / state->RHO[i];
           return &OK_response;
         }
       }
@@ -4888,7 +4976,7 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], struct GlobalState
         {
         case 0:
           for (i = 0; i < nrhox; i++)
-            a1[i] = SI1OP_new(i, state) * state.FRACT[i][state.IXSI1] * state.STIM[i] / state.RHO[i];
+            a1[i] = SI1OP_new(i, state) * state->FRACT[i][state->IXSI1] * state->STIM[i] / state->RHO[i];
           return &OK_response;
         case 1:
           for (i = 0; i < nrhox; i++)
@@ -4900,7 +4988,7 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], struct GlobalState
           return &OK_response;
         case 3:
           for (i = 0; i < nrhox; i++)
-            a1[i] = state.FRACT[i][state.IXSI1] * state.STIM[i] / state.RHO[i];
+            a1[i] = state->FRACT[i][state->IXSI1] * state->STIM[i] / state->RHO[i];
           return &OK_response;
         }
       }
@@ -4910,7 +4998,7 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], struct GlobalState
         {
         case 0:
           for (i = 0; i < nrhox; i++)
-            a1[i] = FE1OP_new(i, state) * state.FRACT[i][state.IXFE1] * state.STIM[i] / state.RHO[i];
+            a1[i] = FE1OP_new(i, state) * state->FRACT[i][state->IXFE1] * state->STIM[i] / state->RHO[i];
           return &OK_response;
         case 1:
           for (i = 0; i < nrhox; i++)
@@ -4922,7 +5010,7 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], struct GlobalState
           return &OK_response;
         case 3:
           for (i = 0; i < nrhox; i++)
-            a1[i] = state.FRACT[i][state.IXFE1] * state.STIM[i] / state.RHO[i];
+            a1[i] = state->FRACT[i][state->IXFE1] * state->STIM[i] / state->RHO[i];
           return &OK_response;
         }
       }
@@ -4932,7 +5020,7 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], struct GlobalState
         {
         case 0:
           for (i = 0; i < nrhox; i++)
-            a1[i] = CHOP(i, state) * state.FRACT[i][state.IXCH] * state.STIM[i] / state.RHO[i];
+            a1[i] = CHOP(i, state) * state->FRACT[i][state->IXCH] * state->STIM[i] / state->RHO[i];
           return &OK_response;
         case 1:
           for (i = 0; i < nrhox; i++)
@@ -4944,7 +5032,7 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], struct GlobalState
           return &OK_response;
         case 3:
           for (i = 0; i < nrhox; i++)
-            a1[i] = state.FRACT[i][state.IXCH] * state.STIM[i] / state.RHO[i];
+            a1[i] = state->FRACT[i][state->IXCH] * state->STIM[i] / state->RHO[i];
           return &OK_response;
         }
       }
@@ -4954,7 +5042,7 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], struct GlobalState
         {
         case 0:
           for (i = 0; i < nrhox; i++)
-            a1[i] = NHOP(i, state) * state.FRACT[i][state.IXNH] * state.STIM[i] / state.RHO[i];
+            a1[i] = NHOP(i, state) * state->FRACT[i][state->IXNH] * state->STIM[i] / state->RHO[i];
           return &OK_response;
         case 1:
           for (i = 0; i < nrhox; i++)
@@ -4966,7 +5054,7 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], struct GlobalState
           return &OK_response;
         case 3:
           for (i = 0; i < nrhox; i++)
-            a1[i] = state.FRACT[i][state.IXNH] * state.STIM[i] / state.RHO[i];
+            a1[i] = state->FRACT[i][state->IXNH] * state->STIM[i] / state->RHO[i];
           return &OK_response;
         }
       }
@@ -4976,7 +5064,7 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], struct GlobalState
         {
         case 0:
           for (i = 0; i < nrhox; i++)
-            a1[i] = OHOP(i, state) * state.FRACT[i][state.IXOH] * state.STIM[i] / state.RHO[i];
+            a1[i] = OHOP(i, state) * state->FRACT[i][state->IXOH] * state->STIM[i] / state->RHO[i];
           return &OK_response;
         case 1:
           for (i = 0; i < nrhox; i++)
@@ -4988,20 +5076,20 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], struct GlobalState
           return &OK_response;
         case 3:
           for (i = 0; i < nrhox; i++)
-            a1[i] = state.FRACT[i][state.IXOH] * state.STIM[i] / state.RHO[i];
+            a1[i] = state->FRACT[i][state->IXOH] * state->STIM[i] / state->RHO[i];
           return &OK_response;
         }
       }
       else
       {
-        sprintf(state.result, "SME cannot compute continuous opacity for %s", species->s);
-        return state.result;
+        sprintf(state->result, "SME cannot compute continuous opacity for %s", species->s);
+        return state->result;
       }
     }
     else
     {
       for (i = 0; i < nrhox; i++)
-        a1[i] = state.ACOOL[i];
+        a1[i] = state->ACOOL[i];
       return &OK_response;
     }
   case 9:
@@ -5011,64 +5099,64 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], struct GlobalState
       if (!strcmp(species->s, "N1"))
       {
         for (i = 0; i < nrhox; i++)
-          a1[i] = N1OP(i, state) * state.FRACT[i][state.IXN1] * state.STIM[i] / state.RHO[i];
+          a1[i] = N1OP(i, state) * state->FRACT[i][state->IXN1] * state->STIM[i] / state->RHO[i];
         return &OK_response;
       }
       else if (!strcmp(species->s, "O1"))
       {
         for (i = 0; i < nrhox; i++)
-          a1[i] = O1OP(i, state) * state.FRACT[i][state.IXO1] * state.STIM[i] / state.RHO[i];
+          a1[i] = O1OP(i, state) * state->FRACT[i][state->IXO1] * state->STIM[i] / state->RHO[i];
         return &OK_response;
       }
       else if (!strcmp(species->s, "Mg2"))
       {
         for (i = 0; i < nrhox; i++)
-          a1[i] = MG2OP(i, state) * state.FRACT[i][state.IXMG2] * state.STIM[i] / state.RHO[i];
+          a1[i] = MG2OP(i, state) * state->FRACT[i][state->IXMG2] * state->STIM[i] / state->RHO[i];
         return &OK_response;
       }
       else if (!strcmp(species->s, "Si2"))
       {
         for (i = 0; i < nrhox; i++)
-          a1[i] = SI2OP(i, state) * state.FRACT[i][state.IXSI2] * state.STIM[i] / state.RHO[i];
+          a1[i] = SI2OP(i, state) * state->FRACT[i][state->IXSI2] * state->STIM[i] / state->RHO[i];
         return &OK_response;
       }
       else if (!strcmp(species->s, "Ca2"))
       {
         for (i = 0; i < nrhox; i++)
-          a1[i] = CA2OP(i, state) * state.FRACT[i][state.IXCA2] * state.STIM[i] / state.RHO[i];
+          a1[i] = CA2OP(i, state) * state->FRACT[i][state->IXCA2] * state->STIM[i] / state->RHO[i];
         return &OK_response;
       }
       else
       {
-        sprintf(state.result, "SME cannot compute continuous opacity for %s", species->s);
-        return state.result;
+        sprintf(state->result, "SME cannot compute continuous opacity for %s", species->s);
+        return state->result;
       }
     }
     else
     {
       for (i = 0; i < nrhox; i++)
-        a1[i] = state.ALUKE[i];
+        a1[i] = state->ALUKE[i];
       return &OK_response;
     }
   case 10:
     for (i = 0; i < nrhox; i++)
-      a1[i] = state.AHOT[i];
+      a1[i] = state->AHOT[i];
     return &OK_response;
   case 11:
     for (i = 0; i < nrhox; i++)
-      a1[i] = state.SIGEL[i];
+      a1[i] = state->SIGEL[i];
     return &OK_response;
   case 12:
     for (i = 0; i < nrhox; i++)
-      a1[i] = state.SIGH2[i];
+      a1[i] = state->SIGH2[i];
     return &OK_response;
   default:
-    strcpy(state.result, "Wrong opacity switch number");
-    return state.result;
+    strcpy(state->result, "Wrong opacity switch number");
+    return state->result;
   }
 }
 
-void AutoIonization(struct GlobalState state)
+void AutoIonization( GlobalState * state)
 {
   /*  CHECK FOR AUTOIONIZATION LINES */
   int OPEN, LINE;
@@ -5076,12 +5164,12 @@ void AutoIonization(struct GlobalState state)
   FILE *file12;
 
   OPEN = 0;
-  for (LINE = 0; LINE < state.NLINES; LINE++)
+  for (LINE = 0; LINE < state->NLINES; LINE++)
   {
-    state.MARK[LINE] = 0;
-    state.AUTOION[LINE] = 0;
-    EXUP = state.EXCIT[LINE] + 1. / (state.WLCENT[LINE] * 8065.544e-8);
-    if (EXUP >= state.POTION[state.SPINDEX[LINE]])
+    state->MARK[LINE] = 0;
+    state->AUTOION[LINE] = 0;
+    EXUP = state->EXCIT[LINE] + 1. / (state->WLCENT[LINE] * 8065.544e-8);
+    if (EXUP >= state->POTION[state->SPINDEX[LINE]])
     {
       if (!OPEN)
       {
@@ -5091,19 +5179,19 @@ void AutoIonization(struct GlobalState state)
         if (OPEN)
           fprintf(file12, "Lines are numbered from 0\n");
       }
-      state.AUTOION[LINE] = 1;
-      if (state.GAMQST[LINE] > 0.0 && state.GAMVW[LINE] > 0.0)
+      state->AUTOION[LINE] = 1;
+      if (state->GAMQST[LINE] > 0.0 && state->GAMVW[LINE] > 0.0)
       {
         if (OPEN)
           fprintf(file12, "Autoionizing line \'%s\' #%d will be computed\n",
-                  strtrim(Terminator(state.SPLIST + 8 * state.SPINDEX[LINE], 8)), LINE);
+                  strtrim(Terminator(state->SPLIST + 8 * state->SPINDEX[LINE], 8)), LINE);
       }
       else
       {
         if (OPEN)
           fprintf(file12, "Autoionizing line \'%s\' #%d will not be computed\n",
-                  strtrim(Terminator(state.SPLIST + 8 * state.SPINDEX[LINE], 8)), LINE);
-        state.MARK[LINE] = 2;
+                  strtrim(Terminator(state->SPLIST + 8 * state->SPINDEX[LINE], 8)), LINE);
+        state->MARK[LINE] = 2;
       }
     }
   }
@@ -5114,16 +5202,16 @@ void AutoIonization(struct GlobalState state)
    JUST PUT IT IN HERE!!! */
 }
 
-extern "C" char const *SME_DLL Ionization(int n, void *arg[], struct GlobalState state)
+extern "C" char const *SME_DLL Ionization(int n, void *arg[],  GlobalState * state)
 {
   /*
    Interface routine between the C++ part of SME the FORTRAN 77 code
    eosmag that solves the equation of molecular equilibrium. All it does
    is to compile the list of species from the line list, pass them to
    the eqcount subroutine in eosmag. eqcount counts the number of
-   different species state.N_SPLIST including the basic set defined in eosmag.
-   ESO_count_species then allocates the arrays state.SPLIST[state.N_SPLIST] and
-   state.SPINDEX[state.NLINES]
+   different species state->N_SPLIST including the basic set defined in eosmag.
+   ESO_count_species then allocates the arrays state->SPLIST[state->N_SPLIST] and
+   state->SPINDEX[state->NLINES]
   */
 
   int LINE;
@@ -5137,30 +5225,30 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[], struct GlobalState
       Pgas, Pelec, max_Ne_err;
   int dump01, dump02, return_pfs, return1, return2, return3, i_max_Ne_err;
 
-  if (!state.flagMODEL)
+  if (!state->flagMODEL)
   {
-    strcpy(state.result, "Model atmosphere not set");
-    return state.result;
+    strcpy(state->result, "Model atmosphere not set");
+    return state->result;
   }
-  if (!state.flagABUND)
+  if (!state->flagABUND)
   {
-    strcpy(state.result, "Abundances not set");
-    return state.result;
+    strcpy(state->result, "Abundances not set");
+    return state->result;
   }
-  if (!state.flagLINELIST)
+  if (!state->flagLINELIST)
   {
-    strcpy(state.result, "No line list set yet");
-    return state.result;
+    strcpy(state->result, "No line list set yet");
+    return state->result;
   }
-  if (state.SPLIST != NULL)
-    FREE(state.SPLIST);
+  if (state->SPLIST != NULL)
+    FREE(state->SPLIST);
 
   species_list = NULL;
-  CALLOC(species_list, state.NLINES * 8, char);
+  CALLOC(species_list, state->NLINES * 8, char);
   if (species_list == NULL)
   {
-    strcpy(state.result, "No enough space in EOS_count_species");
-    return state.result;
+    strcpy(state->result, "No enough space in EOS_count_species");
+    return state->result;
   }
 
   /* The only allowed argument in call to Ionization contains switches
@@ -5186,9 +5274,9 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[], struct GlobalState
     return_pfs = 0;
   }
 
-  for (LINE = 0; LINE < state.NLINES; LINE++)
+  for (LINE = 0; LINE < state->NLINES; LINE++)
   {
-    strncpy(tmpname, state.spname + 8 * LINE, 8);
+    strncpy(tmpname, state->spname + 8 * LINE, 8);
     tmpname[8] = '\0';
     c = strchr(tmpname, ' ');
     if (c != NULL)
@@ -5200,214 +5288,214 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[], struct GlobalState
         species_list[8 * LINE + i] = ' ';
   }
 
-  /* First determine the size of the complete list returned by eqcount in as state.N_SPLIST */
+  /* First determine the size of the complete list returned by eqcount in as state->N_SPLIST */
 
-  state.N_SPLIST = 0; /* That is to indicate that no default list has been set yet */
+  state->N_SPLIST = 0; /* That is to indicate that no default list has been set yet */
 
   nelem = MAX_ELEM - 1;
-  switch (i = eqcount_(ELEMEN + 1, species_list, state.ION, state.NLINES, state.N_SPLIST, nelem, 3, 8))
+  switch (i = eqcount_(ELEMEN + 1, species_list, state->ION, state->NLINES, state->N_SPLIST, nelem, 3, 8))
   {
   case 0:
     break;
   case 1:
     FREE(species_list);
-    strcpy(state.result, "EOS_count_species found illegal species name");
-    return state.result;
+    strcpy(state->result, "EOS_count_species found illegal species name");
+    return state->result;
   default:
     FREE(species_list);
-    sprintf(state.result, "EOS_count_species - SPLSIZ must be larger than %d", i);
-    return state.result;
+    sprintf(state->result, "EOS_count_species - SPLSIZ must be larger than %d", i);
+    return state->result;
   }
 
   /* Now allocate space for the complete list of species and the index */
 
-  CALLOC(state.SPLIST, state.N_SPLIST * 8, char);
-  if (state.SPLIST == NULL)
+  CALLOC(state->SPLIST, state->N_SPLIST * 8, char);
+  if (state->SPLIST == NULL)
   {
-    strcpy(state.result, "Not enough space in EOS_count_species");
-    return state.result;
+    strcpy(state->result, "Not enough space in EOS_count_species");
+    return state->result;
   }
 
   /* Construct a complete list of species */
 
   i = 0;
-  switch (eqlist_(state.ABUND, ELEMEN + 1, species_list, state.ION, state.SPINDEX, state.SPLIST,
-                  state.NLINES, i, state.N_SPLIST, nelem, 3, 8, 8))
+  switch (eqlist_(state->ABUND, ELEMEN + 1, species_list, state->ION, state->SPINDEX, state->SPLIST,
+                  state->NLINES, i, state->N_SPLIST, nelem, 3, 8, 8))
   {
   case 0:
     break;
   case 1:
     FREE(species_list);
-    FREE(state.SPLIST);
-    strcpy(state.result, "EOS_list_species found illegal species name");
-    return state.result;
+    FREE(state->SPLIST);
+    strcpy(state->result, "EOS_list_species found illegal species name");
+    return state->result;
   case 2:
     FREE(species_list);
-    FREE(state.SPLIST);
-    strcpy(state.result, "EOS_list_species received too small state.N_SPLIST");
-    return state.result;
+    FREE(state->SPLIST);
+    strcpy(state->result, "EOS_list_species received too small state->N_SPLIST");
+    return state->result;
   case 3:
     FREE(species_list);
-    FREE(state.SPLIST);
-    strcpy(state.result, "EOS_list_species could not match ionization state");
-    return state.result;
+    FREE(state->SPLIST);
+    strcpy(state->result, "EOS_list_species could not match ionization state");
+    return state->result;
   case 4:
     FREE(species_list);
-    FREE(state.SPLIST);
-    strcpy(state.result, "EOS_list_species found e- in the middle of the list");
-    return state.result;
+    FREE(state->SPLIST);
+    strcpy(state->result, "EOS_list_species found e- in the middle of the list");
+    return state->result;
   case 5:
     FREE(species_list);
-    FREE(state.SPLIST);
-    strcpy(state.result, "EOS_list_species - Unreasonable abundances");
-    return state.result;
+    FREE(state->SPLIST);
+    strcpy(state->result, "EOS_list_species - Unreasonable abundances");
+    return state->result;
   default:
     FREE(species_list);
-    FREE(state.SPLIST);
-    strcpy(state.result, "EOS_list_species - this error should never happen");
-    return state.result;
+    FREE(state->SPLIST);
+    strcpy(state->result, "EOS_list_species - this error should never happen");
+    return state->result;
   }
   FREE(species_list);
-  state.N_SPLIST = i;
+  state->N_SPLIST = i;
 
   /* Now call the solver for molecular equilibrium eqstat. Parameters are:
-   state.T         - temperature (var)
-   state.XNA       - atomic number density (var)
-   state.XNE       - electron number density (var)
-   state.ABUND     - abundances (array)
+   state->T         - temperature (var)
+   state->XNA       - atomic number density (var)
+   state->XNE       - electron number density (var)
+   state->ABUND     - abundances (array)
    ELEMEN    - array of element names (char, should be converted to FORTRAN?)
    AMASS     - atomic masses (array)
-   state.SPINDEX   - index for each sp. line to the EOS list of species (array)
-   state.SPLIST    - EOS list of species(array of char, created by eqlist, so should
+   state->SPINDEX   - index for each sp. line to the EOS list of species (array)
+   state->SPLIST    - EOS list of species(array of char, created by eqlist, so should
                already be in FORTRAN 77 format)
-   state.FRACT     - number densities / partition functions (array of state.N_SPLIST*state.NRHOX)
-   state.POTION    - ionization potential for each species (array)
-   state.MOLWEIGHT - molecular weight of each species (array)
-   state.H1FRACT   - number density of neutral Hydrogen (array of state.NRHOX elements)
-   state.HE1FRACT  - number density of neutral Helium (array of state.NRHOX elements)
-   state.NLINES    - the number of sp. lines (var)
-   state.N_SPLIST  - the total number of species (var)
+   state->FRACT     - number densities / partition functions (array of state->N_SPLIST*state->NRHOX)
+   state->POTION    - ionization potential for each species (array)
+   state->MOLWEIGHT - molecular weight of each species (array)
+   state->H1FRACT   - number density of neutral Hydrogen (array of state->NRHOX elements)
+   state->HE1FRACT  - number density of neutral Helium (array of state->NRHOX elements)
+   state->NLINES    - the number of sp. lines (var)
+   state->N_SPLIST  - the total number of species (var)
    xne       - number density of electrons computed by EOS
    xna       - number density of particles computed by EOS
   */
 
-  if (state.FRACT != NULL)
+  if (state->FRACT != NULL)
   {
-    for (i = 0; i < state.NRHOX_allocated; i++)
-      FREE(state.FRACT[i]);
-    FREE(state.FRACT);
+    for (i = 0; i < state->NRHOX_allocated; i++)
+      FREE(state->FRACT[i]);
+    FREE(state->FRACT);
   }
-  if (state.PARTITION_FUNCTIONS != NULL)
+  if (state->PARTITION_FUNCTIONS != NULL)
   {
-    for (i = 0; i < state.NRHOX_allocated; i++)
-      FREE(state.PARTITION_FUNCTIONS[i]);
-    FREE(state.PARTITION_FUNCTIONS);
+    for (i = 0; i < state->NRHOX_allocated; i++)
+      FREE(state->PARTITION_FUNCTIONS[i]);
+    FREE(state->PARTITION_FUNCTIONS);
   }
-  state.flagIONIZ = 0;
+  state->flagIONIZ = 0;
 
-  if (state.POTION != NULL)
-    FREE(state.POTION);
-  if (state.MOLWEIGHT != NULL)
-    FREE(state.MOLWEIGHT);
+  if (state->POTION != NULL)
+    FREE(state->POTION);
+  if (state->MOLWEIGHT != NULL)
+    FREE(state->MOLWEIGHT);
 
-  CALLOC(state.FRACT, state.NRHOX, float *);
-  for (i = 0; i < state.NRHOX; i++)
+  CALLOC(state->FRACT, state->NRHOX, float *);
+  for (i = 0; i < state->NRHOX; i++)
   {
-    CALLOC(state.FRACT[i], state.N_SPLIST, float);
-    if (state.FRACT[i] == NULL)
+    CALLOC(state->FRACT[i], state->N_SPLIST, float);
+    if (state->FRACT[i] == NULL)
     {
-      strcpy(state.result, "Ionization: Not enough memory");
-      return state.result;
+      strcpy(state->result, "Ionization: Not enough memory");
+      return state->result;
     }
   }
-  CALLOC(state.PARTITION_FUNCTIONS, state.NRHOX, float *);
-  for (i = 0; i < state.NRHOX; i++)
+  CALLOC(state->PARTITION_FUNCTIONS, state->NRHOX, float *);
+  for (i = 0; i < state->NRHOX; i++)
   {
-    CALLOC(state.PARTITION_FUNCTIONS[i], state.N_SPLIST, float);
-    if (state.PARTITION_FUNCTIONS[i] == NULL)
+    CALLOC(state->PARTITION_FUNCTIONS[i], state->N_SPLIST, float);
+    if (state->PARTITION_FUNCTIONS[i] == NULL)
     {
-      strcpy(state.result, "Ionization: Not enough memory");
-      return state.result;
+      strcpy(state->result, "Ionization: Not enough memory");
+      return state->result;
     }
   }
-  state.NRHOX_allocated = state.NRHOX;
+  state->NRHOX_allocated = state->NRHOX;
 
-  CALLOC(state.POTION, state.N_SPLIST, float);
-  if (state.POTION == NULL)
+  CALLOC(state->POTION, state->N_SPLIST, float);
+  if (state->POTION == NULL)
   {
-    strcpy(state.result, "Ionization: Not enough memory");
-    return state.result;
+    strcpy(state->result, "Ionization: Not enough memory");
+    return state->result;
   }
 
-  CALLOC(state.MOLWEIGHT, state.N_SPLIST, float);
-  if (state.MOLWEIGHT == NULL)
+  CALLOC(state->MOLWEIGHT, state->N_SPLIST, float);
+  if (state->MOLWEIGHT == NULL)
   {
-    strcpy(state.result, "Ionization: Not enough memory");
-    return state.result;
+    strcpy(state->result, "Ionization: Not enough memory");
+    return state->result;
   }
 
   /* Find out the location of continuous absorbers */
 
-  for (i = 0; i < state.N_SPLIST; i++)
+  for (i = 0; i < state->N_SPLIST; i++)
   {
-    if (!strncmp(state.SPLIST + 8 * i, "H ", 2))
-      state.IXH1 = i;
-    else if (!strncmp(state.SPLIST + 8 * i, "H+ ", 3))
-      state.IXH2 = i;
-    else if (!strncmp(state.SPLIST + 8 * i, "H- ", 3))
-      state.IXHMIN = i;
-    else if (!strncmp(state.SPLIST + 8 * i, "H2 ", 3))
-      state.IXH2mol = i;
-    else if (!strncmp(state.SPLIST + 8 * i, "H2+ ", 4))
-      state.IXH2pl = i;
-    else if (!strncmp(state.SPLIST + 8 * i, "He ", 3))
-      state.IXHE1 = i;
-    else if (!strncmp(state.SPLIST + 8 * i, "He+ ", 4))
-      state.IXHE2 = i;
-    else if (!strncmp(state.SPLIST + 8 * i, "He++ ", 5))
-      state.IXHE3 = i;
-    else if (!strncmp(state.SPLIST + 8 * i, "C ", 2))
-      state.IXC1 = i;
-    else if (!strncmp(state.SPLIST + 8 * i, "Al ", 3))
-      state.IXAL1 = i;
-    else if (!strncmp(state.SPLIST + 8 * i, "Si ", 3))
-      state.IXSI1 = i;
-    else if (!strncmp(state.SPLIST + 8 * i, "Si+ ", 4))
-      state.IXSI2 = i;
-    else if (!strncmp(state.SPLIST + 8 * i, "Ca ", 3))
-      state.IXCA1 = i;
-    else if (!strncmp(state.SPLIST + 8 * i, "Ca+ ", 4))
-      state.IXCA2 = i;
-    else if (!strncmp(state.SPLIST + 8 * i, "Mg ", 3))
-      state.IXMG1 = i;
-    else if (!strncmp(state.SPLIST + 8 * i, "Mg+ ", 4))
-      state.IXMG2 = i;
-    else if (!strncmp(state.SPLIST + 8 * i, "N ", 2))
-      state.IXN1 = i;
-    else if (!strncmp(state.SPLIST + 8 * i, "Fe ", 3))
-      state.IXFE1 = i;
-    else if (!strncmp(state.SPLIST + 8 * i, "O ", 2))
-      state.IXO1 = i;
-    else if (!strncmp(state.SPLIST + 8 * i, "CH ", 3))
-      state.IXCH = i;
-    else if (!strncmp(state.SPLIST + 8 * i, "NH ", 3))
-      state.IXNH = i;
-    else if (!strncmp(state.SPLIST + 8 * i, "OH ", 3))
-      state.IXOH = i;
-    state.POTION[i] = -1.;
-    state.MOLWEIGHT[i] = -1.;
+    if (!strncmp(state->SPLIST + 8 * i, "H ", 2))
+      state->IXH1 = i;
+    else if (!strncmp(state->SPLIST + 8 * i, "H+ ", 3))
+      state->IXH2 = i;
+    else if (!strncmp(state->SPLIST + 8 * i, "H- ", 3))
+      state->IXHMIN = i;
+    else if (!strncmp(state->SPLIST + 8 * i, "H2 ", 3))
+      state->IXH2mol = i;
+    else if (!strncmp(state->SPLIST + 8 * i, "H2+ ", 4))
+      state->IXH2pl = i;
+    else if (!strncmp(state->SPLIST + 8 * i, "He ", 3))
+      state->IXHE1 = i;
+    else if (!strncmp(state->SPLIST + 8 * i, "He+ ", 4))
+      state->IXHE2 = i;
+    else if (!strncmp(state->SPLIST + 8 * i, "He++ ", 5))
+      state->IXHE3 = i;
+    else if (!strncmp(state->SPLIST + 8 * i, "C ", 2))
+      state->IXC1 = i;
+    else if (!strncmp(state->SPLIST + 8 * i, "Al ", 3))
+      state->IXAL1 = i;
+    else if (!strncmp(state->SPLIST + 8 * i, "Si ", 3))
+      state->IXSI1 = i;
+    else if (!strncmp(state->SPLIST + 8 * i, "Si+ ", 4))
+      state->IXSI2 = i;
+    else if (!strncmp(state->SPLIST + 8 * i, "Ca ", 3))
+      state->IXCA1 = i;
+    else if (!strncmp(state->SPLIST + 8 * i, "Ca+ ", 4))
+      state->IXCA2 = i;
+    else if (!strncmp(state->SPLIST + 8 * i, "Mg ", 3))
+      state->IXMG1 = i;
+    else if (!strncmp(state->SPLIST + 8 * i, "Mg+ ", 4))
+      state->IXMG2 = i;
+    else if (!strncmp(state->SPLIST + 8 * i, "N ", 2))
+      state->IXN1 = i;
+    else if (!strncmp(state->SPLIST + 8 * i, "Fe ", 3))
+      state->IXFE1 = i;
+    else if (!strncmp(state->SPLIST + 8 * i, "O ", 2))
+      state->IXO1 = i;
+    else if (!strncmp(state->SPLIST + 8 * i, "CH ", 3))
+      state->IXCH = i;
+    else if (!strncmp(state->SPLIST + 8 * i, "NH ", 3))
+      state->IXNH = i;
+    else if (!strncmp(state->SPLIST + 8 * i, "OH ", 3))
+      state->IXOH = i;
+    state->POTION[i] = -1.;
+    state->MOLWEIGHT[i] = -1.;
   }
 
   eos_mode = (use_electron_density_from_EOS) ? 0 : 10;
   if (return_pfs)
   {
-    for (i = 0; i < state.NRHOX; i++)
+    for (i = 0; i < state->NRHOX; i++)
     {
-      TEMP = state.T[i];
-      Pelec = state.XNE[i] * state.TK[i];
-      Pgas = Pelec + state.XNA[i] * state.TK[i];
-      eqpf_(TEMP, Pgas, Pelec, state.ABUND + 1, ELEMEN + 1, AMASS + 1,
-            nelem, state.SPLIST, state.N_SPLIST, state.PARTITION_FUNCTIONS[i],
+      TEMP = state->T[i];
+      Pelec = state->XNE[i] * state->TK[i];
+      Pgas = Pelec + state->XNA[i] * state->TK[i];
+      eqpf_(TEMP, Pgas, Pelec, state->ABUND + 1, ELEMEN + 1, AMASS + 1,
+            nelem, state->SPLIST, state->N_SPLIST, state->PARTITION_FUNCTIONS[i],
             3, 8);
     }
     return &OK_response;
@@ -5415,75 +5503,75 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[], struct GlobalState
 
   i_max_Ne_err = -1;
   max_Ne_err = 0.;
-  for (i = 0; i < state.NRHOX; i++)
+  for (i = 0; i < state->NRHOX; i++)
   {
-    TEMP = state.T[i];
-    Pelec = state.XNE[i] * state.TK[i];
-    Pgas = Pelec + state.XNA[i] * state.TK[i];
+    TEMP = state->T[i];
+    Pelec = state->XNE[i] * state->TK[i];
+    Pgas = Pelec + state->XNA[i] * state->TK[i];
 
-    eqstat_(eos_mode, TEMP, Pgas, Pelec, state.ABUND + 1, ELEMEN + 1, AMASS + 1,
-            nelem, state.SPINDEX, state.SPLIST, state.FRACT[i], state.PARTITION_FUNCTIONS[i], state.POTION,
-            state.MOLWEIGHT, state.NLINES, state.N_SPLIST, XNE_estim, XNA_estim, RHO_estim, NITER, 3, 8);
+    eqstat_(eos_mode, TEMP, Pgas, Pelec, state->ABUND + 1, ELEMEN + 1, AMASS + 1,
+            nelem, state->SPINDEX, state->SPLIST, state->FRACT[i], state->PARTITION_FUNCTIONS[i], state->POTION,
+            state->MOLWEIGHT, state->NLINES, state->N_SPLIST, XNE_estim, XNA_estim, RHO_estim, NITER, 3, 8);
 
 
 
-    if (fabs(state.XNE[i] - XNE_estim) / state.XNE[i] > max_Ne_err)
+    if (fabs(state->XNE[i] - XNE_estim) / state->XNE[i] > max_Ne_err)
     {
       i_max_Ne_err = i;
-      max_Ne_err = fabs(state.XNE[i] - XNE_estim) / state.XNE[i];
+      max_Ne_err = fabs(state->XNE[i] - XNE_estim) / state->XNE[i];
     }
-    state.H1FRACT[i] = state.FRACT[i][state.IXH1] * state.PARTITION_FUNCTIONS[i][state.IXH1];
-    state.HE1FRACT[i] = state.FRACT[i][state.IXHE1] * state.PARTITION_FUNCTIONS[i][state.IXHE1];
-    state.H2molFRACT[i] = state.FRACT[i][state.IXH2mol] * state.PARTITION_FUNCTIONS[i][state.IXH2mol];
-    state.XNE_eos[i] = XNE_estim;
-    state.XNA_eos[i] = XNA_estim;
-    state.RHO_eos[i] = RHO_estim;
+    state->H1FRACT[i] = state->FRACT[i][state->IXH1] * state->PARTITION_FUNCTIONS[i][state->IXH1];
+    state->HE1FRACT[i] = state->FRACT[i][state->IXHE1] * state->PARTITION_FUNCTIONS[i][state->IXHE1];
+    state->H2molFRACT[i] = state->FRACT[i][state->IXH2mol] * state->PARTITION_FUNCTIONS[i][state->IXH2mol];
+    state->XNE_eos[i] = XNE_estim;
+    state->XNA_eos[i] = XNA_estim;
+    state->RHO_eos[i] = RHO_estim;
 
     if (dump02)
     {
-      printf("%f %d %d %s %f %f\n", TEMP, i, 79, Terminator(state.SPLIST + 8 * 79, 8),
-             state.PARTITION_FUNCTIONS[i][79], // Fe
-             log10(state.FRACT[i][79] * state.PARTITION_FUNCTIONS[i][79] / state.RHO[i]));
-      printf("%f %d %d %s %f %f\n", TEMP, i, 80, Terminator(state.SPLIST + 8 * 80, 8),
-             state.PARTITION_FUNCTIONS[i][80], // Fe+
-             log10(state.FRACT[i][80] * state.PARTITION_FUNCTIONS[i][80] / state.RHO[i]));
-      printf("%f %d %d %s %f %f\n", TEMP, i, 145, Terminator(state.SPLIST + 8 * 145, 8),
-             state.PARTITION_FUNCTIONS[i][145], // CN
-             log10(state.FRACT[i][145] * state.PARTITION_FUNCTIONS[i][145] / state.RHO[i]));
+      printf("%f %d %d %s %f %f\n", TEMP, i, 79, Terminator(state->SPLIST + 8 * 79, 8),
+             state->PARTITION_FUNCTIONS[i][79], // Fe
+             log10(state->FRACT[i][79] * state->PARTITION_FUNCTIONS[i][79] / state->RHO[i]));
+      printf("%f %d %d %s %f %f\n", TEMP, i, 80, Terminator(state->SPLIST + 8 * 80, 8),
+             state->PARTITION_FUNCTIONS[i][80], // Fe+
+             log10(state->FRACT[i][80] * state->PARTITION_FUNCTIONS[i][80] / state->RHO[i]));
+      printf("%f %d %d %s %f %f\n", TEMP, i, 145, Terminator(state->SPLIST + 8 * 145, 8),
+             state->PARTITION_FUNCTIONS[i][145], // CN
+             log10(state->FRACT[i][145] * state->PARTITION_FUNCTIONS[i][145] / state->RHO[i]));
     }
 
-    if (dump01 && i == state.NRHOX - 1)
+    if (dump01 && i == state->NRHOX - 1)
     {
-      printf("Atmospheric layer #%d out of %d (%g %g %g)\n", i, state.NRHOX - 1, state.T[i], state.XNE[i], state.XNA[i]);
-      for (j = 0; j < state.N_SPLIST; j++)
-        printf("%d %s %f %10.4g %f\n", j, Terminator(state.SPLIST + 8 * j, 8),
-               state.PARTITION_FUNCTIONS[i][j],
-               state.FRACT[i][j],
-               state.FRACT[i][j] / state.RHO[i]);
+      printf("Atmospheric layer #%d out of %d (%g %g %g)\n", i, state->NRHOX - 1, state->T[i], state->XNE[i], state->XNA[i]);
+      for (j = 0; j < state->N_SPLIST; j++)
+        printf("%d %s %f %10.4g %f\n", j, Terminator(state->SPLIST + 8 * j, 8),
+               state->PARTITION_FUNCTIONS[i][j],
+               state->FRACT[i][j],
+               state->FRACT[i][j] / state->RHO[i]);
     }
-    state.FRACT[i][state.N_SPLIST - 1] = XNE_estim;
+    state->FRACT[i][state->N_SPLIST - 1] = XNE_estim;
     if (use_electron_density_from_EOS)
-      state.XNE[i] = XNE_estim;
+      state->XNE[i] = XNE_estim;
     if (use_particle_density_from_EOS)
-      state.XNA[i] = XNA_estim;
+      state->XNA[i] = XNA_estim;
     if (use_gas_density_from_EOS)
-      state.RHO[i] = RHO_estim;
+      state->RHO[i] = RHO_estim;
   }
-  for (i = 0; i < state.NLINES; i++)
-    state.SPINDEX[i]--; /* Index in FORTRAN is 1-based */
+  for (i = 0; i < state->NLINES; i++)
+    state->SPINDEX[i]--; /* Index in FORTRAN is 1-based */
 
-  state.flagIONIZ = 1;
+  state->flagIONIZ = 1;
   if (max_Ne_err > 0.5)
   {
-    sprintf(state.result, "WARNING: EOS-computed electron density differs from the model by %d%% in layer %d",
+    sprintf(state->result, "WARNING: EOS-computed electron density differs from the model by %d%% in layer %d",
             round(max_Ne_err * 100), i_max_Ne_err + 1);
-    return state.result;
+    return state->result;
   }
 
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL GetFraction(int n, void *arg[], struct GlobalState state)
+extern "C" char const *SME_DLL GetFraction(int n, void *arg[],  GlobalState * state)
 {
   short i, l, mode;
   IDL_STRING *a0;
@@ -5491,25 +5579,25 @@ extern "C" char const *SME_DLL GetFraction(int n, void *arg[], struct GlobalStat
   int j;
   double *a;
 
-  if (!state.flagMODEL)
+  if (!state->flagMODEL)
   {
-    strcpy(state.result, "No model atmosphere has been set");
-    return state.result;
+    strcpy(state->result, "No model atmosphere has been set");
+    return state->result;
   }
 
   mode = *(short *)arg[1]; /* Return mode=0 - number densities
                                              =1 - partition functions
                                           other - number densities/pf */
-  if (!state.flagIONIZ && mode != 1)
+  if (!state->flagIONIZ && mode != 1)
   {
-    strcpy(state.result, "Molecular-ionization equilibrium was not computed");
-    return state.result;
+    strcpy(state->result, "Molecular-ionization equilibrium was not computed");
+    return state->result;
   }
 
   if (n < 4)
   {
-    strcpy(state.result, "Not enough arguments");
-    return state.result;
+    strcpy(state->result, "Not enough arguments");
+    return state->result;
   }
   a0 = (IDL_STRING *)arg[0]; /* Pointer to the name of species */
 
@@ -5519,124 +5607,124 @@ extern "C" char const *SME_DLL GetFraction(int n, void *arg[], struct GlobalStat
   l = *(short *)arg[2]; /* Array length */
   a = (double *)arg[3]; /* Array */
 
-  for (i = 0; i < state.N_SPLIST; i++) /* Search for requested species */
+  for (i = 0; i < state->N_SPLIST; i++) /* Search for requested species */
   {
-    if (!strncmp(state.SPLIST + 8 * i, a0->s, a0->slen))
+    if (!strncmp(state->SPLIST + 8 * i, a0->s, a0->slen))
     {
       switch (mode)
       {
       case 0:
-        for (j = 0; j < min(state.NRHOX, l); j++)
-          a[j] = state.FRACT[j][i] *
-                 state.PARTITION_FUNCTIONS[j][i];
+        for (j = 0; j < min(state->NRHOX, l); j++)
+          a[j] = state->FRACT[j][i] *
+                 state->PARTITION_FUNCTIONS[j][i];
         return &OK_response;
       case 1:
-        for (j = 0; j < min(state.NRHOX, l); j++)
-          a[j] = state.PARTITION_FUNCTIONS[j][i];
+        for (j = 0; j < min(state->NRHOX, l); j++)
+          a[j] = state->PARTITION_FUNCTIONS[j][i];
         return &OK_response;
       default:
-        for (j = 0; j < min(state.NRHOX, l); j++)
-          a[j] = state.FRACT[j][i];
+        for (j = 0; j < min(state->NRHOX, l); j++)
+          a[j] = state->FRACT[j][i];
         return &OK_response;
       }
     }
   }
-  sprintf(state.result, "Requested species %s not found", Terminator(a0->s, a0->slen));
-  return state.result;
+  sprintf(state->result, "Requested species %s not found", Terminator(a0->s, a0->slen));
+  return state->result;
 }
 
-extern "C" char const *SME_DLL GetDensity(int n, void *arg[], struct GlobalState state)
+extern "C" char const *SME_DLL GetDensity(int n, void *arg[],  GlobalState * state)
 {
   short l;
   char sp[9];
   int j;
   double *a;
 
-  if (!state.flagMODEL)
+  if (!state->flagMODEL)
   {
-    strcpy(state.result, "No model atmosphere has been set");
-    return state.result;
+    strcpy(state->result, "No model atmosphere has been set");
+    return state->result;
   }
 
-  if (!state.flagIONIZ)
+  if (!state->flagIONIZ)
   {
-    strcpy(state.result, "Molecular-ionization equilibrium was not computed");
-    return state.result;
+    strcpy(state->result, "Molecular-ionization equilibrium was not computed");
+    return state->result;
   }
 
   if (n < 2)
   {
-    strcpy(state.result, "Not enough arguments");
-    return state.result;
+    strcpy(state->result, "Not enough arguments");
+    return state->result;
   }
   l = *(short *)arg[0]; /* Array length */
   a = (double *)arg[1]; /* Array */
-  for (j = 0; j < min(state.NRHOX, l); j++)
-    a[j] = state.RHO_eos[j];
+  for (j = 0; j < min(state->NRHOX, l); j++)
+    a[j] = state->RHO_eos[j];
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL GetNatom(int n, void *arg[], struct GlobalState state)
+extern "C" char const *SME_DLL GetNatom(int n, void *arg[],  GlobalState * state)
 {
   short l;
   int j;
   double *a;
 
-  if (!state.flagMODEL)
+  if (!state->flagMODEL)
   {
-    strcpy(state.result, "No model atmosphere has been set");
-    return state.result;
+    strcpy(state->result, "No model atmosphere has been set");
+    return state->result;
   }
 
-  if (!state.flagIONIZ)
+  if (!state->flagIONIZ)
   {
-    strcpy(state.result, "Molecular-ionization equilibrium was not computed");
-    return state.result;
+    strcpy(state->result, "Molecular-ionization equilibrium was not computed");
+    return state->result;
   }
 
   if (n < 2)
   {
-    strcpy(state.result, "Not enough arguments");
-    return state.result;
+    strcpy(state->result, "Not enough arguments");
+    return state->result;
   }
   l = *(short *)arg[0]; /* Array length */
   a = (double *)arg[1]; /* Array */
-  for (j = 0; j < min(state.NRHOX, l); j++)
-    a[j] = state.XNA_eos[j];
+  for (j = 0; j < min(state->NRHOX, l); j++)
+    a[j] = state->XNA_eos[j];
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL GetNelec(int n, void *arg[], struct GlobalState state)
+extern "C" char const *SME_DLL GetNelec(int n, void *arg[],  GlobalState * state)
 {
   short l;
   int j;
   double *a;
 
-  if (!state.flagMODEL)
+  if (!state->flagMODEL)
   {
-    strcpy(state.result, "No model atmosphere has been set");
-    return state.result;
+    strcpy(state->result, "No model atmosphere has been set");
+    return state->result;
   }
 
-  if (!state.flagIONIZ)
+  if (!state->flagIONIZ)
   {
-    strcpy(state.result, "Molecular-ionization equilibrium was not computed");
-    return state.result;
+    strcpy(state->result, "Molecular-ionization equilibrium was not computed");
+    return state->result;
   }
 
   if (n < 2)
   {
-    strcpy(state.result, "Not enough arguments");
-    return state.result;
+    strcpy(state->result, "Not enough arguments");
+    return state->result;
   }
   l = *(short *)arg[0]; /* Array length */
   a = (double *)arg[1]; /* Array */
-  for (j = 0; j < min(state.NRHOX, l); j++)
-    a[j] = state.XNE_eos[j];
+  for (j = 0; j < min(state->NRHOX, l); j++)
+    a[j] = state->XNE_eos[j];
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL Transf(int n, void *arg[], struct GlobalState state)
+extern "C" char const *SME_DLL Transf(int n, void *arg[],  GlobalState * state)
 {
   /*  THIS SUBROUTINE EXPLICITLY SOLVES THE TRANSFER EQUATION
     FOR A SET OF NODES ON THE STAR DISK. THE RESULTS ARE:
@@ -5666,48 +5754,48 @@ extern "C" char const *SME_DLL Transf(int n, void *arg[], struct GlobalState sta
 
   /* Check if everything is set and pre-calculated */
 
-  if (!state.flagMODEL)
+  if (!state->flagMODEL)
   {
-    strcpy(state.result, "No model atmosphere has been set");
-    return state.result;
+    strcpy(state->result, "No model atmosphere has been set");
+    return state->result;
   }
-  if (!state.flagWLRANGE)
+  if (!state->flagWLRANGE)
   {
-    strcpy(state.result, "No wavelength range has been set");
-    return state.result;
+    strcpy(state->result, "No wavelength range has been set");
+    return state->result;
   }
-  if (!state.flagABUND)
+  if (!state->flagABUND)
   {
-    strcpy(state.result, "No list of abundances has been set");
-    return state.result;
+    strcpy(state->result, "No list of abundances has been set");
+    return state->result;
   }
-  if (!state.flagLINELIST)
+  if (!state->flagLINELIST)
   {
-    strcpy(state.result, "No line list has been set");
-    return state.result;
+    strcpy(state->result, "No line list has been set");
+    return state->result;
   }
-  if (!state.flagIONIZ)
+  if (!state->flagIONIZ)
   {
-    strcpy(state.result, "Molecular-ionization equilibrium was not computed");
-    return state.result;
+    strcpy(state->result, "Molecular-ionization equilibrium was not computed");
+    return state->result;
   }
-  if (!state.flagCONTIN)
+  if (!state->flagCONTIN)
   {
-    strcpy(state.result, "No arrays have been allocated for continous opacity calculations");
-    return state.result;
+    strcpy(state->result, "No arrays have been allocated for continous opacity calculations");
+    return state->result;
   }
-  if (!state.lineOPACITIES)
+  if (!state->lineOPACITIES)
   {
-    strcpy(state.result, "No memory has been allocated for storing line opacities");
-    return state.result;
+    strcpy(state->result, "No memory has been allocated for storing line opacities");
+    return state->result;
   }
 
   /* Get the arguments */
 
   if (n < 9)
   {
-    strcpy(state.result, "Not enough arguments");
-    return state.result;
+    strcpy(state->result, "Not enough arguments");
+    return state->result;
   }
   if (n > 10) /* New SME software capable of using predefined wavelength grid */
   {
@@ -5736,13 +5824,13 @@ extern "C" char const *SME_DLL Transf(int n, void *arg[], struct GlobalState sta
     TABLE = (double *)arg[6];  /* Array for synthetic spectrum */
     EPS1 = *(double *)arg[7];  /* Accuracy of the radiative transfer integration */
     EPS2 = *(double *)arg[8];  /* Accuracy of the interpolation on wl grid */
-    state.change_byte_order = 0;
+    state->change_byte_order = 0;
   }
 
   if (NMU > MUSIZE)
   {
-    snprintf(state.result, 511, "Specified number of limb angles (%d) exceeds MUSIZE (%d)", NMU, MUSIZE);
-    return state.result;
+    snprintf(state->result, 511, "Specified number of limb angles (%d) exceeds MUSIZE (%d)", NMU, MUSIZE);
+    return state->result;
   }
 
   if (n > 11) /* Check of continuum is needed at every wavelength */
@@ -5756,15 +5844,15 @@ extern "C" char const *SME_DLL Transf(int n, void *arg[], struct GlobalState sta
   if (!keep_lineop)
   {
     /* Allocate temporary arrays */
-    CALLOC(state.YABUND, state.NLINES, double);
-    CALLOC(state.XMASS, state.NLINES, double);
-    CALLOC(state.EXCUP, state.NLINES, double);
-    CALLOC(state.ENU4, state.NLINES, double);
-    CALLOC(state.ENL4, state.NLINES, double);
-    if (state.ENL4 == NULL)
+    CALLOC(state->YABUND, state->NLINES, double);
+    CALLOC(state->XMASS, state->NLINES, double);
+    CALLOC(state->EXCUP, state->NLINES, double);
+    CALLOC(state->ENU4, state->NLINES, double);
+    CALLOC(state->ENL4, state->NLINES, double);
+    if (state->ENL4 == NULL)
     {
-      strcpy(state.result, "Not enough memory");
-      return state.result;
+      strcpy(state->result, "Not enough memory");
+      return state->result;
     }
 
     /* Check autoionization lines */
@@ -5773,44 +5861,44 @@ extern "C" char const *SME_DLL Transf(int n, void *arg[], struct GlobalState sta
 
     /* Initialize flags prepare central line opacities and the Voigt function parameters */
 
-    for (line = 0; line < state.NLINES; line++)
+    for (line = 0; line < state->NLINES; line++)
     {
       LINEOPAC(line, state);
       if (NWL == 0)
       {
-        state.MARK[line] = (state.ALMAX[line] < EPS1) ? 2 : -1;
-        state.Wlim_left[line] = max(state.WLCENT[line] - 1000., 0.); /* Initialize line contribution limits */
-        state.Wlim_right[line] = min(state.WLCENT[line] + 1000., 2000000.);
+        state->MARK[line] = (state->ALMAX[line] < EPS1) ? 2 : -1;
+        state->Wlim_left[line] = max(state->WLCENT[line] - 1000., 0.); /* Initialize line contribution limits */
+        state->Wlim_right[line] = min(state->WLCENT[line] + 1000., 2000000.);
       }
-      state.ALMAX[line] = 0.;
+      state->ALMAX[line] = 0.;
     }
-    FREE(state.YABUND);
-    FREE(state.XMASS);
-    FREE(state.EXCUP);
-    FREE(state.ENU4);
-    FREE(state.ENL4);
+    FREE(state->YABUND);
+    FREE(state->XMASS);
+    FREE(state->EXCUP);
+    FREE(state->ENU4);
+    FREE(state->ENL4);
 
     // Line contribution limits
-    for (line = 0; line < state.NLINES; line++) // Check the line contribution at various detunings
+    for (line = 0; line < state->NLINES; line++) // Check the line contribution at various detunings
     {
       delta_lambda = 0.2;
-      WW = state.WLCENT[line];
-      if (state.MARK[line] == -1)
+      WW = state->WLCENT[line];
+      if (state->MARK[line] == -1)
       {
-        state.MARK[line] = 0;
+        state->MARK[line] = 0;
         do
         {
           delta_lambda = delta_lambda * 1.5;
           OPMTRX(WW + delta_lambda, opacity_tot, opacity_cont,
                  source, source_cont, line, line, state); // Assess line contribution at a given offset
-        } while (state.ALMAX[line] > EPS1);
-        state.Wlim_left[line] = max(WW - delta_lambda, 0.);
-        state.Wlim_right[line] = min(WW + delta_lambda, 2000000.);
+        } while (state->ALMAX[line] > EPS1);
+        state->Wlim_left[line] = max(WW - delta_lambda, 0.);
+        state->Wlim_right[line] = min(WW + delta_lambda, 2000000.);
       }
     }
   }
 
-  if (state.MOTYPE == 3) /* If things get spherical initialize a 2D array of MUs and do the RT */
+  if (state->MOTYPE == 3) /* If things get spherical initialize a 2D array of MUs and do the RT */
   {
     double sintheta, deltaR, meanR, meanZ, path;
     int nrhox, grazing[MUSIZE], NRHOXs[MUSIZE];
@@ -5830,26 +5918,26 @@ extern "C" char const *SME_DLL Transf(int n, void *arg[], struct GlobalState sta
     */
     for (imu = 0; imu < NMU; imu++)
     {
-      P_impact = (state.RADIUS + state.RAD_ATMO[0]) * sqrt(1. - MU[imu] * MU[imu]);
-      grazing[imu] = (P_impact > state.RADIUS + state.RAD_ATMO[state.NRHOX - 1]) ? 1 : 0;
+      P_impact = (state->RADIUS + state->RAD_ATMO[0]) * sqrt(1. - MU[imu] * MU[imu]);
+      grazing[imu] = (P_impact > state->RADIUS + state->RAD_ATMO[state->NRHOX - 1]) ? 1 : 0;
       if (grazing[imu]) /* Dealing with grazing rays that do not penetrate optically thick layers */
       {
-        for (nrhox = 1; nrhox < state.NRHOX; nrhox++)
-          if (P_impact >= state.RADIUS + state.RAD_ATMO[nrhox])
+        for (nrhox = 1; nrhox < state->NRHOX; nrhox++)
+          if (P_impact >= state->RADIUS + state->RAD_ATMO[nrhox])
             break;
-        deltaR = state.RAD_ATMO[nrhox - 1] - state.RAD_ATMO[nrhox];      // The layer where we do not cross both
-        path = state.RAD_ATMO[nrhox - 1] + state.RADIUS;                 // boundaries gets special treatment
+        deltaR = state->RAD_ATMO[nrhox - 1] - state->RAD_ATMO[nrhox];      // The layer where we do not cross both
+        path = state->RAD_ATMO[nrhox - 1] + state->RADIUS;                 // boundaries gets special treatment
         path = 2. * sqrt(path * path - P_impact * P_impact); // Geometrical path through the inner ring
-        rhox_sph[imu][0] = state.RHOX[0] / MU[imu];                // Scale the top mass value by projected path
+        rhox_sph[imu][0] = state->RHOX[0] / MU[imu];                // Scale the top mass value by projected path
         for (im = 1; im < nrhox; im++)                       // Loop from the surface to the deepest layer
         {
-          meanR = state.RAD_ATMO[im] + state.RAD_ATMO[im - 1] + 2 * state.RADIUS;
-          meanZ = sqrt((state.RAD_ATMO[im] + state.RADIUS) * (state.RAD_ATMO[im] + state.RADIUS) - P_impact * P_impact) +
-                  sqrt((state.RAD_ATMO[im - 1] + state.RADIUS) * (state.RAD_ATMO[im - 1] + state.RADIUS) - P_impact * P_impact);
-          rhox_sph[imu][im] = rhox_sph[imu][im - 1] + (state.RHOX[im] - state.RHOX[im - 1]) * meanR / meanZ;
+          meanR = state->RAD_ATMO[im] + state->RAD_ATMO[im - 1] + 2 * state->RADIUS;
+          meanZ = sqrt((state->RAD_ATMO[im] + state->RADIUS) * (state->RAD_ATMO[im] + state->RADIUS) - P_impact * P_impact) +
+                  sqrt((state->RAD_ATMO[im - 1] + state->RADIUS) * (state->RAD_ATMO[im - 1] + state->RADIUS) - P_impact * P_impact);
+          rhox_sph[imu][im] = rhox_sph[imu][im - 1] + (state->RHOX[im] - state->RHOX[im - 1]) * meanR / meanZ;
         }
         rhox_sph[imu][nrhox] = rhox_sph[imu][nrhox - 1] + // Column mass across the deepest layer
-                               path * (state.RHOX[nrhox] - state.RHOX[nrhox - 1]) / (state.RAD_ATMO[nrhox - 1] - state.RAD_ATMO[nrhox]);
+                               path * (state->RHOX[nrhox] - state->RHOX[nrhox - 1]) / (state->RAD_ATMO[nrhox - 1] - state->RAD_ATMO[nrhox]);
         for (im = nrhox + 1; im < 2 * nrhox; im++) // The rest of the grazing ray back to the surface
         {                                          // We have column mass chunks stored in rhox_sph already
           rhox_sph[imu][im] = rhox_sph[imu][im - 1] + (rhox_sph[imu][2 * nrhox - im] - rhox_sph[imu][2 * nrhox - im - 1]);
@@ -5858,15 +5946,15 @@ extern "C" char const *SME_DLL Transf(int n, void *arg[], struct GlobalState sta
       }
       else /* Normal rays are treated as in plane parallel case except for variable Mu */
       {
-        rhox_sph[imu][0] = state.RHOX[0] / MU[imu]; // Scale the top mass value by projected path
-        for (im = 1; im < state.NRHOX; im++)
+        rhox_sph[imu][0] = state->RHOX[0] / MU[imu]; // Scale the top mass value by projected path
+        for (im = 1; im < state->NRHOX; im++)
         {
-          meanR = state.RAD_ATMO[im] + state.RAD_ATMO[im - 1] + 2 * state.RADIUS;
-          meanZ = sqrt((state.RAD_ATMO[im] + state.RADIUS) * (state.RAD_ATMO[im] + state.RADIUS) - P_impact * P_impact) +
-                  sqrt((state.RAD_ATMO[im - 1] + state.RADIUS) * (state.RAD_ATMO[im - 1] + state.RADIUS) - P_impact * P_impact);
-          rhox_sph[imu][im] = rhox_sph[imu][im - 1] + (state.RHOX[im] - state.RHOX[im - 1]) * meanR / meanZ;
+          meanR = state->RAD_ATMO[im] + state->RAD_ATMO[im - 1] + 2 * state->RADIUS;
+          meanZ = sqrt((state->RAD_ATMO[im] + state->RADIUS) * (state->RAD_ATMO[im] + state->RADIUS) - P_impact * P_impact) +
+                  sqrt((state->RAD_ATMO[im - 1] + state->RADIUS) * (state->RAD_ATMO[im - 1] + state->RADIUS) - P_impact * P_impact);
+          rhox_sph[imu][im] = rhox_sph[imu][im - 1] + (state->RHOX[im] - state->RHOX[im - 1]) * meanR / meanZ;
         }
-        NRHOXs[imu] = state.NRHOX;
+        NRHOXs[imu] = state->NRHOX;
       }
     }
     iret = RKINTS_sph(rhox_sph, NMU, NRHOXs, EPS1, EPS2, FCBLUE, FCRED, TABLE, NWSIZE, NWL,
@@ -5875,10 +5963,10 @@ extern "C" char const *SME_DLL Transf(int n, void *arg[], struct GlobalState sta
   else /* Plane-parallel case is handled by simpler routine RKINTS which
           is responsible for the adaptive wavelength grid */
   {
-    for (imu = 0; imu < NMU; imu++) /* Prepare state.RHOX arrays for each Mu */
+    for (imu = 0; imu < NMU; imu++) /* Prepare state->RHOX arrays for each Mu */
     {
-      for (im = 0; im < state.NRHOX; im++)
-        rhox[imu * state.NRHOX + im] = state.RHOX[im] / MU[imu];
+      for (im = 0; im < state->NRHOX; im++)
+        rhox[imu * state->NRHOX + im] = state->RHOX[im] / MU[imu];
     }
     iret = RKINTS(rhox, NMU, EPS1, EPS2, FCBLUE, FCRED, TABLE, NWSIZE, NWL,
                   WL, long_continuum, state);
@@ -5889,73 +5977,73 @@ extern "C" char const *SME_DLL Transf(int n, void *arg[], struct GlobalState sta
   return iret ? "Not enough array length to store all the points" : "";
 }
 
-extern "C" char const *SME_DLL GetLineRange(int n, void *arg[], struct GlobalState state) /* Get importance range for every line */
+extern "C" char const *SME_DLL GetLineRange(int n, void *arg[],  GlobalState * state) /* Get importance range for every line */
 {
   int nlines, line;
   double *b;
 
-  if (!state.flagMODEL)
+  if (!state->flagMODEL)
   {
-    strcpy(state.result, "No model atmosphere has been set");
-    return state.result;
+    strcpy(state->result, "No model atmosphere has been set");
+    return state->result;
   }
-  if (!state.flagWLRANGE)
+  if (!state->flagWLRANGE)
   {
-    strcpy(state.result, "No wavelength range has been set");
-    return state.result;
+    strcpy(state->result, "No wavelength range has been set");
+    return state->result;
   }
-  if (!state.flagABUND)
+  if (!state->flagABUND)
   {
-    strcpy(state.result, "No list of abundances has been set");
-    return state.result;
+    strcpy(state->result, "No list of abundances has been set");
+    return state->result;
   }
-  if (!state.flagLINELIST)
+  if (!state->flagLINELIST)
   {
-    strcpy(state.result, "No line list has been set");
-    return state.result;
+    strcpy(state->result, "No line list has been set");
+    return state->result;
   }
-  if (!state.flagIONIZ)
+  if (!state->flagIONIZ)
   {
-    strcpy(state.result, "Molecular-ionization equilibrium was not computed");
-    return state.result;
+    strcpy(state->result, "Molecular-ionization equilibrium was not computed");
+    return state->result;
   }
-  if (!state.flagCONTIN)
+  if (!state->flagCONTIN)
   {
-    strcpy(state.result, "No arrays have been allocated for continous opacity calculations");
-    return state.result;
+    strcpy(state->result, "No arrays have been allocated for continous opacity calculations");
+    return state->result;
   }
-  if (!state.lineOPACITIES)
+  if (!state->lineOPACITIES)
   {
-    strcpy(state.result, "No memory has been allocated for storing line opacities");
-    return state.result;
+    strcpy(state->result, "No memory has been allocated for storing line opacities");
+    return state->result;
   }
 
   if (n < 2) // Check if arguments are present
   {
-    strcpy(state.result, "GetLineRange: Requires an double array pointer and its length");
-    return state.result;
+    strcpy(state->result, "GetLineRange: Requires an double array pointer and its length");
+    return state->result;
   }
 
   b = (double *)arg[0];
   nlines = *(int *)arg[1];
 
-  for (line = 0; line < min(nlines, state.NLINES); line++)
+  for (line = 0; line < min(nlines, state->NLINES); line++)
   {
-    if (state.MARK[line])
+    if (state->MARK[line])
     {
-      b[2 * line] = b[2 * line + 1] = state.WLCENT[line];
+      b[2 * line] = b[2 * line + 1] = state->WLCENT[line];
     }
     else
     {
-      b[2 * line] = state.Wlim_left[line];
-      b[2 * line + 1] = state.Wlim_right[line];
+      b[2 * line] = state->Wlim_left[line];
+      b[2 * line + 1] = state->Wlim_right[line];
     }
   }
 
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL CentralDepth(int n, void *arg[], struct GlobalState state)
+extern "C" char const *SME_DLL CentralDepth(int n, void *arg[],  GlobalState * state)
 {
   /*
   THIS SUBROUTINE EXPLICITLY SOLVES THE TRANSFER EQUATION
@@ -5974,63 +6062,63 @@ extern "C" char const *SME_DLL CentralDepth(int n, void *arg[], struct GlobalSta
 
   /* Check if everything is set and pre-calculated */
 
-  if (!state.flagMODEL)
+  if (!state->flagMODEL)
   {
-    strcpy(state.result, "No model atmosphere has been set");
-    return state.result;
+    strcpy(state->result, "No model atmosphere has been set");
+    return state->result;
   }
-  if (!state.flagWLRANGE)
+  if (!state->flagWLRANGE)
   {
-    strcpy(state.result, "No wavelength range has been set");
-    return state.result;
+    strcpy(state->result, "No wavelength range has been set");
+    return state->result;
   }
-  if (!state.flagABUND)
+  if (!state->flagABUND)
   {
-    strcpy(state.result, "No list of abundances has been set");
-    return state.result;
+    strcpy(state->result, "No list of abundances has been set");
+    return state->result;
   }
-  if (!state.flagLINELIST)
+  if (!state->flagLINELIST)
   {
-    strcpy(state.result, "No line list has been set");
-    return state.result;
+    strcpy(state->result, "No line list has been set");
+    return state->result;
   }
-  if (!state.flagIONIZ)
+  if (!state->flagIONIZ)
   {
-    strcpy(state.result, "Molecular-ionization equilibrium was not computed");
-    return state.result;
+    strcpy(state->result, "Molecular-ionization equilibrium was not computed");
+    return state->result;
   }
-  if (!state.flagCONTIN)
+  if (!state->flagCONTIN)
   {
-    strcpy(state.result, "No arrays have been allocated for continous opacity calculations");
-    return state.result;
+    strcpy(state->result, "No arrays have been allocated for continous opacity calculations");
+    return state->result;
   }
-  if (!state.lineOPACITIES)
+  if (!state->lineOPACITIES)
   {
-    strcpy(state.result, "No memory has been allocated for storing line opacities");
-    return state.result;
+    strcpy(state->result, "No memory has been allocated for storing line opacities");
+    return state->result;
   }
 
   /* Get the arguments */
 
   if (n < 5)
   {
-    strcpy(state.result, "Not enough arguments");
-    return state.result;
+    strcpy(state->result, "Not enough arguments");
+    return state->result;
   }
   NMU = *(int *)arg[0]; /* Number of limb points */
   if (NMU > 81)
   {
-    strcpy(state.result, "SME library is limited to maximum 81 mu angles");
-    return state.result;
+    strcpy(state->result, "SME library is limited to maximum 81 mu angles");
+    return state->result;
   }
   MU = (double *)arg[1];    /* Array of limb points */
   NWSIZE = *(int *)arg[2];  /* Length of the arrays for synthesis */
   TABLE = (float *)arg[3];  /* Array for synthetic spectrum */
   EPS1 = *(double *)arg[4]; /* Accuracy of the radiative transfer integration */
-  if (NWSIZE < state.NLINES)
+  if (NWSIZE < state->NLINES)
   {
-    strcpy(state.result, "Array size is smaller than the number of sp.lines");
-    return state.result;
+    strcpy(state->result, "Array size is smaller than the number of sp.lines");
+    return state->result;
   }
 
   /* Check autoionization lines */
@@ -6039,7 +6127,7 @@ extern "C" char const *SME_DLL CentralDepth(int n, void *arg[], struct GlobalSta
 
   /* Initialize intensity vector */
 
-  for (line = 0; line < state.NLINES; line++)
+  for (line = 0; line < state->NLINES; line++)
   {
     TABLE[line] = 0.;
   }
@@ -6062,18 +6150,18 @@ extern "C" char const *SME_DLL CentralDepth(int n, void *arg[], struct GlobalSta
 
   /* INTEGRATE TRANSFER EQUATION FOR SPECIFIC INTENSITIES */
 
-  CONTOP(state.WLSTD, state.COPSTD, state);
-  for (line = 0; line < state.NLINES; line++)
+  CONTOP(state->WLSTD, state->COPSTD, state);
+  for (line = 0; line < state->NLINES; line++)
   {
     FC = 0.0;
-    CONTOP(state.WLCENT[line], opacity, state); /* Compute continuous opacity at the line center */
+    CONTOP(state->WLCENT[line], opacity, state); /* Compute continuous opacity at the line center */
 
     CENTERINTG(MU, NMU, line, opacity, TBL, state);
     for (IMU = 0; IMU < NMU; IMU++)
     {
 
       TABLE[line] = TABLE[line] + WEIGHTS[IMU] * TBL[IMU];
-      FC = FC + WEIGHTS[IMU] * FCINTG(MU[IMU], state.WLCENT[line], opacity, state);
+      FC = FC + WEIGHTS[IMU] * FCINTG(MU[IMU], state->WLCENT[line], opacity, state);
     }
 
     TABLE[line] = (TABLE[line] < FC) ? 1.0 - TABLE[line] / FC : 0.0;
@@ -6088,7 +6176,7 @@ extern "C" char const *SME_DLL CentralDepth(int n, void *arg[], struct GlobalSta
 
 int RKINTS_sph(double rhox[][2 * MOSIZE], int NMU, int NRHOXs[], double EPS1, double EPS2,
                double *FCBLUE, double *FCRED, double *TABLE, int NWSIZE, int &NWL,
-               double *WL, short long_continuum, int grazing[], struct GlobalState state)
+               double *WL, short long_continuum, int grazing[],  GlobalState * state)
 {
   /* 
   THIS SUBROUTINE CALLS SUBROUTINE FCINTG TO INTEGRATE THE EMMERGING
@@ -6118,7 +6206,7 @@ int RKINTS_sph(double rhox[][2 * MOSIZE], int NMU, int NRHOXs[], double EPS1, do
     for (IWL = 0; IWL < NWL; IWL++)
     {
       OPMTRX(WL[IWL], opacity_tot, opacity_cont,
-             source, source_cont, 0, state.NLINES - 1, state);
+             source, source_cont, 0, state->NLINES - 1, state);
 
       for (IMU = 0; IMU < NMU; IMU++)
       {
@@ -6140,11 +6228,11 @@ int RKINTS_sph(double rhox[][2 * MOSIZE], int NMU, int NRHOXs[], double EPS1, do
           if (IMU == 0)
             FNORM = FCBLUE[IWL * NMU];
         }
-        else if (fabs(WL[IWL] - state.WFIRST) < 1.e-4)
+        else if (fabs(WL[IWL] - state->WFIRST) < 1.e-4)
         {
           TBINTG_sph(nrhox, rhox[IMU], opacity_cont, source_cont, FCBLUE + IMU, grazing[IMU], state);
         }
-        if (fabs(WL[IWL] - state.WLAST) < 1.e-4)
+        if (fabs(WL[IWL] - state->WLAST) < 1.e-4)
         {
           TBINTG_sph(nrhox, rhox[IMU], opacity_cont, source_cont, FCRED + IMU, grazing[IMU], state);
         }
@@ -6155,9 +6243,9 @@ int RKINTS_sph(double rhox[][2 * MOSIZE], int NMU, int NRHOXs[], double EPS1, do
 
   /* Wavelength grid is not pre-set. Construct an adaptive grid starting from the blue */
 
-  WL[0] = state.WFIRST;
-  OPMTRX(state.WFIRST, opacity_tot, opacity_cont,
-         source, source_cont, 0, state.NLINES - 1, state);
+  WL[0] = state->WFIRST;
+  OPMTRX(state->WFIRST, opacity_tot, opacity_cont,
+         source, source_cont, 0, state->NLINES - 1, state);
   for (IMU = 0; IMU < NMU; IMU++)
   {
     nrhox = NRHOXs[IMU];
@@ -6180,11 +6268,11 @@ int RKINTS_sph(double rhox[][2 * MOSIZE], int NMU, int NRHOXs[], double EPS1, do
   /* Now add one line point at each line center. Check line contribution. */
 
   IWL = 0;
-  for (line = 0; line < state.NLINES; line++)
+  for (line = 0; line < state->NLINES; line++)
   {
-    WW = state.WLCENT[line];
+    WW = state->WLCENT[line];
     DWL_MIN = WW * DVEL_MIN / CLIGHTcm;
-    if (WW > state.WFIRST && WW < state.WLAST && WW - WL[IWL] > DWL_MIN && !state.MARK[line])
+    if (WW > state->WFIRST && WW < state->WLAST && WW - WL[IWL] > DWL_MIN && !state->MARK[line])
     {
       // Next pair of wavelength points associated with the next line
       IWL++;
@@ -6193,13 +6281,13 @@ int RKINTS_sph(double rhox[][2 * MOSIZE], int NMU, int NRHOXs[], double EPS1, do
       WL[IWL] = (WW + WL[IWL - 1]) * 0.5; // Intermediate wavelength step
 
       OPMTRX(WL[IWL], opacity_tot, opacity_cont,
-             source, source_cont, 0, state.NLINES - 1, state);
-      if (state.Wlim_right[line] > WL[IWL] && state.WLCENT[line] <= WL[IWL] &&
-          state.ALMAX[line] < EPS1)
-        state.Wlim_right[line] = WL[IWL];
-      if (state.Wlim_left[line] < WL[IWL] && state.WLCENT[line] > WL[IWL] &&
-          state.ALMAX[line] < EPS1)
-        state.Wlim_left[line] = WL[IWL];
+             source, source_cont, 0, state->NLINES - 1, state);
+      if (state->Wlim_right[line] > WL[IWL] && state->WLCENT[line] <= WL[IWL] &&
+          state->ALMAX[line] < EPS1)
+        state->Wlim_right[line] = WL[IWL];
+      if (state->Wlim_left[line] < WL[IWL] && state->WLCENT[line] > WL[IWL] &&
+          state->ALMAX[line] < EPS1)
+        state->Wlim_left[line] = WL[IWL];
 
       for (IMU = 0; IMU < NMU; IMU++)
       {
@@ -6230,13 +6318,13 @@ int RKINTS_sph(double rhox[][2 * MOSIZE], int NMU, int NRHOXs[], double EPS1, do
       WL[IWL] = WW; // Put a point in the line center
 
       OPMTRX(WL[IWL], opacity_tot, opacity_cont,
-             source, source_cont, 0, state.NLINES - 1, state);
-      if (state.Wlim_right[line] > WL[IWL] && state.WLCENT[line] <= WL[IWL] &&
-          state.ALMAX[line] < EPS1)
-        state.Wlim_right[line] = WL[IWL];
-      if (state.Wlim_left[line] < WL[IWL] && state.WLCENT[line] > WL[IWL] &&
-          state.ALMAX[line] < EPS1)
-        state.Wlim_left[line] = WL[IWL];
+             source, source_cont, 0, state->NLINES - 1, state);
+      if (state->Wlim_right[line] > WL[IWL] && state->WLCENT[line] <= WL[IWL] &&
+          state->ALMAX[line] < EPS1)
+        state->Wlim_right[line] = WL[IWL];
+      if (state->Wlim_left[line] < WL[IWL] && state->WLCENT[line] > WL[IWL] &&
+          state->ALMAX[line] < EPS1)
+        state->Wlim_left[line] = WL[IWL];
 
       for (IMU = 0; IMU < NMU; IMU++)
       {
@@ -6264,13 +6352,13 @@ int RKINTS_sph(double rhox[][2 * MOSIZE], int NMU, int NRHOXs[], double EPS1, do
 
   /* One more point at the red end of the spectral interval */
 
-  DWL_MIN = state.WLAST * DVEL_MIN / CLIGHTcm;
-  if (state.WLAST - WL[IWL] > DWL_MIN)
+  DWL_MIN = state->WLAST * DVEL_MIN / CLIGHTcm;
+  if (state->WLAST - WL[IWL] > DWL_MIN)
     IWL++;
   if (IWL > NWSIZE - 1)
     return 1;
-  WL[IWL] = state.WLAST;
-  OPMTRX(WL[IWL], opacity_tot, opacity_cont, source, source_cont, 0, state.NLINES - 1, state);
+  WL[IWL] = state->WLAST;
+  OPMTRX(WL[IWL], opacity_tot, opacity_cont, source, source_cont, 0, state->NLINES - 1, state);
   for (IMU = 0; IMU < NMU; IMU++)
   {
     nrhox = NRHOXs[IMU];
@@ -6296,7 +6384,7 @@ int RKINTS_sph(double rhox[][2 * MOSIZE], int NMU, int NRHOXs[], double EPS1, do
 
   IWL = 1;
   line_first = 0;
-  line_last = state.NLINES - 1;
+  line_last = state->NLINES - 1;
   while (IWL < NWL)
   {
     if (NWL >= NWSIZE - 1)
@@ -6358,9 +6446,9 @@ int RKINTS_sph(double rhox[][2 * MOSIZE], int NMU, int NRHOXs[], double EPS1, do
 
       /* Here is a new version that I hope is finally robust */
 
-      for (line = state.NLINES - 1; line >= line_last; line--)
+      for (line = state->NLINES - 1; line >= line_last; line--)
       {
-        if (state.Wlim_left[line] < WL[IWL + 2] && state.MARK[line] == 0)
+        if (state->Wlim_left[line] < WL[IWL + 2] && state->MARK[line] == 0)
         {
           line_last = line;
           break;
@@ -6368,7 +6456,7 @@ int RKINTS_sph(double rhox[][2 * MOSIZE], int NMU, int NRHOXs[], double EPS1, do
       }
       for (line = line_first; line <= line_last; line++)
       {
-        if (state.Wlim_right[line] > WL[IWL] && state.MARK[line] == 0)
+        if (state->Wlim_right[line] > WL[IWL] && state->MARK[line] == 0)
         {
           line_first = line;
           break;
@@ -6383,7 +6471,7 @@ int RKINTS_sph(double rhox[][2 * MOSIZE], int NMU, int NRHOXs[], double EPS1, do
 
       for (line = 0; line <= line_first; line++)
       {
-        if (state.Wlim_right[line] > WL[IWL - 1] && state.MARK[line] == 0)
+        if (state->Wlim_right[line] > WL[IWL - 1] && state->MARK[line] == 0)
         {
           line_first = line;
           break;
@@ -6391,7 +6479,7 @@ int RKINTS_sph(double rhox[][2 * MOSIZE], int NMU, int NRHOXs[], double EPS1, do
       }
       for (line = line_last; line >= line_first; line--)
       {
-        if (state.Wlim_left[line] < WL[IWL] && state.MARK[line] == 0)
+        if (state->Wlim_left[line] < WL[IWL] && state->MARK[line] == 0)
         {
           line_last = line;
           break;
@@ -6405,7 +6493,7 @@ int RKINTS_sph(double rhox[][2 * MOSIZE], int NMU, int NRHOXs[], double EPS1, do
 int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
            double *FCBLUE, double *FCRED, double *TABLE,
            int NWSIZE, int &NWL, double *WL,
-           short long_continuum, struct GlobalState state)
+           short long_continuum,  GlobalState * state)
 {
   /*
   THIS SUBROUTINE CALLS SUBROUTINE FCINTG TO INTEGRATE THE EMERGING
@@ -6430,15 +6518,15 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
   {                             // No adaptive grid in this case
     if (!long_continuum)
     {
-      OPMTRX(state.WFIRST, opacity_tot, opacity_cont, source, source_cont, 0, state.NLINES - 1, state);
+      OPMTRX(state->WFIRST, opacity_tot, opacity_cont, source, source_cont, 0, state->NLINES - 1, state);
       TBINTG(NMU, rhox, opacity_cont, source_cont, FCBLUE, state);
     }
 
     line_first = 0;
-    line_last = state.NLINES - 1;
-    while (state.Wlim_right[line_first] < WL[0] && line_first < line_last)
+    line_last = state->NLINES - 1;
+    while (state->Wlim_right[line_first] < WL[0] && line_first < line_last)
       line_first++;
-    while (state.Wlim_left[line_last] > WL[NWL - 1] && line_first < line_last)
+    while (state->Wlim_left[line_last] > WL[NWL - 1] && line_first < line_last)
       line_last--;
 
     NNWL = NWL;
@@ -6451,7 +6539,7 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
         TBINTG(NMU, rhox, opacity_cont, source_cont, FCBLUE + IWL * NMU, state);
       }
     }
-    OPMTRX(state.WLAST, opacity_tot, opacity_cont, source, source_cont, 0, state.NLINES - 1, state);
+    OPMTRX(state->WLAST, opacity_tot, opacity_cont, source, source_cont, 0, state->NLINES - 1, state);
     TBINTG(NMU, rhox, opacity_cont, source_cont, FCRED, state);
     return 0;
   }
@@ -6459,8 +6547,8 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
   /* CALCULATE CONTINUUM FLUX FOR BOTH ENDS OF THE INTERVAL
    FIRST WE CALCULATE FLUX AT THE BLUE END OF SPECTRAL INTERVAL */
 
-  WL[0] = state.WFIRST;
-  OPMTRX(state.WFIRST, opacity_tot, opacity_cont, source, source_cont, 0, state.NLINES - 1, state);
+  WL[0] = state->WFIRST;
+  OPMTRX(state->WFIRST, opacity_tot, opacity_cont, source, source_cont, 0, state->NLINES - 1, state);
 
   TBINTG(NMU, rhox, opacity_tot, source, TABLE, state);
   TBINTG(NMU, rhox, opacity_cont, source_cont, FCBLUE, state);
@@ -6469,24 +6557,24 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
   /*  Add one point at each line center and one in between */
 
   IWL = 0;
-  for (line = 0; line < state.NLINES; line++)
+  for (line = 0; line < state->NLINES; line++)
   {
-    WW = state.WLCENT[line];
+    WW = state->WLCENT[line];
     DWL_MIN = WW * DVEL_MIN / CLIGHTcm;
-    if (WW > state.WFIRST && WW < state.WLAST && WW - WL[IWL] > DWL_MIN && !state.MARK[line])
+    if (WW > state->WFIRST && WW < state->WLAST && WW - WL[IWL] > DWL_MIN && !state->MARK[line])
     {
       IWL++;
       if (IWL > NWSIZE - 1)
         return 1;
       // Add one point between the previous point and the next line center
       WL[IWL] = (WW + WL[IWL - 1]) * 0.5; // Half-way between the next line center and the previous wavelength point
-      OPMTRX(WL[IWL], opacity_tot, opacity_cont, source, source_cont, 0, state.NLINES - 1, state);
-      if (state.Wlim_right[line] > WL[IWL] && state.WLCENT[line] <= WL[IWL] &&
-          state.ALMAX[line] < EPS1)
-        state.Wlim_right[line] = WL[IWL];
-      if (state.Wlim_left[line] < WL[IWL] && state.WLCENT[line] > WL[IWL] &&
-          state.ALMAX[line] < EPS1)
-        state.Wlim_left[line] = WL[IWL];
+      OPMTRX(WL[IWL], opacity_tot, opacity_cont, source, source_cont, 0, state->NLINES - 1, state);
+      if (state->Wlim_right[line] > WL[IWL] && state->WLCENT[line] <= WL[IWL] &&
+          state->ALMAX[line] < EPS1)
+        state->Wlim_right[line] = WL[IWL];
+      if (state->Wlim_left[line] < WL[IWL] && state->WLCENT[line] > WL[IWL] &&
+          state->ALMAX[line] < EPS1)
+        state->Wlim_left[line] = WL[IWL];
       TBINTG(NMU, rhox, opacity_tot, source, TABLE + IWL * NMU, state);
       if (long_continuum)
       {
@@ -6499,39 +6587,39 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
       if (IWL > NWSIZE - 1)
         return 1;
       WL[IWL] = WW; // Smack in the next line center
-      OPMTRX(WL[IWL], opacity_tot, opacity_cont, source, source_cont, 0, state.NLINES - 1, state);
-      if (state.Wlim_right[line] > WL[IWL] && state.WLCENT[line] <= WL[IWL] &&
-          state.ALMAX[line] < EPS1)
-        state.Wlim_right[line] = WL[IWL];
-      if (state.Wlim_left[line] < WL[IWL] && state.WLCENT[line] > WL[IWL] &&
-          state.ALMAX[line] < EPS1)
-        state.Wlim_left[line] = WL[IWL];
+      OPMTRX(WL[IWL], opacity_tot, opacity_cont, source, source_cont, 0, state->NLINES - 1, state);
+      if (state->Wlim_right[line] > WL[IWL] && state->WLCENT[line] <= WL[IWL] &&
+          state->ALMAX[line] < EPS1)
+        state->Wlim_right[line] = WL[IWL];
+      if (state->Wlim_left[line] < WL[IWL] && state->WLCENT[line] > WL[IWL] &&
+          state->ALMAX[line] < EPS1)
+        state->Wlim_left[line] = WL[IWL];
       TBINTG(NMU, rhox, opacity_tot, source, TABLE + IWL * NMU, state);
       if (long_continuum)
       {
-        state.debug_print = 0;
+        state->debug_print = 0;
         TBINTG(NMU, rhox, opacity_cont, source_cont, FCBLUE + IWL * NMU, state);
         FNORM = FCBLUE[IWL * NMU];
       }
 
       if (1. - TABLE[IWL * NMU] / FNORM < EPS2)
-        state.MARK[line] = 2;
+        state->MARK[line] = 2;
     }
   }
 
   /* ... and finally add one more point at the red end of the spectral interval */
 
-  DWL_MIN = state.WLAST * DVEL_MIN / CLIGHTcm;
-  if (state.WLAST - WL[IWL] > DWL_MIN)
+  DWL_MIN = state->WLAST * DVEL_MIN / CLIGHTcm;
+  if (state->WLAST - WL[IWL] > DWL_MIN)
     IWL++;
   if (IWL > NWSIZE - 1)
     return 1;
-  WL[IWL] = state.WLAST;
-  OPMTRX(WL[IWL], opacity_tot, opacity_cont, source, source_cont, 0, state.NLINES - 1, state);
+  WL[IWL] = state->WLAST;
+  OPMTRX(WL[IWL], opacity_tot, opacity_cont, source, source_cont, 0, state->NLINES - 1, state);
   TBINTG(NMU, rhox, opacity_tot, source, TABLE + IWL * NMU, state);
-  state.debug_print = 1;
+  state->debug_print = 1;
   TBINTG(NMU, rhox, opacity_cont, source_cont, FCRED, state);
-  state.debug_print = 0;
+  state->debug_print = 0;
   if (long_continuum)
   {
     for (IMU = 0; IMU < NMU; IMU++)
@@ -6548,7 +6636,7 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
 
   IWL = 1;
   line_first = 0;
-  line_last = state.NLINES - 1;
+  line_last = state->NLINES - 1;
   while (IWL < NWL)
   {
     if (NWL >= NWSIZE - 1)
@@ -6590,9 +6678,9 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
       permanently all weak lines left of this wavelength. Unmark all
       temporary marked lines. Here is a new version that I hope is fiinally robust */
 
-      for (line = state.NLINES - 1; line >= line_last; line--)
+      for (line = state->NLINES - 1; line >= line_last; line--)
       {
-        if (state.Wlim_left[line] < WL[IWL + 2])
+        if (state->Wlim_left[line] < WL[IWL + 2])
         {
           line_last = line;
           break;
@@ -6600,7 +6688,7 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
       }
       for (line = line_first; line <= line_last; line++)
       {
-        if (state.Wlim_right[line] > WL[IWL])
+        if (state->Wlim_right[line] > WL[IWL])
         {
           line_first = line;
           break;
@@ -6616,7 +6704,7 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
 
       for (line = 0; line <= line_first; line++)
       {
-        if (state.Wlim_right[line] > WL[IWL - 1])
+        if (state->Wlim_right[line] > WL[IWL - 1])
         {
           line_first = line;
           break;
@@ -6624,7 +6712,7 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
       }
       for (line = line_last; line >= line_first; line--)
       {
-        if (state.Wlim_left[line] < WL[IWL])
+        if (state->Wlim_left[line] < WL[IWL])
         {
           line_last = line;
           break;
@@ -6640,7 +6728,7 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
 
 #define FLUX_SCALE 1.0686475e5
 
-double FCINTG(double MU, double WAVE, double *COPWL, struct GlobalState state)
+double FCINTG(double MU, double WAVE, double *COPWL,  GlobalState * state)
 {
   /*
   Quadratic DELO with Bezier spline RT solver
@@ -6659,24 +6747,24 @@ double FCINTG(double MU, double WAVE, double *COPWL, struct GlobalState state)
   CONWL5 = exp(50.7649141 - 5. * log(WAVE));
   HNUK = 1.43868e8 / WAVE;
 
-  SRC_B = CONWL5 / (exp(HNUK / state.T[state.NRHOX - 1]) - 1.); // Source function
-  SRC_C = CONWL5 / (exp(HNUK / state.T[state.NRHOX - 2]) - 1.);
-  OPC_B = (state.MOTYPE == 0) ? COPWL[state.NRHOX - 1] / state.COPSTD[state.NRHOX - 1] : COPWL[state.NRHOX - 1]; // Opacities
-  OPC_C = (state.MOTYPE == 0) ? COPWL[state.NRHOX - 2] / state.COPSTD[state.NRHOX - 2] : COPWL[state.NRHOX - 2];
+  SRC_B = CONWL5 / (exp(HNUK / state->T[state->NRHOX - 1]) - 1.); // Source function
+  SRC_C = CONWL5 / (exp(HNUK / state->T[state->NRHOX - 2]) - 1.);
+  OPC_B = (state->MOTYPE == 0) ? COPWL[state->NRHOX - 1] / state->COPSTD[state->NRHOX - 1] : COPWL[state->NRHOX - 1]; // Opacities
+  OPC_C = (state->MOTYPE == 0) ? COPWL[state->NRHOX - 2] / state->COPSTD[state->NRHOX - 2] : COPWL[state->NRHOX - 2];
 
-  DBNU = 2.0 * (SRC_B - SRC_C) / ((state.RHOX[state.NRHOX - 1] - state.RHOX[state.NRHOX - 2]) * (OPC_B + OPC_C)) * MU;
+  DBNU = 2.0 * (SRC_B - SRC_C) / ((state->RHOX[state->NRHOX - 1] - state->RHOX[state->NRHOX - 2]) * (OPC_B + OPC_C)) * MU;
   INTENSITY = 0.5 * (SRC_B + SRC_C) + DBNU; // Intensity at the bottom
 
   SPRIME_SAVE = 0.0; // Initialize S'
 
-  for (IM = state.NRHOX - 2; IM > 0; IM--) // Work your way from the deepest
+  for (IM = state->NRHOX - 2; IM > 0; IM--) // Work your way from the deepest
   {                                  // layer to the surface
     SRC_A = SRC_B;                   // Shift source functions and opacities
     OPC_A = OPC_B;
     SRC_B = SRC_C;
     OPC_B = OPC_C;
-    SRC_C = CONWL5 / (exp(HNUK / state.T[IM - 1]) - 1.); // Downwind point
-    OPC_C = (state.MOTYPE == 0) ? COPWL[IM - 1] / state.COPSTD[IM - 1] : COPWL[IM - 1];
+    SRC_C = CONWL5 / (exp(HNUK / state->T[IM - 1]) - 1.); // Downwind point
+    OPC_C = (state->MOTYPE == 0) ? COPWL[IM - 1] / state->COPSTD[IM - 1] : COPWL[IM - 1];
     /*
     !:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     ! New version based on monotoneous quadratic Bezier splines
@@ -6756,8 +6844,8 @@ double FCINTG(double MU, double WAVE, double *COPWL, struct GlobalState state)
     ! Now to the the actual computing. delta and delta' first (assuming equispaced
     ! geometrical grid lambda is 1/2):
     */
-    STEP_AB = (state.RHOX[IM + 1] - state.RHOX[IM]) / MU;
-    STEP_BC = (state.RHOX[IM] - state.RHOX[IM - 1]) / MU;
+    STEP_AB = (state->RHOX[IM + 1] - state->RHOX[IM]) / MU;
+    STEP_BC = (state->RHOX[IM] - state->RHOX[IM - 1]) / MU;
     DER = (OPC_B - OPC_A) / STEP_AB;
     DER1 = (OPC_C - OPC_B) / STEP_BC;
     LAMBDA = (1.0 + STEP_BC / (STEP_AB + STEP_BC)) / 3.0;
@@ -6798,7 +6886,7 @@ double FCINTG(double MU, double WAVE, double *COPWL, struct GlobalState state)
     SPRIME_A = SPRIME_SAVE;
     SPRIME_B = (DER * DER1 > 0.0) ? DER / (LAMBDA * DER1 + (1.0 - LAMBDA) * DER) * DER1 : 0.0;
     SPRIME_SAVE = SPRIME_B;
-    if (IM == state.NRHOX - 2)
+    if (IM == state->NRHOX - 2)
     {
       CNTR_AB = SRC_B - DELTA / 2.0 * SPRIME_B;
     }
@@ -6819,7 +6907,7 @@ double FCINTG(double MU, double WAVE, double *COPWL, struct GlobalState state)
 }
 
 void TBINTG_sph(int nrhox, double rhox[], double opacity[], double source[],
-                double *RESULT, int grazing, struct GlobalState state)
+                double *RESULT, int grazing,  GlobalState * state)
 {
   /*
   RT solver
@@ -6916,7 +7004,7 @@ void TBINTG_sph(int nrhox, double rhox[], double opacity[], double source[],
   *RESULT = INTENSITY * FLUX_SCALE;
 }
 
-void TBINTG1(double rhox[], double opacity[], double source[], double *RESULT, struct GlobalState state)
+void TBINTG1(double rhox[], double opacity[], double source[], double *RESULT,  GlobalState * state)
 {
   /*
   RT solver
@@ -6934,16 +7022,16 @@ void TBINTG1(double rhox[], double opacity[], double source[], double *RESULT, s
 
   /* Useful things for the Planck function */
 
-  SRC_B = source[state.NRHOX - 1]; // Source function
-  SRC_C = source[state.NRHOX - 2];
-  OPC_B = opacity[state.NRHOX - 1]; // Opacities
-  OPC_C = opacity[state.NRHOX - 2];
-  DBNU = 2.0 * (SRC_B - SRC_C) / ((rhox[state.NRHOX - 1] - rhox[state.NRHOX - 2]) * (OPC_B + OPC_C));
+  SRC_B = source[state->NRHOX - 1]; // Source function
+  SRC_C = source[state->NRHOX - 2];
+  OPC_B = opacity[state->NRHOX - 1]; // Opacities
+  OPC_C = opacity[state->NRHOX - 2];
+  DBNU = 2.0 * (SRC_B - SRC_C) / ((rhox[state->NRHOX - 1] - rhox[state->NRHOX - 2]) * (OPC_B + OPC_C));
   INTENSITY = 0.5 * (SRC_B + SRC_C) + DBNU; // Line intensity at the bottom
 
   SPRIME_SAVE = 0.0; // Initialize S'
 
-  for (IM = state.NRHOX - 2; IM > 0; IM--) // Work your way from the deepest
+  for (IM = state->NRHOX - 2; IM > 0; IM--) // Work your way from the deepest
   {                                  // layer to the surface
     SRC_A = SRC_B;                   // Shift source functions and opacities
     OPC_A = OPC_B;
@@ -6996,7 +7084,7 @@ void TBINTG1(double rhox[], double opacity[], double source[], double *RESULT, s
     SPRIME_A = SPRIME_SAVE;
     SPRIME_B = (DER * DER1 > 0.0) ? DER / (LAMBDA * DER1 + (1.0 - LAMBDA) * DER) * DER1 : 0.0;
     SPRIME_SAVE = SPRIME_B;
-    if (IM == state.NRHOX - 2)
+    if (IM == state->NRHOX - 2)
     {
       CNTR_AB = SRC_B - DELTA / 2.0 * SPRIME_B;
     }
@@ -7014,7 +7102,7 @@ void TBINTG1(double rhox[], double opacity[], double source[], double *RESULT, s
 }
 
 void TBINTG(int Nmu, double rhox[], double opacity[], double source[],
-            double RESULT[], struct GlobalState state)
+            double RESULT[],  GlobalState * state)
 {
   /*
   RT solver for plane parallel geometry
@@ -7034,18 +7122,18 @@ void TBINTG(int Nmu, double rhox[], double opacity[], double source[],
 
   /* Useful things for the Planck function */
 
-  SRC_B = source[state.NRHOX - 1]; // Source function
-  SRC_C = source[state.NRHOX - 2];
-  OPC_B = opacity[state.NRHOX - 1]; // Opacities
-  OPC_C = opacity[state.NRHOX - 2];
+  SRC_B = source[state->NRHOX - 1]; // Source function
+  SRC_C = source[state->NRHOX - 2];
+  OPC_B = opacity[state->NRHOX - 1]; // Opacities
+  OPC_C = opacity[state->NRHOX - 2];
   for (imu = 0; imu < Nmu; imu++)
   {
-    DBNU = 2.0 * (SRC_B - SRC_C) / ((rhox[imu * state.NRHOX + state.NRHOX - 1] - rhox[imu * state.NRHOX + state.NRHOX - 2]) * (OPC_B + OPC_C));
+    DBNU = 2.0 * (SRC_B - SRC_C) / ((rhox[imu * state->NRHOX + state->NRHOX - 1] - rhox[imu * state->NRHOX + state->NRHOX - 2]) * (OPC_B + OPC_C));
     INTENSITY[imu] = 0.5 * (SRC_B + SRC_C) + DBNU; // Line intensity at the bottom
     SPRIME_SAVE[imu] = 0.0;                        // Initialize S'
   }
 
-  for (IM = state.NRHOX - 2; IM > 0; IM--) // Work your way from the deepest
+  for (IM = state->NRHOX - 2; IM > 0; IM--) // Work your way from the deepest
   {                                  // layer to the surface
     SRC_A = SRC_B;                   // Shift source functions and opacities
     OPC_A = OPC_B;
@@ -7058,8 +7146,8 @@ void TBINTG(int Nmu, double rhox[], double opacity[], double source[],
     */
     for (imu = 0; imu < Nmu; imu++)
     {
-      STEP_AB = (rhox[imu * state.NRHOX + IM + 1] - rhox[imu * state.NRHOX + IM]);
-      STEP_BC = (rhox[imu * state.NRHOX + IM] - rhox[imu * state.NRHOX + IM - 1]);
+      STEP_AB = (rhox[imu * state->NRHOX + IM + 1] - rhox[imu * state->NRHOX + IM]);
+      STEP_BC = (rhox[imu * state->NRHOX + IM] - rhox[imu * state->NRHOX + IM - 1]);
       DER = (OPC_B - OPC_A) / STEP_AB;
       DER1 = (OPC_C - OPC_B) / STEP_BC;
       LAMBDA = (1.0 + STEP_BC / (STEP_AB + STEP_BC)) / 3.0;
@@ -7100,7 +7188,7 @@ void TBINTG(int Nmu, double rhox[], double opacity[], double source[],
       SPRIME_A = SPRIME_SAVE[imu];
       SPRIME_B = (DER * DER1 > 0.0) ? DER / (LAMBDA * DER1 + (1.0 - LAMBDA) * DER) * DER1 : 0.0;
       SPRIME_SAVE[imu] = SPRIME_B;
-      if (IM == state.NRHOX - 2)
+      if (IM == state->NRHOX - 2)
       {
         CNTR_AB = SRC_B - DELTA / 2.0 * SPRIME_B;
       }
@@ -7119,7 +7207,7 @@ void TBINTG(int Nmu, double rhox[], double opacity[], double source[],
     RESULT[imu] = INTENSITY[imu] * FLUX_SCALE;
 }
 
-void CENTERINTG(double *MUs, int NMU, int LINE, double *contop, double *RESULT, struct GlobalState state)
+void CENTERINTG(double *MUs, int NMU, int LINE, double *contop, double *RESULT,  GlobalState * state)
 {
   /*
   Quadratic DELO with Bezier spline RT solver
@@ -7135,43 +7223,43 @@ void CENTERINTG(double *MUs, int NMU, int LINE, double *contop, double *RESULT, 
 
   /* Useful things for the Planck function */
 
-  CONWL5 = exp(50.7649141 - 5. * log(state.WLCENT[LINE]));
-  HNUK = 1.43868e8 / state.WLCENT[LINE];
+  CONWL5 = exp(50.7649141 - 5. * log(state->WLCENT[LINE]));
+  HNUK = 1.43868e8 / state->WLCENT[LINE];
 
   OPMTRX1(LINE, XK, state);
 
-  if (state.MOTYPE)
-    for (IM = 0; IM < state.NRHOX; IM++)
+  if (state->MOTYPE)
+    for (IM = 0; IM < state->NRHOX; IM++)
       XK[IM] = XK[IM] + contop[IM];
   else
-    for (IM = 0; IM < state.NRHOX; IM++)
-      XK[IM] = XK[IM] + contop[IM] / state.COPSTD[IM];
+    for (IM = 0; IM < state->NRHOX; IM++)
+      XK[IM] = XK[IM] + contop[IM] / state->COPSTD[IM];
 
   for (IMU = 0; IMU < NMU; IMU++)
   {
     MU = MUs[IMU];
-    SRC_B = CONWL5 / (exp(HNUK / state.T[state.NRHOX - 1]) - 1.); // Source function
-    SRC_C = CONWL5 / (exp(HNUK / state.T[state.NRHOX - 2]) - 1.);
-    OPC_B = XK[state.NRHOX - 1]; // Opacities
-    OPC_C = XK[state.NRHOX - 2];
-    DBNU = 2.0 * (SRC_B - SRC_C) / ((state.RHOX[state.NRHOX - 1] - state.RHOX[state.NRHOX - 2]) * (OPC_B + OPC_C)) * MU;
+    SRC_B = CONWL5 / (exp(HNUK / state->T[state->NRHOX - 1]) - 1.); // Source function
+    SRC_C = CONWL5 / (exp(HNUK / state->T[state->NRHOX - 2]) - 1.);
+    OPC_B = XK[state->NRHOX - 1]; // Opacities
+    OPC_C = XK[state->NRHOX - 2];
+    DBNU = 2.0 * (SRC_B - SRC_C) / ((state->RHOX[state->NRHOX - 1] - state->RHOX[state->NRHOX - 2]) * (OPC_B + OPC_C)) * MU;
     INTENSITY = 0.5 * (SRC_B + SRC_C) + DBNU; // Intensity at the bottom
 
     SPRIME_SAVE = 0.0; // Initialize S'
 
-    for (IM = state.NRHOX - 2; IM > 0; IM--) // Work your way from the deepest
+    for (IM = state->NRHOX - 2; IM > 0; IM--) // Work your way from the deepest
     {                                  // layer to the surface
       SRC_A = SRC_B;                   // Shift source functions and opacities
       OPC_A = OPC_B;
       SRC_B = SRC_C;
       OPC_B = OPC_C;
-      SRC_C = CONWL5 / (exp(HNUK / state.T[IM - 1]) - 1.); // Downwind point
+      SRC_C = CONWL5 / (exp(HNUK / state->T[IM - 1]) - 1.); // Downwind point
       OPC_C = XK[IM - 1];
       /*
       Steps in monochromatic optical depth
       */
-      STEP_AB = (state.RHOX[IM + 1] - state.RHOX[IM]) / MU;
-      STEP_BC = (state.RHOX[IM] - state.RHOX[IM - 1]) / MU;
+      STEP_AB = (state->RHOX[IM + 1] - state->RHOX[IM]) / MU;
+      STEP_BC = (state->RHOX[IM] - state->RHOX[IM - 1]) / MU;
       DER = (OPC_B - OPC_A) / STEP_AB;
       DER1 = (OPC_C - OPC_B) / STEP_BC;
       LAMBDA = (1.0 + STEP_BC / (STEP_AB + STEP_BC)) / 3.0;
@@ -7212,7 +7300,7 @@ void CENTERINTG(double *MUs, int NMU, int LINE, double *contop, double *RESULT, 
       SPRIME_A = SPRIME_SAVE;
       SPRIME_B = (DER * DER1 > 0.0) ? DER / (LAMBDA * DER1 + (1.0 - LAMBDA) * DER) * DER1 : 0.0;
       SPRIME_SAVE = SPRIME_B;
-      if (IM == state.NRHOX - 2)
+      if (IM == state->NRHOX - 2)
       {
         CNTR_AB = SRC_B - DELTA / 2.0 * SPRIME_B;
       }
@@ -7232,7 +7320,7 @@ void CENTERINTG(double *MUs, int NMU, int LINE, double *contop, double *RESULT, 
 
 #undef FLUX_SCALE
 
-extern "C" char const *SME_DLL GetLineOpacity(int n, void *arg[], struct GlobalState state) /* Returns specific line opacity */
+extern "C" char const *SME_DLL GetLineOpacity(int n, void *arg[],  GlobalState * state) /* Returns specific line opacity */
 {
   int MOTYPE_orig;
   short i, j, nrhox;
@@ -7240,35 +7328,35 @@ extern "C" char const *SME_DLL GetLineOpacity(int n, void *arg[], struct GlobalS
 
   if (n < 3)
   {
-    strcpy(state.result, "Not enough arguments");
-    return state.result;
+    strcpy(state->result, "Not enough arguments");
+    return state->result;
   }
   WAVE = *(double *)arg[0]; /* Wavelength */
   i = *(short *)arg[1];     /* Length of IDL opacity array */
-  nrhox = min(state.NRHOX, i);
+  nrhox = min(state->NRHOX, i);
   a1 = (double *)arg[2]; /* Line opacity */
   a2 = (double *)arg[3]; /* Continuum opacity including scatter */
   a3 = (double *)arg[4]; /* Scatter */
   a4 = (double *)arg[5]; /* Total source function */
   a5 = (double *)arg[6]; /* Continuum source function */
-  MOTYPE_orig = state.MOTYPE;  /* Save state.MOTYPE */
-  state.MOTYPE = -1;           /* Set state.MOTYPE to return only line opacity */
+  MOTYPE_orig = state->MOTYPE;  /* Save state->MOTYPE */
+  state->MOTYPE = -1;           /* Set state->MOTYPE to return only line opacity */
 
   /* Allocate temporary arrays */
 
-  CALLOC(XK, state.NRHOX, double);
-  CALLOC(XC, state.NRHOX, double);
-  CALLOC(SRC, state.NRHOX, double);
-  CALLOC(SRC_CONT, state.NRHOX, double);
+  CALLOC(XK, state->NRHOX, double);
+  CALLOC(XC, state->NRHOX, double);
+  CALLOC(SRC, state->NRHOX, double);
+  CALLOC(SRC_CONT, state->NRHOX, double);
 
   AutoIonization(state);
-  OPMTRX(WAVE, XK, XC, SRC, SRC_CONT, 0, state.NLINES - 1, state);
+  OPMTRX(WAVE, XK, XC, SRC, SRC_CONT, 0, state->NLINES - 1, state);
 
   for (i = 0; i < nrhox; i++)
   {
     a1[i] = XK[i];
     a2[i] = XC[i];
-    a3[i] = state.SIGH[i] + state.SIGEL[i] + state.SIGH2[i] + state.SIGHE[i];
+    a3[i] = state->SIGH[i] + state->SIGEL[i] + state->SIGH2[i] + state->SIGHE[i];
     a4[i] = SRC[i];
     a5[i] = SRC_CONT[i];
   }
@@ -7278,7 +7366,7 @@ extern "C" char const *SME_DLL GetLineOpacity(int n, void *arg[], struct GlobalS
   FREE(SRC);
   FREE(SRC_CONT);
 
-  state.MOTYPE = MOTYPE_orig;
+  state->MOTYPE = MOTYPE_orig;
   return &OK_response;
 }
 
@@ -7289,7 +7377,7 @@ extern "C" char const *SME_DLL GetLineOpacity(int n, void *arg[], struct GlobalS
 #define M0 1.660540e-27
 #define A0 5.29177249e-11
 
-void LINEOPAC(int LINE, struct GlobalState state)
+void LINEOPAC(int LINE,  GlobalState * state)
 {
   /*
    This function computes central line opacity without the
@@ -7300,7 +7388,7 @@ void LINEOPAC(int LINE, struct GlobalState state)
    Author: N.Piskunov
 
                     pi*e^2
-   Line opacity is: ------ * gf * N_absorb * state.STIM
+   Line opacity is: ------ * gf * N_absorb * state->STIM
                      m*c
   
    The Hydrogen line profiles are computed externally by Kurucz
@@ -7308,7 +7396,7 @@ void LINEOPAC(int LINE, struct GlobalState state)
    and are area normalized!
 
    Therefore the normalization factor Z=PI*e^2/(m*c) with speed
-   of light in cm/s. The net state.result is that Z is in cm^2/s !!!
+   of light in cm/s. The net state->result is that Z is in cm^2/s !!!
 
    Other constants: K  - Boltzmann's constant J/K,
                     M0 - unit atomic mass kg (Carbon 12 scale),
@@ -7337,24 +7425,24 @@ void LINEOPAC(int LINE, struct GlobalState state)
   short ion, ITAU;
   int i_cont;
 
-  WAVE = state.WLCENT[LINE];
+  WAVE = state->WLCENT[LINE];
   CONTOP(WAVE, opac, state);
-  state.ALMAX[LINE] = 0.;
-  for (ITAU = 0; ITAU < state.NRHOX; ITAU++)
+  state->ALMAX[LINE] = 0.;
+  for (ITAU = 0; ITAU < state->NRHOX; ITAU++)
   {
-    TEMPER = state.T[ITAU];
+    TEMPER = state->T[ITAU];
     HNUXXX = CLIGHT * 6.6256e-27 / WAVE;
-    XXRHO = state.RHO[ITAU];  /* Density                 */
-    XNELEC = state.XNE[ITAU]; /* Electron number density */
-    XNATOM = state.XNA[ITAU]; /* Atom number density     */
-    Vmicro = state.VTURB[ITAU];
+    XXRHO = state->RHO[ITAU];  /* Density                 */
+    XNELEC = state->XNE[ITAU]; /* Electron number density */
+    XNATOM = state->XNA[ITAU]; /* Atom number density     */
+    Vmicro = state->VTURB[ITAU];
     OPCON = opac[ITAU];
 
     /* Fractions of H I and He I */
 
-    H1FRC = state.H1FRACT[ITAU];
-    HE1FRC = state.HE1FRACT[ITAU];
-    H2molFRC = state.H2molFRACT[ITAU];
+    H1FRC = state->H1FRACT[ITAU];
+    HE1FRC = state->HE1FRACT[ITAU];
+    H2molFRC = state->H2molFRACT[ITAU];
 
     /* Some other useful things */
 
@@ -7362,119 +7450,119 @@ void LINEOPAC(int LINE, struct GlobalState state)
     XSTIM = 1. - exp(-HNUXXX / XTK);
     TEMP6 = pow(TEMPER / 10000., 1. / 6.) * XNELEC;
     TEMP3 = pow(TEMPER / 10000., 0.3) * (H1FRC + 0.413 * HE1FRC +
-                                         (state.flagH2broad ? 0.876 * H2molFRC : 0.));
+                                         (state->flagH2broad ? 0.876 * H2molFRC : 0.));
 
-    /* state.VTURB is in km/s, 1.E13 converts C to km/s, so VTURB2 is dimensionless */
+    /* state->VTURB is in km/s, 1.E13 converts C to km/s, so VTURB2 is dimensionless */
     VTURB2 = 1.e26 / CLIGHT / CLIGHT * Vmicro * Vmicro;
 
     /* Loop through spectral lines */
 
-    if (state.AUTOION[LINE] && (state.GAMVW[LINE] <= 0.0 || state.GAMQST[LINE] <= 0.0))
+    if (state->AUTOION[LINE] && (state->GAMVW[LINE] <= 0.0 || state->GAMQST[LINE] <= 0.0))
     {
-      state.AVOIGT[ITAU][LINE] = 1.;
-      state.VVOIGT[ITAU][LINE] = 1.;
-      state.LINEOP[ITAU][LINE] = 0.;
-      state.MARK[LINE] = 2;
+      state->AVOIGT[ITAU][LINE] = 1.;
+      state->VVOIGT[ITAU][LINE] = 1.;
+      state->LINEOP[ITAU][LINE] = 0.;
+      state->MARK[LINE] = 2;
     }
     else
     {
-      WLC = state.WLCENT[LINE];
-      ion = state.ION[LINE]; /* ion==1 for neutrals */
+      WLC = state->WLCENT[LINE];
+      ion = state->ION[LINE]; /* ion==1 for neutrals */
 
       /* The fraction number of absorbing atoms */
 
-      FR = state.FRACT[ITAU][state.SPINDEX[LINE]];
-      EFRACT = FR * exp(-state.EXCIT[LINE] / (8.6171e-5 * TEMPER));
+      FR = state->FRACT[ITAU][state->SPINDEX[LINE]];
+      EFRACT = FR * exp(-state->EXCIT[LINE] / (8.6171e-5 * TEMPER));
 
       /* Wavelength independent things for a given line */
 
-      state.YABUND[LINE] = Z * state.GF[LINE];
-      state.XMASS[LINE] = 1.66355e24 / CLIGHT / CLIGHT / state.MOLWEIGHT[state.SPINDEX[LINE]];
-      state.EXCUP[LINE] = state.EXCIT[LINE] + 1. / (WLC * 8065.544e-8);
-      if (!state.AUTOION[LINE] && (state.GAMVW[LINE] == 0. || state.GAMQST[LINE] == 0.))
+      state->YABUND[LINE] = Z * state->GF[LINE];
+      state->XMASS[LINE] = 1.66355e24 / CLIGHT / CLIGHT / state->MOLWEIGHT[state->SPINDEX[LINE]];
+      state->EXCUP[LINE] = state->EXCIT[LINE] + 1. / (WLC * 8065.544e-8);
+      if (!state->AUTOION[LINE] && (state->GAMVW[LINE] == 0. || state->GAMQST[LINE] == 0.))
       {
-        state.ENU4[LINE] = (ion * 13.598 * ion / (state.POTION[state.SPINDEX[LINE]] - state.EXCUP[LINE]));
-        state.ENU4[LINE] = state.ENU4[LINE] * state.ENU4[LINE];
-        state.ENL4[LINE] = (ion * 13.598 * ion / (state.POTION[state.SPINDEX[LINE]] - state.EXCIT[LINE]));
-        state.ENL4[LINE] = state.ENL4[LINE] * state.ENL4[LINE];
+        state->ENU4[LINE] = (ion * 13.598 * ion / (state->POTION[state->SPINDEX[LINE]] - state->EXCUP[LINE]));
+        state->ENU4[LINE] = state->ENU4[LINE] * state->ENU4[LINE];
+        state->ENL4[LINE] = (ion * 13.598 * ion / (state->POTION[state->SPINDEX[LINE]] - state->EXCIT[LINE]));
+        state->ENL4[LINE] = state->ENL4[LINE] * state->ENL4[LINE];
       }
 
       /* Radiative damping */
 
-      state.GAMRAD[LINE] = (state.GAMRAD[LINE] > 0.0) ? state.GAMRAD[LINE] : 0.222e16 / (WLC * WLC);
+      state->GAMRAD[LINE] = (state->GAMRAD[LINE] > 0.0) ? state->GAMRAD[LINE] : 0.222e16 / (WLC * WLC);
 
       /* Identify Helium lines included in Dimitrijevic & Sahal-Brechot table;
       Stark damping for those will be computed in subroutine GAMHE */
 
-      state.IDHEL[LINE] = -1;
-      if (!strncmp(state.spname + 8 * LINE, "He ", 3) && !state.MARK[LINE])
+      state->IDHEL[LINE] = -1;
+      if (!strncmp(state->spname + 8 * LINE, "He ", 3) && !state->MARK[LINE])
       {
         switch ((int)floor(WLC))
         {
         case 3819:
-          state.IDHEL[LINE] = 0;
+          state->IDHEL[LINE] = 0;
           break;
         case 3867:
-          state.IDHEL[LINE] = 1;
+          state->IDHEL[LINE] = 1;
           break;
         case 3871:
-          state.IDHEL[LINE] = 2;
+          state->IDHEL[LINE] = 2;
           break;
         case 3888:
-          state.IDHEL[LINE] = 3;
+          state->IDHEL[LINE] = 3;
           break;
         case 3926:
-          state.IDHEL[LINE] = 4;
+          state->IDHEL[LINE] = 4;
           break;
         case 3964:
-          state.IDHEL[LINE] = 5;
+          state->IDHEL[LINE] = 5;
           break;
         case 4009:
-          state.IDHEL[LINE] = 6;
+          state->IDHEL[LINE] = 6;
           break;
         case 4120:
         case 4121:
-          state.IDHEL[LINE] = 7;
+          state->IDHEL[LINE] = 7;
           break;
         case 4143:
-          state.IDHEL[LINE] = 8;
+          state->IDHEL[LINE] = 8;
           break;
         case 4168:
         case 4169:
-          state.IDHEL[LINE] = 9;
+          state->IDHEL[LINE] = 9;
           break;
         case 4437:
-          state.IDHEL[LINE] = 10;
+          state->IDHEL[LINE] = 10;
           break;
         case 4471:
-          state.IDHEL[LINE] = 11;
+          state->IDHEL[LINE] = 11;
           break;
         case 4713:
-          state.IDHEL[LINE] = 12;
+          state->IDHEL[LINE] = 12;
           break;
         case 4921:
         case 4922:
-          state.IDHEL[LINE] = 13;
+          state->IDHEL[LINE] = 13;
           break;
         case 5015:
         case 5016:
-          state.IDHEL[LINE] = 14;
+          state->IDHEL[LINE] = 14;
           break;
         case 5047:
-          state.IDHEL[LINE] = 15;
+          state->IDHEL[LINE] = 15;
           break;
         case 5875:
-          state.IDHEL[LINE] = 16;
+          state->IDHEL[LINE] = 16;
           break;
         case 6678:
-          state.IDHEL[LINE] = 17;
+          state->IDHEL[LINE] = 17;
           break;
         case 4026:
-          state.IDHEL[LINE] = 18;
+          state->IDHEL[LINE] = 18;
           break;
         case 4387:
         case 4388:
-          state.IDHEL[LINE] = 19;
+          state->IDHEL[LINE] = 19;
           break;
         default:
           break;
@@ -7485,19 +7573,19 @@ void LINEOPAC(int LINE, struct GlobalState state)
       DLDOPL is delta_lambda in Angstroems
       DNDOPL is delta_nu in Hz. */
 
-      DOPL = sqrt(TEMPER * state.XMASS[LINE] + VTURB2);
+      DOPL = sqrt(TEMPER * state->XMASS[LINE] + VTURB2);
       DLDOPL = WAVE * DOPL;
-      state.VVOIGT[ITAU][LINE] = 1. / DLDOPL;
+      state->VVOIGT[ITAU][LINE] = 1. / DLDOPL;
       DNDOPL = DOPL / WAVE;
 
-      if (!strncmp(state.spname + 8 * LINE, "H ", 2)) // This is a hydrogen line
+      if (!strncmp(state->spname + 8 * LINE, "H ", 2)) // This is a hydrogen line
       {
         double HNORM;
 
-        HNORM = SQRTPI * EFRACT * state.YABUND[LINE] * XSTIM / XXRHO;
-        state.VVOIGT[ITAU][LINE] = DOPL;
-        state.LINEOP[ITAU][LINE] = HNORM;
-        state.ALMAX[LINE] = 1.e6;
+        HNORM = SQRTPI * EFRACT * state->YABUND[LINE] * XSTIM / XXRHO;
+        state->VVOIGT[ITAU][LINE] = DOPL;
+        state->LINEOP[ITAU][LINE] = HNORM;
+        state->ALMAX[LINE] = 1.e6;
       }
       else // Non-hydrogen line
       {
@@ -7506,22 +7594,22 @@ void LINEOPAC(int LINE, struct GlobalState state)
         to D.Gray, otherwise - follow C.Cowley). For Helium - Dimitrijevich
         tables are used. */
 
-        if (state.IDHEL[LINE] < 0) /* If not Helium */
+        if (state->IDHEL[LINE] < 0) /* If not Helium */
         {
-          if (state.GAMQST[LINE] > 0.0 || state.AUTOION[LINE])
-            GQST = state.GAMQST[LINE] * TEMP6;
+          if (state->GAMQST[LINE] > 0.0 || state->AUTOION[LINE])
+            GQST = state->GAMQST[LINE] * TEMP6;
           else
           {
-            GQST = (ion - 1) ? 5.42e-7 * state.ENU4[LINE] * XNELEC / ((ion + 1) * (ion + 1)) : 2.26e-7 * state.ENU4[LINE] * XNELEC;
+            GQST = (ion - 1) ? 5.42e-7 * state->ENU4[LINE] * XNELEC / ((ion + 1) * (ion + 1)) : 2.26e-7 * state->ENU4[LINE] * XNELEC;
           }
         }
         else /* Compute Stark broadenning for Helium separately */
         {
-          GAMHE(state.IDHEL[LINE], TEMPER, XNELEC, XNATOM, GQST, SHFT, state);
+          GAMHE(state->IDHEL[LINE], TEMPER, XNELEC, XNATOM, GQST, SHFT, state);
         }
 
         /*  Van der Waals damping parameter */
-        if (state.ANSTEE[LINE])
+        if (state->ANSTEE[LINE])
         {
           /*
           This van der Waals part is written by Paul Barklem
@@ -7529,8 +7617,8 @@ void LINEOPAC(int LINE, struct GlobalState state)
           Unpack the temperature dependent van der Waals parameters:
           integer part is SIGMA and decimal part is ALPHA.
           */
-          SIGMA = ((int)state.GAMVW[LINE]) * A0 * A0;
-          ALPHA = state.GAMVW[LINE] - (int)state.GAMVW[LINE];
+          SIGMA = ((int)state->GAMVW[LINE]) * A0 * A0;
+          ALPHA = state->GAMVW[LINE] - (int)state->GAMVW[LINE];
 
           //  Compute the Gamma function of X, this function is valid over the range 1<X<2
 
@@ -7541,33 +7629,33 @@ void LINEOPAC(int LINE, struct GlobalState state)
           //  Compute the halfwidth per unit perturber density for vbar
 
           GVW = pow(4. / PI, ALPHA * 0.5) * GAMMAF * 1.e4 * SIGMA;
-          VBAR = sqrt(8. * K * TEMPER / PI / M0 * (1. / 1.008 + 1. / state.MOLWEIGHT[state.SPINDEX[LINE]]));
+          VBAR = sqrt(8. * K * TEMPER / PI / M0 * (1. / 1.008 + 1. / state->MOLWEIGHT[state->SPINDEX[LINE]]));
           GVW = GVW * pow(VBAR / 1.e4, 1. - ALPHA);
 
           //  Fullwidth given H1FRC perturbers per cm^3 with approximate HeI and
           //  molecular H2 contributions. The factor of 2 in the end comes from
           //  converting to the full width.
 
-          GVW = GVW * (H1FRC + 0.413 * HE1FRC + (state.flagH2broad ? 0.876 * H2molFRC : 0.)) * 1.e6 * 2.;
+          GVW = GVW * (H1FRC + 0.413 * HE1FRC + (state->flagH2broad ? 0.876 * H2molFRC : 0.)) * 1.e6 * 2.;
         }
-        else if ((!state.ANSTEE[LINE] && state.GAMVW[LINE] > 0.0) || state.AUTOION[LINE])
+        else if ((!state->ANSTEE[LINE] && state->GAMVW[LINE] > 0.0) || state->AUTOION[LINE])
         { // Input was log line width per unit density (rad/s cm^3)
-          GVW = state.GAMVW[LINE] * TEMP3 * state.VW_scale;
+          GVW = state->GAMVW[LINE] * TEMP3 * state->VW_scale;
         }
         else
         { // Input was zero and so we use Unsold theory
-          CW = 1.61e-33 * (state.ENU4[LINE] - state.ENL4[LINE]) / (ion * ion);
-          state.GAMVW[LINE] = 78654.213 * pow(CW, 0.4);
-          GVW = state.GAMVW[LINE] * TEMP3 * state.VW_scale;
+          CW = 1.61e-33 * (state->ENU4[LINE] - state->ENL4[LINE]) / (ion * ion);
+          state->GAMVW[LINE] = 78654.213 * pow(CW, 0.4);
+          GVW = state->GAMVW[LINE] * TEMP3 * state->VW_scale;
         }
 
         /*  Total broadening and VOIGT function parameters */
 
-        GAMTOT = state.GAMRAD[LINE] + GQST + GVW;
-        state.AVOIGT[ITAU][LINE] = GAMTOT / (DNDOPL * C4PI);
-        A = state.AVOIGT[ITAU][LINE];
+        GAMTOT = state->GAMRAD[LINE] + GQST + GVW;
+        state->AVOIGT[ITAU][LINE] = GAMTOT / (DNDOPL * C4PI);
+        A = state->AVOIGT[ITAU][LINE];
 
-        /*  VOIGT function calculation: Humlicek, J. 1982, J.Q.S.R.state.T. 27, 437
+        /*  VOIGT function calculation: Humlicek, J. 1982, J.Q.S.R.state->T. 27, 437
         stripted for the case of line center (V==0) */
 
         UAV = A * A;
@@ -7588,16 +7676,16 @@ void LINEOPAC(int LINE, struct GlobalState state)
 
         /*  Line absorption without the VOIGT function */
 
-        state.LINEOP[ITAU][LINE] = EFRACT * state.YABUND[LINE] * XSTIM / (XXRHO * DNDOPL);
-        if (state.LINEOP[ITAU][LINE] * VOIGT / OPCON > state.ALMAX[LINE])
-          state.ALMAX[LINE] = state.LINEOP[ITAU][LINE] * VOIGT / OPCON;
+        state->LINEOP[ITAU][LINE] = EFRACT * state->YABUND[LINE] * XSTIM / (XXRHO * DNDOPL);
+        if (state->LINEOP[ITAU][LINE] * VOIGT / OPCON > state->ALMAX[LINE])
+          state->ALMAX[LINE] = state->LINEOP[ITAU][LINE] * VOIGT / OPCON;
       }
     }
   }
 }
 
 void OPMTRX(double WAVE, double *XK, double *XC, double *source_line,
-            double *source_cont, int LINE_START, int LINE_FINISH, struct GlobalState state)
+            double *source_cont, int LINE_START, int LINE_FINISH,  GlobalState * state)
 {
   /*
    THIS FUNCTION CALCULATES THE OPACITY OR OPACITY RATIO (OPACWL/OPACSTD)
@@ -7608,7 +7696,7 @@ void OPMTRX(double WAVE, double *XK, double *XC, double *source_line,
    Author: N.Piskunov
 
                     pi*e^2
-   Line opacity is: ------ * gf * N_absorb * state.STIM * f(wl-wl0)
+   Line opacity is: ------ * gf * N_absorb * state->STIM * f(wl-wl0)
                      m*c
  
    where the line profile f(wl) is assumed to be nomalized so that:
@@ -7629,7 +7717,7 @@ void OPMTRX(double WAVE, double *XK, double *XC, double *source_line,
    and are area normalized!
 
    Therefore the normalization factor Z=PI*e^2/(m*c) with speed
-   of light in cm/s. The net state.result is that Z is in cm^2/s !!!
+   of light in cm/s. The net state->result is that Z is in cm^2/s !!!
 
    Other constants: K  - Boltzmann's constant J/K,
                     M0 - unit atomic mass kg (Carbon 12 scale),
@@ -7661,18 +7749,18 @@ void OPMTRX(double WAVE, double *XK, double *XC, double *source_line,
   CONWL5 = exp(50.7649141 - 5. * log(WAVE));
   HNUK = 1.43868e8 / WAVE;
   for (LINE = LINE_START; LINE <= LINE_FINISH; LINE++)
-    state.ALMAX[LINE] = 0.;
+    state->ALMAX[LINE] = 0.;
 
   CONTOP(WAVE, opcon, state);
-  for (ITAU = 0; ITAU < state.NRHOX; ITAU++)
+  for (ITAU = 0; ITAU < state->NRHOX; ITAU++)
   {
-    TEMPER = state.T[ITAU];
+    TEMPER = state->T[ITAU];
     OPCON = opcon[ITAU];
-    XNELEC = state.XNE[ITAU]; /* Electron number density */
-    XNATOM = state.XNA[ITAU]; /* Atom number density     */
+    XNELEC = state->XNE[ITAU]; /* Electron number density */
+    XNATOM = state->XNA[ITAU]; /* Atom number density     */
 
     EHNUKT = exp(HNUK / TEMPER);
-    if (state.initNLTE)
+    if (state->initNLTE)
     {
       SRC_cont = CONWL5 / (EHNUKT - 1.); // LTE source function used for continuum
       source_cont[ITAU] = SRC_cont;
@@ -7689,61 +7777,61 @@ void OPMTRX(double WAVE, double *XK, double *XC, double *source_line,
     ALINE = 0.;
     for (LINE = LINE_START; LINE <= LINE_FINISH; LINE++)
     {
-      if (state.MARK[LINE] || WAVE <= state.Wlim_left[LINE] || WAVE >= state.Wlim_right[LINE])
+      if (state->MARK[LINE] || WAVE <= state->Wlim_left[LINE] || WAVE >= state->Wlim_right[LINE])
         continue;
-      if (state.AUTOION[LINE] && (state.GAMVW[LINE] <= 0.0 || state.GAMQST[LINE] <= 0.0))
+      if (state->AUTOION[LINE] && (state->GAMVW[LINE] <= 0.0 || state->GAMQST[LINE] <= 0.0))
         continue;
-      WLC = state.WLCENT[LINE];
+      WLC = state->WLCENT[LINE];
 
-      if (state.initNLTE) // NLTE correction
+      if (state->initNLTE) // NLTE correction
       {
-        XNLTE = state.BNLTE_low[LINE][ITAU] / (EHNUKT - 1.) *
-                (EHNUKT - state.BNLTE_upp[LINE][ITAU] / state.BNLTE_low[LINE][ITAU]);
+        XNLTE = state->BNLTE_low[LINE][ITAU] / (EHNUKT - 1.) *
+                (EHNUKT - state->BNLTE_upp[LINE][ITAU] / state->BNLTE_low[LINE][ITAU]);
         SRC_line = CONWL5 / // NLTE source function for line
-                   (state.BNLTE_low[LINE][ITAU] / state.BNLTE_upp[LINE][ITAU] * EHNUKT - 1.);
+                   (state->BNLTE_low[LINE][ITAU] / state->BNLTE_upp[LINE][ITAU] * EHNUKT - 1.);
       }
 
-      if (!strncmp(state.spname + 8 * LINE, "H ", 2)) // This is a hydrogen line
+      if (!strncmp(state->spname + 8 * LINE, "H ", 2)) // This is a hydrogen line
       {
         int NBLO, NBUP;
         double HNORM;
         float temper, xnelec, h1frc, he1frc, dopl, aline1, aline2;
         double wave, wlcent;
 
-        NBLO = (int)(state.GAMQST[LINE] + 0.1);
-        NBUP = (int)(state.GAMVW[LINE] + 0.1);
+        NBLO = (int)(state->GAMQST[LINE] + 0.1);
+        NBUP = (int)(state->GAMVW[LINE] + 0.1);
 
         temper = TEMPER;
-        xnelec = state.XNE[ITAU];
-        h1frc = state.H1FRACT[ITAU];
-        he1frc = state.HE1FRACT[ITAU];
+        xnelec = state->XNE[ITAU];
+        h1frc = state->H1FRACT[ITAU];
+        he1frc = state->HE1FRACT[ITAU];
         wave = WAVE;
-        wlcent = state.WLCENT[LINE];
-        dopl = state.VVOIGT[ITAU][LINE];
+        wlcent = state->WLCENT[LINE];
+        dopl = state->VVOIGT[ITAU][LINE];
         hlinprof_(wave, wlcent, temper, xnelec, NBLO, NBUP,
-                  h1frc, he1frc, dopl, aline1, state.PATH, &state.PATHLEN, &state.change_byte_order);
-        ALINE1 = aline1 * state.LINEOP[ITAU][LINE] * wave * wave;
-        if (state.initNLTE)
+                  h1frc, he1frc, dopl, aline1, state->PATH, &state->PATHLEN, &state->change_byte_order);
+        ALINE1 = aline1 * state->LINEOP[ITAU][LINE] * wave * wave;
+        if (state->initNLTE)
         {
           ALINE1 *= XNLTE; // NLTE correction to the line opacity
           source_line[ITAU] += ALINE1 * SRC_line;
         }
-        state.ALMAX[LINE] = ALINE1 / OPCON;
+        state->ALMAX[LINE] = ALINE1 / OPCON;
       }
       else // Non-hydrogen line
       {
         double TR, TI, UR, UI, SAV, XX, YY, X1, Y1, X2, Y2, UU, VV;
 
-        if (state.IDHEL[LINE] > 0)
+        if (state->IDHEL[LINE] > 0)
         {
-          GAMHE(state.IDHEL[LINE], TEMPER, XNELEC, state.FRACT[ITAU][1], GQST, SHFT, state);
+          GAMHE(state->IDHEL[LINE], TEMPER, XNELEC, state->FRACT[ITAU][1], GQST, SHFT, state);
           WLC = WLC + SHFT;
         }
 
-        A = state.AVOIGT[ITAU][LINE];
-        V = (WAVE - WLC) * state.VVOIGT[ITAU][LINE];
+        A = state->AVOIGT[ITAU][LINE];
+        V = (WAVE - WLC) * state->VVOIGT[ITAU][LINE];
 
-        /*  VOIGT function calculation: Humlicek, J. 1982, J.Q.S.R.state.T. 27, 437 */
+        /*  VOIGT function calculation: Humlicek, J. 1982, J.Q.S.R.state->T. 27, 437 */
 
         TR = A;
         TI = -V;
@@ -7829,36 +7917,36 @@ void OPMTRX(double WAVE, double *XK, double *XC, double *source_line,
 
         /*  Line absorption with the VOIGT function */
 
-        ALINE1 = VOIGT * state.LINEOP[ITAU][LINE];
-        if (state.initNLTE)
+        ALINE1 = VOIGT * state->LINEOP[ITAU][LINE];
+        if (state->initNLTE)
         {
           ALINE1 *= XNLTE; // NLTE correction to the line opacity
           source_line[ITAU] += ALINE1 * SRC_line;
         }
-        if (ALINE1 / OPCON > state.ALMAX[LINE])
-          state.ALMAX[LINE] = ALINE1 / OPCON;
+        if (ALINE1 / OPCON > state->ALMAX[LINE])
+          state->ALMAX[LINE] = ALINE1 / OPCON;
       }
       ALINE += ALINE1;
     }
 
     /* Compute total opacity */
 
-    if (state.MOTYPE > 0) // state.RHOX model
+    if (state->MOTYPE > 0) // state->RHOX model
     {
       XK[ITAU] = ALINE + OPCON;
       XC[ITAU] = OPCON;
     }
-    else if (state.MOTYPE == 0) // TAU model
+    else if (state->MOTYPE == 0) // TAU model
     {
-      XK[ITAU] = (ALINE + OPCON) / state.COPSTD[ITAU];
-      XC[ITAU] = OPCON / state.COPSTD[ITAU];
+      XK[ITAU] = (ALINE + OPCON) / state->COPSTD[ITAU];
+      XC[ITAU] = OPCON / state->COPSTD[ITAU];
     }
-    else if (state.MOTYPE == -1)
+    else if (state->MOTYPE == -1)
     {
       XK[ITAU] = ALINE;
       XC[ITAU] = OPCON;
     }
-    if (state.initNLTE)
+    if (state->initNLTE)
       source_line[ITAU] = (source_line[ITAU] + OPCON * SRC_cont) / (ALINE + OPCON);
   }
 }
@@ -7869,7 +7957,7 @@ void OPMTRX(double WAVE, double *XK, double *XC, double *source_line,
 #undef M0
 #undef A0
 
-void OPMTRX1(int LINE, double *XK, struct GlobalState state)
+void OPMTRX1(int LINE, double *XK,  GlobalState * state)
 {
   /*
    THIS FUNCTION CALCULATES THE OPACITY OR OPACITY RATIO (OPACWL/OPACSTD)
@@ -7896,43 +7984,43 @@ void OPMTRX1(int LINE, double *XK, struct GlobalState state)
       TEMPER, DOPL;
   short ITAU;
 
-  for (ITAU = 0; ITAU < state.NRHOX; ITAU++)
+  for (ITAU = 0; ITAU < state->NRHOX; ITAU++)
   {
-    TEMPER = state.T[ITAU];
-    XNELEC = state.XNE[ITAU]; /* Electron number density */
-    XNATOM = state.XNA[ITAU]; /* Atom number density     */
+    TEMPER = state->T[ITAU];
+    XNELEC = state->XNE[ITAU]; /* Electron number density */
+    XNATOM = state->XNA[ITAU]; /* Atom number density     */
 
     /* Loop through spectral lines */
 
     ALINE = 0.;
     {
-      if (!strncmp(state.spname + 8 * LINE, "H ", 2)) // This is a hydrogen line
+      if (!strncmp(state->spname + 8 * LINE, "H ", 2)) // This is a hydrogen line
       {
         int NBLO, NBUP;
         float temper, xnelec, h1frc, he1frc, dopl, aline;
         double wave, wlcent;
 
-        NBLO = (int)(state.GAMQST[LINE] + 0.1);
-        NBUP = (int)(state.GAMVW[LINE] + 0.1);
+        NBLO = (int)(state->GAMQST[LINE] + 0.1);
+        NBUP = (int)(state->GAMVW[LINE] + 0.1);
         temper = TEMPER;
         xnelec = XNELEC;
-        h1frc = state.H1FRACT[ITAU];
-        he1frc = state.HE1FRACT[ITAU];
-        dopl = state.VVOIGT[ITAU][LINE];
-        wave = state.WLCENT[LINE];
-        wlcent = state.WLCENT[LINE];
+        h1frc = state->H1FRACT[ITAU];
+        he1frc = state->HE1FRACT[ITAU];
+        dopl = state->VVOIGT[ITAU][LINE];
+        wave = state->WLCENT[LINE];
+        wlcent = state->WLCENT[LINE];
 
         hlinprof_(wave, wlcent, temper, xnelec, NBLO, NBUP,
-                  h1frc, he1frc, dopl, aline, state.PATH, &state.PATHLEN, &state.change_byte_order);
-        ALINE = aline * state.LINEOP[ITAU][LINE];
+                  h1frc, he1frc, dopl, aline, state->PATH, &state->PATHLEN, &state->change_byte_order);
+        ALINE = aline * state->LINEOP[ITAU][LINE];
       }
       else // Non-hydrogen line
       {
 
-        /*  VOIGT function calculation: Humlicek, J. 1982, J.Q.S.R.state.T. 27, 437
+        /*  VOIGT function calculation: Humlicek, J. 1982, J.Q.S.R.state->T. 27, 437
         stripted for the case of line center (V==0) */
 
-        A = state.AVOIGT[ITAU][LINE] * state.WLCENT[LINE];
+        A = state->AVOIGT[ITAU][LINE] * state->WLCENT[LINE];
         UAV = A * A;
         if (A >= 15.)
           W4 = A * 0.5641896 / (0.5 + UAV);
@@ -7951,17 +8039,17 @@ void OPMTRX1(int LINE, double *XK, struct GlobalState state)
 
         /*  Line absorption with the VOIGT function */
 
-        ALINE = VOIGT * state.LINEOP[ITAU][LINE] * state.WLCENT[LINE];
+        ALINE = VOIGT * state->LINEOP[ITAU][LINE] * state->WLCENT[LINE];
       }
     }
 
     /* Compute total opacity */
 
-    if (state.MOTYPE > 0)
+    if (state->MOTYPE > 0)
       XK[ITAU] = ALINE;
-    else if (state.MOTYPE == 0)
-      XK[ITAU] = ALINE / state.COPSTD[ITAU];
-    else if (state.MOTYPE == -1)
+    else if (state->MOTYPE == 0)
+      XK[ITAU] = ALINE / state->COPSTD[ITAU];
+    else if (state->MOTYPE == -1)
       XK[ITAU] = ALINE;
   }
 }
@@ -7973,14 +8061,14 @@ void OPMTRX1(int LINE, double *XK, struct GlobalState state)
 #undef A0
 
 void GAMHE(short IND, double temp, double ANE, double ANP,
-           double &GAM, double &SHIFT, struct GlobalState state)
+           double &GAM, double &SHIFT, GlobalState * state)
 {
   /*   NEUTRAL HELIUM STARK BROADENING PARAMETERS
-     AFTER DIMITRIJEVIC AND SAHAL-BRECHOT, 1984, J.Q.S.R.state.T. 31, 301
+     AFTER DIMITRIJEVIC AND SAHAL-BRECHOT, 1984, J.Q.S.R.state->T. 31, 301
      OR FREUDENSTEIN AND COOPER, 1978, AP.J. 224, 1079  (FOR C(IND)>0)
   */
   static double W[20][5] =
-      /*   ELECTRONS state.T= 5000   10000   20000   40000     LAMBDA */
+      /*   ELECTRONS state->T= 5000   10000   20000   40000     LAMBDA */
       {{5.990, 6.650, 6.610, 6.210, 3819.60},
        {2.950, 3.130, 3.230, 3.300, 3867.50},
        {109.000, 94.400, 79.500, 65.700, 3871.79},
@@ -8002,7 +8090,7 @@ void GAMHE(short IND, double temp, double ANE, double ANP,
        {3.490, 3.630, 3.470, 3.190, 4026.20},
        {4.970, 5.100, 4.810, 4.310, 4387.93}};
   static double V[20][4] =
-      /*   PROTONS   state.T= 5000   10000   20000   40000 */
+      /*   PROTONS   state->T= 5000   10000   20000   40000 */
       {{1.520, 4.540, 9.140, 10.200},
        {0.607, 0.710, 0.802, 0.901},
        {0.000, 0.000, 0.000, 0.000},
@@ -8076,7 +8164,7 @@ void GAMHE(short IND, double temp, double ANE, double ANP,
   if (W[IND][0] != 0.0)
   {
 
-    /* CUBIC INTERPOLATION OVER state.T=5000,10000,20000,40000 IN LOG SCALE */
+    /* CUBIC INTERPOLATION OVER state->T=5000,10000,20000,40000 IN LOG SCALE */
 
     TLG = log10(temp);
     if (TLG <= TT3)

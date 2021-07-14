@@ -5,7 +5,7 @@ from pathlib import Path
 
 import numpy as np
 
-from cwrapper import get_lib_name, IDL_DLL
+from cwrapper import get_lib_name, IDL_DLL, GlobalState, idl_call_external
 
 logger = logging.getLogger(__name__)
 
@@ -50,6 +50,9 @@ class SME_DLL:
         self.ion = None
 
         self.lib = IDL_DLL(libfile)
+        self.state = None
+        self.state = self.NewState()
+
         if datadir is not None:
             self.SetLibraryPath(datadir)
 
@@ -89,8 +92,23 @@ class SME_DLL:
             n = os.path.join(directory, name)
             if not os.path.exists(n):
                 raise FileNotFoundError(
-                    "Could not find required data file {name} in library directory {directory}".format(name=name, directory=directory)
+                    "Could not find required data file {name} in library directory {directory}".format(
+                        name=name, directory=directory
+                    )
                 )
+
+    def NewState(self, delete_old = True):
+        if delete_old and self.state is not None:
+            self.FreeState()
+        self.state = self.lib.call(
+            "NewState", restype="state", raise_error=False, raise_warning=False
+        )
+        return self.state
+
+    def FreeState(self):
+        if self.state is not None:
+            self.lib.call("FreeState", raise_error=False, raise_warning=False, state=self.state)
+            self.state = None
 
     def SMELibraryVersion(self):
         """
@@ -101,21 +119,23 @@ class SME_DLL:
         version : str
             SME library version
         """
-        version = self.lib.call("SMELibraryVersion", raise_error=False)
+        version = self.lib.call(
+            "SMELibraryVersion", raise_error=False, state=self.state
+        )
         return version
 
     def GetLibraryPath(self):
         """ Get the data file directory """
-        return self.lib.GetLibraryPath(raise_error=False)
+        return self.lib.GetLibraryPath(raise_error=False, state=self.state)
 
     def GetDataFiles(self):
         """ Get the required data files """
-        files = self.lib.GetDataFiles(raise_error=False)
+        files = self.lib.GetDataFiles(raise_error=False, state=self.state)
         return files.split(";")
 
     def SetLibraryPath(self, libpath):
         """ Set the path to the library """
-        self.lib.SetLibraryPath(libpath, type="string")
+        self.lib.SetLibraryPath(libpath, type="string", state=self.state)
 
     def InputWaveRange(self, wfirst, wlast):
         """
@@ -133,7 +153,7 @@ class SME_DLL:
         assert (
             wfirst < wlast
         ), "Input Wavelength range is wrong, first wavelength is larger than last"
-        self.lib.InputWaveRange(wfirst, wlast, type="double")
+        self.lib.InputWaveRange(wfirst, wlast, type="double", state=self.state)
 
         self.wfirst = wfirst
         self.wlast = wlast
@@ -147,20 +167,20 @@ class SME_DLL:
         gamma6 : float
             van der Waals scaling factor
         """
-        self.lib.SetVWscale(gamma6, type="double")
+        self.lib.SetVWscale(gamma6, type="double", state=self.state)
         self.vw_scale = gamma6
 
     def SetH2broad(self, h2_flag=True):
         """ Set flag for H2 molecule """
         if h2_flag:
-            self.lib.SetH2broad()
+            self.lib.SetH2broad(state=self.state)
             self.h2broad = True
         else:
             self.ClearH2broad()
 
     def ClearH2broad(self):
         """ Clear flag for H2 molecule """
-        self.lib.ClearH2broad()
+        self.lib.ClearH2broad(state=self.state)
         self.h2broad = False
 
     def InputLineList(self, linelist):
@@ -186,13 +206,17 @@ class SME_DLL:
 
         assert (
             atomic.shape[1] == nlines
-        ), "Got wrong Linelist shape, expected ({nlines}, 8) but got {atomic}".format(nlines=nlines, atomic=atomic.shape)
+        ), "Got wrong Linelist shape, expected ({nlines}, 8) but got {atomic}".format(
+            nlines=nlines, atomic=atomic.shape
+        )
         assert (
             atomic.shape[0] == 8
-        ), "Got wrong Linelist shape, expected ({nlines}, 8) but got {atomic}".format(nlines=nlines, atomic=atomic.shape)
+        ), "Got wrong Linelist shape, expected ({nlines}, 8) but got {atomic}".format(
+            nlines=nlines, atomic=atomic.shape
+        )
 
         self.lib.InputLineList(
-            nlines, species, atomic, type=("int", "string", "double")
+            nlines, species, atomic, type=("int", "string", "double"), state=self.state
         )
 
         self.linelist = linelist
@@ -209,7 +233,9 @@ class SME_DLL:
         """
         nlines = self.nlines
         atomic = np.zeros((nlines, 6))
-        self.lib.OutputLineList(nlines, atomic, type=("int", "double"))
+        self.lib.OutputLineList(
+            nlines, atomic, type=("int", "double"), state=self.state
+        )
         return atomic
 
     def UpdateLineList(self, atomic, species, index):
@@ -229,7 +255,9 @@ class SME_DLL:
         nlines = atomic.shape[0]
         assert (
             atomic.shape[1] == 8
-        ), "Got wrong Linelist shape, expected ({nlines}, 8) but got {atomic}".format(nlines=nlines, atomic=atomic.shape)
+        ), "Got wrong Linelist shape, expected ({nlines}, 8) but got {atomic}".format(
+            nlines=nlines, atomic=atomic.shape
+        )
 
         assert (
             len(index) == nlines
@@ -241,7 +269,12 @@ class SME_DLL:
         atomic = atomic.T
 
         self.lib.UpdateLineList(
-            nlines, species, atomic, index, type=("int", "str", "double", "short")
+            nlines,
+            species,
+            atomic,
+            index,
+            type=("int", "str", "double", "short"),
+            state=self.state,
         )
 
     def InputModel(self, teff, grav, vturb, atmo):
@@ -300,7 +333,7 @@ class SME_DLL:
         except AttributeError as ae:
             raise TypeError("atmo has to be an Atmo type, {ae}".format(ae=ae))
 
-        self.lib.InputModel(*args, type=type)
+        self.lib.InputModel(*args, type=type, state=self.state)
 
         self.teff = teff
         self.grav = grav
@@ -325,7 +358,7 @@ class SME_DLL:
         # metallicity is included in the abundance class, ignored in function call
         abund = abund("sme", raw=True)
         assert isinstance(abund, np.ndarray)
-        self.lib.InputAbund(abund, type="double")
+        self.lib.InputAbund(abund, type="double", state=self.state)
 
         self.abund = abund
 
@@ -363,7 +396,7 @@ class SME_DLL:
                 args += [copstd]
                 type += ["d"]
 
-        self.lib.Opacity(*args, type=type)
+        self.lib.Opacity(*args, type=type, state=self.state)
 
         return args[1:]
 
@@ -412,7 +445,7 @@ class SME_DLL:
                 args += [species]
                 type += ["u"]
 
-        self.lib.GetOpacity(*args, type=type)
+        self.lib.GetOpacity(*args, type=type, state=self.state)
         return result
 
     def Ionization(self, ion=0):
@@ -434,7 +467,9 @@ class SME_DLL:
         ion : int
             flag that determines the behaviour of the C function
         """
-        self.lib.Ionization(ion, type="short", raise_error=False, raise_warning=True)
+        self.lib.Ionization(
+            ion, type="short", raise_error=False, raise_warning=True, state=self.state
+        )
         self.ion = ion
 
     def GetDensity(self):
@@ -448,7 +483,7 @@ class SME_DLL:
         """
         length = self.ndepth
         array = np.zeros(length, dtype=float)
-        self.lib.GetDensity(length, array, type="sd")
+        self.lib.GetDensity(length, array, type="sd", state=self.state)
         return array
 
     def GetNatom(self):
@@ -462,7 +497,7 @@ class SME_DLL:
         """
         length = self.ndepth
         array = np.zeros(length, dtype=float)
-        self.lib.GetNatom(length, array, type="sd")
+        self.lib.GetNatom(length, array, type="sd", state=self.state)
         return array
 
     def GetNelec(self):
@@ -476,7 +511,7 @@ class SME_DLL:
         """
         length = self.ndepth
         array = np.zeros(length, dtype=float)
-        self.lib.GetNelec(length, array, type="sd")
+        self.lib.GetNelec(length, array, type="sd", state=self.state)
         return array
 
     def Transf(
@@ -559,6 +594,7 @@ class SME_DLL:
             keep_lineop,
             long_continuum,
             type=type,
+            state=self.state,
         )
 
         if nw == 0:
@@ -598,7 +634,9 @@ class SME_DLL:
         nwsize = self.nlines
         table = np.zeros(nwsize)
 
-        self.lib.CentralDepth(nmu, mu, nwsize, table, accrt, type="idifd")
+        self.lib.CentralDepth(
+            nmu, mu, nwsize, table, accrt, type="idifd", state=self.state
+        )
         self.nmu = nmu
 
         return table
@@ -632,7 +670,9 @@ class SME_DLL:
         tsf = np.zeros(nmu)
         csf = np.zeros(nmu)
         type = "dsddddd"
-        self.lib.GetLineOpacity(wave, nmu, lop, cop, scr, tsf, csf, type=type)
+        self.lib.GetLineOpacity(
+            wave, nmu, lop, cop, scr, tsf, csf, type=type, state=self.state
+        )
         return lop, cop, scr, tsf, csf
 
     def GetLineRange(self):
@@ -652,7 +692,9 @@ class SME_DLL:
         nlines = self.nlines
         linerange = np.zeros((nlines, 2))
 
-        self.lib.GetLineRange(linerange, nlines, type=("double", "int"))
+        self.lib.GetLineRange(
+            linerange, nlines, type=("double", "int"), state=self.state
+        )
 
         return linerange
 
@@ -676,11 +718,15 @@ class SME_DLL:
         bmat = np.atleast_2d(bmat)
         if bmat.shape[0] != 2:
             raise ValueError(
-                "Departure coefficient matrix has the wrong shape, expected (2, {ndepth}) but got {bmat} instead".format(ndepth=ndepth, bmat=bmat.shape)
+                "Departure coefficient matrix has the wrong shape, expected (2, {ndepth}) but got {bmat} instead".format(
+                    ndepth=ndepth, bmat=bmat.shape
+                )
             )
         if bmat.shape[1] != ndepth:
             raise ValueError(
-                "Departure coefficient matrix has the wrong shape, expected (2, {ndepth}) but got {bmat} instead".format(ndepth=ndepth, bmat=bmat.shape)
+                "Departure coefficient matrix has the wrong shape, expected (2, {ndepth}) but got {bmat} instead".format(
+                    ndepth=ndepth, bmat=bmat.shape
+                )
             )
 
         if not isinstance(lineindex, (int, np.integer)):
@@ -688,10 +734,14 @@ class SME_DLL:
 
         if not 0 <= lineindex < nlines:
             raise ValueError(
-                "Lineindex out of range, expected value between 0 and {nlines}, but got {lineindex} instead".format(nlines=nlines, lineindex=lineindex)
+                "Lineindex out of range, expected value between 0 and {nlines}, but got {lineindex} instead".format(
+                    nlines=nlines, lineindex=lineindex
+                )
             )
 
-        self.lib.InputDepartureCoefficients(bmat, lineindex, type=("double", "int"))
+        self.lib.InputDepartureCoefficients(
+            bmat, lineindex, type=("double", "int"), state=self.state
+        )
 
     def GetNLTE(self, line):
         """ Get the NLTE departure coefficients as stored in the C library
@@ -710,13 +760,13 @@ class SME_DLL:
 
         bmat = np.full((2, nrhox), -1.0, dtype=float)
         self.lib.GetDepartureCoefficients(
-            bmat, nrhox, line, type=("double", "int", "int")
+            bmat, nrhox, line, type=("double", "int", "int"), state=self.state
         )
         return bmat
 
     def ResetNLTE(self):
         """ Reset departure coefficients from any previous call, to ensure LTE as default """
-        self.lib.ResetDepartureCoefficients()
+        self.lib.ResetDepartureCoefficients(state=self.state)
 
     def GetNLTEflags(self):
         """Get an array that tells us which lines have been used with NLTE correction
@@ -734,6 +784,8 @@ class SME_DLL:
         nlines = self.nlines
         nlte_flags = np.zeros(nlines, dtype=np.int16)
 
-        self.lib.GetNLTEflags(nlte_flags, nlines, type=("short", "int"))
+        self.lib.GetNLTEflags(
+            nlte_flags, nlines, type=("short", "int"), state=self.state
+        )
 
         return nlte_flags.astype(bool)

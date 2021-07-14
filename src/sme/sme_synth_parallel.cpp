@@ -55,24 +55,25 @@ The second version below can be used to trace any attempts to
 to do such a terrible thing!
 */
 #if DEBUG_MEMORY_CHECK
-#define CALLOC(ptr, varlen, vartype)                                                 \
- if(ptr!=NULL)                                                                      \
- {                                                                                  \
-   printf("Attempt to re-allocate %s line #%d\n", #ptr, __LINE__);                  \
-   exit(99);                                                                        \
- }                                                                                  \
- ptr=(vartype*)calloc(varlen, sizeof(vartype));
+#define CALLOC(ptr, varlen, vartype)                                \
+  if (ptr != NULL)                                                  \
+  {                                                                 \
+    printf("Attempt to re-allocate %s line #%d\n", #ptr, __LINE__); \
+    exit(99);                                                       \
+  }                                                                 \
+  ptr = (vartype *)calloc(varlen, sizeof(vartype));
 
 #define FREE(ptr)                                                                    \
- if(ptr!=NULL)                                                                      \
- {                                                                                  \
-   free((char *)ptr); ptr=NULL;                                                     \
- }                                                                                  \
- else                                                                               \
- {                                                                                  \
-   printf("Attempt to free unallocated variable %s at line #%d\n", #ptr, __LINE__); \
-   exit(98);                                                                        \
- }
+  if (ptr != NULL)                                                                   \
+  {                                                                                  \
+    free((char *)ptr);                                                               \
+    ptr = NULL;                                                                      \
+  }                                                                                  \
+  else                                                                               \
+  {                                                                                  \
+    printf("Attempt to free unallocated variable %s at line #%d\n", #ptr, __LINE__); \
+    exit(98);                                                                        \
+  }
 #else
 #define CALLOC(ptr, varlen, vartype) ptr = (vartype *)calloc(varlen, sizeof(vartype))
 
@@ -85,50 +86,50 @@ to do such a terrible thing!
 #endif
 /* Modules */
 
-void ALAM(double *,  GlobalState * state);
-void CONTOP(double, double *,  GlobalState * state);
-void HOP(double *, int, int,  GlobalState * state);
-void H2PLOP(double *, int, int,  GlobalState * state);
-void HMINOP(double *, int, int,  GlobalState * state);
-void HMINOP_old(double *, int, int,  GlobalState * state);
-void HRAYOP(double *, int,  GlobalState * state);
-void HE1OP(double *, int, int,  GlobalState * state);
-void HE1OP_new(double *, int, int,  GlobalState * state);
-void HE2OP(double *, int, int,  GlobalState * state);
-void HEMIOP(double *, int,  GlobalState * state);
-void HERAOP(double *, int,  GlobalState * state);
-void COOLOP(double *,  GlobalState * state);
-double C1OP(int,  GlobalState * state);
-double MG1OP(int,  GlobalState * state);
-double AL1OP(int,  GlobalState * state);
-double SI1OP(int,  GlobalState * state);
-double FE1OP(int,  GlobalState * state);
-double C1OP_new(int,  GlobalState * state);
-double MG1OP_new(int,  GlobalState * state);
-double N1OP(int,  GlobalState * state);
-double O1OP(int,  GlobalState * state);
-double MG2OP(int,  GlobalState * state);
-double SI2OP(int,  GlobalState * state);
-double CA2OP(int,  GlobalState * state);
+void ALAM(double *, GlobalState *state);
+void CONTOP(double, double *, GlobalState *state);
+void HOP(double *, int, int, GlobalState *state);
+void H2PLOP(double *, int, int, GlobalState *state);
+void HMINOP(double *, int, int, GlobalState *state);
+void HMINOP_old(double *, int, int, GlobalState *state);
+void HRAYOP(double *, int, GlobalState *state);
+void HE1OP(double *, int, int, GlobalState *state);
+void HE1OP_new(double *, int, int, GlobalState *state);
+void HE2OP(double *, int, int, GlobalState *state);
+void HEMIOP(double *, int, GlobalState *state);
+void HERAOP(double *, int, GlobalState *state);
+void COOLOP(double *, GlobalState *state);
+double C1OP(int, GlobalState *state);
+double MG1OP(int, GlobalState *state);
+double AL1OP(int, GlobalState *state);
+double SI1OP(int, GlobalState *state);
+double FE1OP(int, GlobalState *state);
+double C1OP_new(int, GlobalState *state);
+double MG1OP_new(int, GlobalState *state);
+double N1OP(int, GlobalState *state);
+double O1OP(int, GlobalState *state);
+double MG2OP(int, GlobalState *state);
+double SI2OP(int, GlobalState *state);
+double CA2OP(int, GlobalState *state);
 
-void LUKEOP(double *,  GlobalState * state);
-void HOTOP(double *,  GlobalState * state);
-void ELECOP(double *,  GlobalState * state);
-void H2RAOP(double *, int,  GlobalState * state);
+void LUKEOP(double *, GlobalState *state);
+void HOTOP(double *, GlobalState *state);
+void ELECOP(double *, GlobalState *state);
+void H2RAOP(double *, int, GlobalState *state);
 int RKINTS(double *, int, double, double, double *, double *, double *,
-           int, int &, double *, short,  GlobalState * state);
+           int, int &, double *, short, GlobalState *state);
 int RKINTS_sph(double rhox[][2 * MOSIZE], int, int NRHOXs[], double, double,
                double *, double *, double *, int, int &,
-               double *, short, int grazing[],  GlobalState * state);
-double FCINTG(double, double, double *,  GlobalState * state);
-void TBINTG(int, double *, double *, double *, double *,  GlobalState * state);
-void TBINTG_sph(int, double *, double *, double *, double *, int,  GlobalState * state);
-void CENTERINTG(double *, int, int, double *, double *,  GlobalState * state);
-void LINEOPAC(int,  GlobalState * state);
-void OPMTRX(double, double *, double *, double *, double *, int, int,  GlobalState * state);
-void OPMTRXn(double, double *, double *, double *,  GlobalState * state);
-void OPMTRX1(int, double *,  GlobalState * state);
-void GAMHE(short, double, double, double, double &, double &,  GlobalState * state);
+               double *, short, int grazing[], GlobalState *state);
+double FCINTG(double, double, double *, GlobalState *state);
+void TBINTG(int, double *, double *, double *, double *, GlobalState *state);
+void TBINTG_sph(int, double *, double *, double *, double *, int, GlobalState *state);
+void CENTERINTG(double *, int, int, double *, double *, GlobalState *state);
+void LINEOPAC(int, GlobalState *state);
+void OPMTRX(double, double *, double *, double *, double *, int, int, GlobalState *state);
+void OPMTRXn(double, double *, double *, double *, GlobalState *state);
+void OPMTRX1(int, double *, GlobalState *state);
+void GAMHE(short, double, double, double, double &, double &, GlobalState *state);
 double HFNM(int, int);
 double VCSE1F(double);
 double VACAIR(double);
@@ -215,15 +216,16 @@ int compress(char *target, char *source)
   return t - 1;
 }
 
-extern "C" GlobalState * SME_DLL NewState(){
-  GlobalState * state = (GlobalState *) malloc(sizeof(GlobalState));
+extern "C" GlobalState *SME_DLL NewState()
+{
+  GlobalState *state = (GlobalState *)malloc(sizeof(GlobalState));
 
   state->FREQ = 0;
   state->FREQLG = 0;
   state->NRHOX = -1;
   state->NRHOX_allocated = -1;
   state->MOTYPE = -1;
-  state->TEFF =  -1;
+  state->TEFF = -1;
   state->GRAV = -1;
   state->WLSTD = -1;
   state->RADIUS = -1;
@@ -234,17 +236,17 @@ extern "C" GlobalState * SME_DLL NewState(){
   state->WLAST = -1;
   state->VW_scale = -1;
   state->N_SPLIST = -1;
-  state->IXH1 = state->IXH2 =  state->IXH2mol =  state->IXH2pl =  state->IXHMIN = \
-      state->IXHE1 =  state->IXHE2 = state->IXHE3 =  state->IXC1 =  state->IXAL1 = state->IXSI1 = \
-      state->IXSI2 =  state->IXCA1 =  state->IXMG1 = state->IXMG2 = state->IXCA2 = state->IXN1 = \
-      state->IXFE1 = state->IXO1 = state->IXCH = state->IXNH = state->IXOH = -1;
+  state->IXH1 = state->IXH2 = state->IXH2mol = state->IXH2pl = state->IXHMIN =
+      state->IXHE1 = state->IXHE2 = state->IXHE3 = state->IXC1 = state->IXAL1 = state->IXSI1 =
+          state->IXSI2 = state->IXCA1 = state->IXMG1 = state->IXMG2 = state->IXCA2 = state->IXN1 =
+              state->IXFE1 = state->IXO1 = state->IXCH = state->IXNH = state->IXOH = -1;
   state->PATHLEN = 0;
   state->change_byte_order = 0;
   state->allocated_NLTE_lines = -1;
   // consistency flags
-  state->flagMODEL =  state->flagWLRANGE =  state->flagABUND = state->flagLINELIST = \
-      state->flagIONIZ = state->flagCONTIN = state->lineOPACITIES = state->flagH2broad = \
-      state->initNLTE = 0;
+  state->flagMODEL = state->flagWLRANGE = state->flagABUND = state->flagLINELIST =
+      state->flagIONIZ = state->flagCONTIN = state->lineOPACITIES = state->flagH2broad =
+          state->initNLTE = 0;
 
   /* Global pointers for dynamically allocated arrays */
 
@@ -304,35 +306,39 @@ extern "C" GlobalState * SME_DLL NewState(){
   return state;
 }
 
-extern "C" void SME_DLL FreeState(GlobalState * state){
+extern "C" void SME_DLL FreeState(GlobalState *state)
+{
   free(state);
 }
 
-extern "C" int SME_DLL GetNLINES( GlobalState * state){
-    return state->NLINES;
+extern "C" int SME_DLL GetNLINES(GlobalState *state)
+{
+  return state->NLINES;
 }
 
-extern "C" short SME_DLL GetNRHOX( GlobalState * state){
-    return state->NRHOX;
+extern "C" short SME_DLL GetNRHOX(GlobalState *state)
+{
+  return state->NRHOX;
 }
 
-extern "C" char * SME_DLL GetSPNAME( GlobalState * state){
+extern "C" char *SME_DLL GetSPNAME(GlobalState *state)
+{
   return state->spname;
 }
 
-extern "C" char const *SME_DLL SMELibraryVersion(int n, void *arg[],  GlobalState * state) /* Return SME library version */
+extern "C" char const *SME_DLL SMELibraryVersion(int n, void *arg[], GlobalState *state) /* Return SME library version */
 {
   sprintf(state->result, "SME Library version: %s, %s", VERSION, PLATFORM);
   return state->result;
 }
 
-extern "C" char const *SME_DLL GetDataFiles(int n, void *arg[],  GlobalState * state) /* Return SME library version */
+extern "C" char const *SME_DLL GetDataFiles(int n, void *arg[], GlobalState *state) /* Return SME library version */
 {
   sprintf(state->result, "%s;%s;%s;%s;%s", DATAFILE_FE, DATAFILE_NH, DATAFILE_STEHLE, DATAFILE_VCS, DATAFILE_BPO);
   return state->result;
 }
 
-extern "C" char const *SME_DLL GetLibraryPath(int n, void *arg[],  GlobalState * state)
+extern "C" char const *SME_DLL GetLibraryPath(int n, void *arg[], GlobalState *state)
 {
   sprintf(state->result, "%s", state->PATH);
   return state->result;
@@ -342,7 +348,7 @@ extern "C" char const *SME_DLL GetLibraryPath(int n, void *arg[],  GlobalState *
   Set SME library datafile location
   If smelib was installed using make install the default location should point to the data files already
 */
-extern "C" char const *SME_DLL SetLibraryPath(int n, void *arg[],  GlobalState * state)
+extern "C" char const *SME_DLL SetLibraryPath(int n, void *arg[], GlobalState *state)
 {
   state->PATHLEN = 0;
   if (n == 1)
@@ -358,7 +364,7 @@ extern "C" char const *SME_DLL SetLibraryPath(int n, void *arg[],  GlobalState *
   return state->result;
 }
 
-extern "C" char const *SME_DLL InputWaveRange(int n, void *arg[],  GlobalState * state) /* Read in Wavelength range */
+extern "C" char const *SME_DLL InputWaveRange(int n, void *arg[], GlobalState *state) /* Read in Wavelength range */
 {
   int i;
 
@@ -389,7 +395,7 @@ extern "C" char const *SME_DLL InputWaveRange(int n, void *arg[],  GlobalState *
   }
 }
 
-extern "C" char const *SME_DLL SetVWscale(int n, void *arg[],  GlobalState * state) /* Set van der Waals scaling factor */
+extern "C" char const *SME_DLL SetVWscale(int n, void *arg[], GlobalState *state) /* Set van der Waals scaling factor */
 {
   if (n < 1)
   {
@@ -401,19 +407,19 @@ extern "C" char const *SME_DLL SetVWscale(int n, void *arg[],  GlobalState * sta
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL SetH2broad(int n, void *arg[],  GlobalState * state) /* Set flag for H2 molecule */
+extern "C" char const *SME_DLL SetH2broad(int n, void *arg[], GlobalState *state) /* Set flag for H2 molecule */
 {
   state->flagH2broad = 1;
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL ClearH2broad(int n, void *arg[],  GlobalState * state) /* Clear flag for H2 molecule */
+extern "C" char const *SME_DLL ClearH2broad(int n, void *arg[], GlobalState *state) /* Clear flag for H2 molecule */
 {
   state->flagH2broad = 0;
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL InputLineList(int n, void *arg[],  GlobalState * state) /* Read in line list */
+extern "C" char const *SME_DLL InputLineList(int n, void *arg[], GlobalState *state) /* Read in line list */
 {
   short l;
   int LINE, i;
@@ -589,13 +595,13 @@ extern "C" char const *SME_DLL InputLineList(int n, void *arg[],  GlobalState * 
       if (*(a0[LINE].s + l) == ' ')
         break;
     state->ION[LINE] = (l == a0[LINE].slen) ? 1 : atoi(a0[LINE].s + l + 1);
-    state->WLCENT[LINE] = a3[LINE];               /* Central wavelength    */
-    state->EXCIT[LINE] = a4[LINE];                /* Excitation            */
-    GFLOG = a5[LINE];                      /* Oscillator strength   */
-    state->GAMRAD[LINE] = a6[LINE];               /* Radiative damping     */
-    state->GAMQST[LINE] = a7[LINE];               /* Stark damping         */
-    state->GAMVW[LINE] = a8[LINE];                /* Van der Waals damping */
-    state->MARK[LINE] = -1;                       /* Initialize line flag  */
+    state->WLCENT[LINE] = a3[LINE];                      /* Central wavelength    */
+    state->EXCIT[LINE] = a4[LINE];                       /* Excitation            */
+    GFLOG = a5[LINE];                                    /* Oscillator strength   */
+    state->GAMRAD[LINE] = a6[LINE];                      /* Radiative damping     */
+    state->GAMQST[LINE] = a7[LINE];                      /* Stark damping         */
+    state->GAMVW[LINE] = a8[LINE];                       /* Van der Waals damping */
+    state->MARK[LINE] = -1;                              /* Initialize line flag  */
     state->Wlim_left[LINE] = state->WLCENT[LINE] - 150.; /* Initialize line contribution limits */
     state->Wlim_right[LINE] = state->WLCENT[LINE] + 150.;
 
@@ -647,7 +653,7 @@ extern "C" char const *SME_DLL InputLineList(int n, void *arg[],  GlobalState * 
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL OutputLineList(int n, void *arg[],  GlobalState * state) /* Return line list */
+extern "C" char const *SME_DLL OutputLineList(int n, void *arg[], GlobalState *state) /* Return line list */
 {
   int LINE, Nlines;
   double *a1;
@@ -684,7 +690,7 @@ extern "C" char const *SME_DLL OutputLineList(int n, void *arg[],  GlobalState *
     a1[6 * LINE + 1] = state->GF[LINE];
     a1[6 * LINE + 2] = state->EXCIT[LINE];
     a1[6 * LINE + 3] = (state->GAMRAD[LINE] > 0.) ? log10(state->GAMRAD[LINE]) : 0.; /* Radiative damping     */
-    if (strncmp(state->spname + 8 * LINE, "H ", 2))                           /* Non-Hydrogen line     */
+    if (strncmp(state->spname + 8 * LINE, "H ", 2))                                  /* Non-Hydrogen line     */
     {
       a1[6 * LINE + 4] = (state->GAMQST[LINE] > 0.) ? log10(state->GAMQST[LINE]) : 0.; /* Stark damping         */
       a1[6 * LINE + 5] = (state->GAMVW[LINE] > 0. &&
@@ -701,7 +707,7 @@ extern "C" char const *SME_DLL OutputLineList(int n, void *arg[],  GlobalState *
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL UpdateLineList(int n, void *arg[],  GlobalState * state) /* Change line list parameters */
+extern "C" char const *SME_DLL UpdateLineList(int n, void *arg[], GlobalState *state) /* Change line list parameters */
 {
   static char ERRMES[60];
   char tmpname[8];
@@ -811,14 +817,14 @@ extern "C" char const *SME_DLL UpdateLineList(int n, void *arg[],  GlobalState *
       GWLG10 = state->GAMVW[i];
     }
     state->GF[i] = pow10(GFLOG);
-    state->MARK[i] = -1;                              /* Mark line for is unknown in terms of opacity contribution */
+    state->MARK[i] = -1;                                     /* Mark line for is unknown in terms of opacity contribution */
     state->Wlim_left[i] = max(state->WLCENT[i] - 1000., 0.); /* Initialize line contribution limits */
     state->Wlim_right[i] = min(state->WLCENT[i] + 1000., 20000000.);
   }
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL InputModel(int n, void *arg[],  GlobalState * state) /* Read in model atmosphere */
+extern "C" char const *SME_DLL InputModel(int n, void *arg[], GlobalState *state) /* Read in model atmosphere */
 {
   int IM, im, i, arg_offset;
   short *ifop, l;
@@ -913,7 +919,7 @@ extern "C" char const *SME_DLL InputModel(int n, void *arg[],  GlobalState * sta
     a7 = (double *)arg[12 + arg_offset];
 
   for (IM = im = 0; IM < state->NRHOX; im++, IM++) /* Copy model on the original grid */
-  {                                         /* Intermediate points are found   */
+  {                                                /* Intermediate points are found   */
     state->RHOX[IM] = a1[im];                      /* by iterpolation                 */
     state->T[IM] = a2[im];
     state->XNE[IM] = a3[im];
@@ -928,7 +934,7 @@ extern "C" char const *SME_DLL InputModel(int n, void *arg[],  GlobalState * sta
   {
     state->TKEV[IM] = 8.6171e-5 * state->T[IM];  // Temperature in eV
     state->TK[IM] = 1.38054e-16 * state->T[IM];  // Temperature times Boltzmann factor kT
-                                   // NP changed the value of the Planck constant from 6.6256e-27 in the line below 22-Jan-2018
+                                                 // NP changed the value of the Planck constant from 6.6256e-27 in the line below 22-Jan-2018
     state->HKT[IM] = 6.6261e-27 / state->TK[IM]; // Plank constant divided by kT h/kT (h is in erg*s)
     state->TLOG[IM] = log(state->T[IM]);
   }
@@ -936,7 +942,7 @@ extern "C" char const *SME_DLL InputModel(int n, void *arg[],  GlobalState * sta
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL InputDepartureCoefficients(int n, void *arg[],  GlobalState * state)
+extern "C" char const *SME_DLL InputDepartureCoefficients(int n, void *arg[], GlobalState *state)
 {
   /* Reads in NLTE b's  for one transition at a time. The calling sequence
    requires a pointer to a double array of the size 2*state->NRHOX and an integer
@@ -1021,7 +1027,7 @@ extern "C" char const *SME_DLL InputDepartureCoefficients(int n, void *arg[],  G
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL GetDepartureCoefficients(int n, void *arg[],  GlobalState * state) /* Get NLTE b's for specific line */
+extern "C" char const *SME_DLL GetDepartureCoefficients(int n, void *arg[], GlobalState *state) /* Get NLTE b's for specific line */
 {
   int im;
   int nrhox, line;
@@ -1069,7 +1075,7 @@ extern "C" char const *SME_DLL GetDepartureCoefficients(int n, void *arg[],  Glo
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL GetNLTEflags(int n, void *arg[],  GlobalState * state) /* Get NLTE flag for every line */
+extern "C" char const *SME_DLL GetNLTEflags(int n, void *arg[], GlobalState *state) /* Get NLTE flag for every line */
 {
   int nlines, line;
   short *b;
@@ -1101,7 +1107,7 @@ extern "C" char const *SME_DLL GetNLTEflags(int n, void *arg[],  GlobalState * s
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL ResetDepartureCoefficients(int n, void *arg[],  GlobalState * state) /* Reset LTE */
+extern "C" char const *SME_DLL ResetDepartureCoefficients(int n, void *arg[], GlobalState *state) /* Reset LTE */
 {
   int line;
 
@@ -1125,7 +1131,7 @@ extern "C" char const *SME_DLL ResetDepartureCoefficients(int n, void *arg[],  G
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL InputAbund(int n, void *arg[],  GlobalState * state) /* Read in abundances */
+extern "C" char const *SME_DLL InputAbund(int n, void *arg[], GlobalState *state) /* Read in abundances */
 {
   int i;
   double *a;
@@ -1145,7 +1151,7 @@ extern "C" char const *SME_DLL InputAbund(int n, void *arg[],  GlobalState * sta
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL Opacity(int n, void *arg[],  GlobalState * state) /* Calculate opacities */
+extern "C" char const *SME_DLL Opacity(int n, void *arg[], GlobalState *state) /* Calculate opacities */
 {
   short i, nrhox;
   double *a1, *a2, *a3;
@@ -1214,7 +1220,7 @@ extern "C" char const *SME_DLL Opacity(int n, void *arg[],  GlobalState * state)
   return &OK_response;
 }
 
-void CONTOP(double WLCONT, double *opacity,  GlobalState * state)
+void CONTOP(double WLCONT, double *opacity, GlobalState *state)
 {
   /*  This subroutine computes the continuous opacity vector for one
     or two wavelengths.
@@ -1244,7 +1250,7 @@ void CONTOP(double WLCONT, double *opacity,  GlobalState * state)
   ALAM(opacity, state);
 }
 
-void ALAM(double *opacity,  GlobalState * state)
+void ALAM(double *opacity, GlobalState *state)
 {
   /*  THIS SUBROUTINE COMPUTES CONTINUOUS OPACITY USING
     KURUCZ's ATLAS-9 SUBROUTINES.
@@ -1838,7 +1844,7 @@ double XKARZAS(double FREQ, double ZEFF2, int N, int L)
   return exp(X * 2.30258509299405e0) / ZEFF2;
 }
 
-double COULX(int N, double freq, double Z,  GlobalState * state)
+double COULX(int N, double freq, double Z, GlobalState *state)
 {
   static double A[6] = {0.9916, 1.105, 1.101, 1.101, 1.102, 1.0986},
                 B[6] = {2.719e3, -2.375e4, -9.863e3, -5.765e3, -3.909e3, -2.704e3},
@@ -1863,7 +1869,7 @@ double COULX(int N, double freq, double Z,  GlobalState * state)
   return CLX;
 }
 
-double COULFF(int J, int NZ,  GlobalState * state)
+double COULFF(int J, int NZ, GlobalState *state)
 {
   static double Z4LOG[6] = {0., 1.20412, 1.90849, 2.40824, 2.79588, 3.11261},
                 A[12][11] = {
@@ -1898,7 +1904,7 @@ double COULFF(int J, int NZ,  GlobalState * state)
   return CLFF;
 }
 
-void HOP(double *ahyd, int iH1, int iH2,  GlobalState * state) /* REQUIRES FUNCTIONS COULX AND COULFF */
+void HOP(double *ahyd, int iH1, int iH2, GlobalState *state) /* REQUIRES FUNCTIONS COULX AND COULFF */
 {
   double BOLT[MOSIZE][8], EXLIM[MOSIZE], FREET[MOSIZE], BOLTEX[MOSIZE];
   double CONT[8], H, CFREE, XR, EX, C, nH1;
@@ -1934,7 +1940,7 @@ void HOP(double *ahyd, int iH1, int iH2,  GlobalState * state) /* REQUIRES FUNCT
   return;
 }
 
-void HRAYOP(double *sigh, int iH1,  GlobalState * state)
+void HRAYOP(double *sigh, int iH1, GlobalState *state)
 {
   double WAVE, WW, SIG, nH1;
   int J;
@@ -1947,7 +1953,7 @@ void HRAYOP(double *sigh, int iH1,  GlobalState * state)
   return;
 }
 
-void H2PLOP(double *ah2p, int iH1, int iH2,  GlobalState * state)
+void H2PLOP(double *ah2p, int iH1, int iH2, GlobalState *state)
 {
   double FR, ES, FREQ15, nH1;
   int J;
@@ -1974,7 +1980,7 @@ void H2PLOP(double *ah2p, int iH1, int iH2,  GlobalState * state)
   return;
 }
 
-void HMINOP_old(double *ahmin, int iH1, int iHmin,  GlobalState * state)
+void HMINOP_old(double *ahmin, int iH1, int iHmin, GlobalState *state)
 {
   double HMINBF, HMINFF, H, FREQ1, B, C, HMINFR, nH1;
   int J;
@@ -2012,7 +2018,7 @@ void HMINOP_old(double *ahmin, int iH1, int iHmin,  GlobalState * state)
   return;
 }
 
-void HMINOP(double *ahmin, int iH1, int iHmin,  GlobalState * state)
+void HMINOP(double *ahmin, int iH1, int iHmin, GlobalState *state)
 {
   //From Mathisen (1984), after Wishart (1979) and  Broad & Reinhardt (1976)
   static double WBF[85] = {18.00, 19.60, 21.40, 23.60, 26.40, 29.80, 34.30,
@@ -2108,7 +2114,7 @@ void HMINOP(double *ahmin, int iH1, int iHmin,  GlobalState * state)
   return;
 }
 
-void HE1OP(double *ahe1, int iHe1, int iHe2,  GlobalState * state) /* REQUIRES FUNCTION COULFF. Needs update!!! */
+void HE1OP(double *ahe1, int iHe1, int iHe2, GlobalState *state) /* REQUIRES FUNCTION COULFF. Needs update!!! */
 {
   double BOLT[MOSIZE][10], EXLIM[MOSIZE], BOLTEX[MOSIZE], FREET[MOSIZE], TRANS[10];
   double FREQ3, CFREE, C, HE1, EX, XRLOG;
@@ -2381,7 +2387,7 @@ double HE12p3P(double FREQ)
   return pow10(X);
 }
 
-void HE1OP_new(double *ahe1, int iHe1, int iHe2,  GlobalState * state)
+void HE1OP_new(double *ahe1, int iHe1, int iHe2, GlobalState *state)
 {
   static double G[10] = {1., 3., 1., 9., 3., 3., 1., 9., 20., 3.},
                 HEFREQ[10] = {5.945209e15, 1.152844e15, .9603331e15,
@@ -2543,7 +2549,7 @@ void HE1OP_new(double *ahe1, int iHe1, int iHe2,  GlobalState * state)
   }
 }
 
-void HE2OP(double *ahe2, int iHe2, int iHe3,  GlobalState * state) /*  REQUIRES FUNCTIONS COULX AND COULFF */
+void HE2OP(double *ahe2, int iHe2, int iHe3, GlobalState *state) /*  REQUIRES FUNCTIONS COULX AND COULFF */
 {
   /* FREQUENCIES ARE 4X HYDROGEN, CHI ARE FOR state->ION POT=54.403 */
   double HE2, C, CFREE, EX, FREQ3, BLTARG, BLTLOG, EXLLOG,
@@ -2587,7 +2593,7 @@ void HE2OP(double *ahe2, int iHe2, int iHe3,  GlobalState * state) /*  REQUIRES 
   return;
 }
 
-void HEMIOP(double *ahemin, int iHe1,  GlobalState * state)
+void HEMIOP(double *ahemin, int iHe1, GlobalState *state)
 {
   double A, B, C;
   int J;
@@ -2600,7 +2606,7 @@ void HEMIOP(double *ahemin, int iHe1,  GlobalState * state)
   return;
 }
 
-void HERAOP(double *sighe, int iHe1,  GlobalState * state)
+void HERAOP(double *sighe, int iHe1, GlobalState *state)
 {
   double WAVE, WW, SIG, S1;
   int J;
@@ -2614,7 +2620,7 @@ void HERAOP(double *sighe, int iHe1,  GlobalState * state)
   return;
 }
 
-double C1OP(int J,  GlobalState * state) /* CROSS-SECTION */
+double C1OP(int J, GlobalState *state) /* CROSS-SECTION */
 {
   double C1240, C1444, X1240, X1444, X1100;
 
@@ -2632,8 +2638,8 @@ double C1OP(int J,  GlobalState * state) /* CROSS-SECTION */
   return X1100 * 9. + X1240 * C1240 + X1444 * C1444;
 }
 
-double C1OP_new(int J,  GlobalState * state) /* Cross-section                                */
-{                      /* This routine is based on R.L. Kurucz Atlas12 */
+double C1OP_new(int J, GlobalState *state) /* Cross-section                                */
+{                                          /* This routine is based on R.L. Kurucz Atlas12 */
   static double ELEV[25] = {79314.86, 78731.27, 78529.62, 78309.76, 78226.35,
                             77679.82, 73975.91, 72610.72, 71374.90, 70743.95,
                             69722.00, 68856.33, 61981.82, 60373.00, 21648.01,
@@ -2988,7 +2994,7 @@ double C1OP_new(int J,  GlobalState * state) /* Cross-section                   
   return H;
 }
 
-double MG1OP(int J,  GlobalState * state) // CROSS-SECTION TIMES THE PARTITION FUNCTION
+double MG1OP(int J, GlobalState *state) // CROSS-SECTION TIMES THE PARTITION FUNCTION
 {
   static double PEACH[15][7] =
       {
@@ -3034,8 +3040,8 @@ double MG1OP(int J,  GlobalState * state) // CROSS-SECTION TIMES THE PARTITION F
   return exp(XWL1 * (1.0 - DT) + XWL2 * DT);
 }
 
-double MG1OP_new(int J,  GlobalState * state) /* Cross-section                                */
-{                       /* This routine is based on R.L. Kurucz Atlas12 */
+double MG1OP_new(int J, GlobalState *state) /* Cross-section                                */
+{                                           /* This routine is based on R.L. Kurucz Atlas12 */
   static double ELEV[15] = {54676.710, 54676.438, 54192.284, 53134.642, 49346.729,
                             47957.034, 47847.797, 46403.065, 43503.333, 41197.043,
                             35051.264, 21919.178, 21870.464, 21850.405, 0.};
@@ -3252,13 +3258,13 @@ double MG1OP_new(int J,  GlobalState * state) /* Cross-section                  
   return H;
 }
 
-double AL1OP(int J,  GlobalState * state)
+double AL1OP(int J, GlobalState *state)
 {
   return (state->FREQ >= 1.443e15) ? 2.1e-17 * pow(1.443e15 / state->FREQ, 3.) * 6 : 0.;
 }
 
-double AL1OP_new(int J,  GlobalState * state) /* Cross-section                                */
-{                       /* This routine is based on R.L. Kurucz Atlas12 */
+double AL1OP_new(int J, GlobalState *state) /* Cross-section                                */
+{                                           /* This routine is based on R.L. Kurucz Atlas12 */
   double ELIM, WAVENO, F1, F2, al1op;
 
   WAVENO = state->FREQ / CLIGHTcm;
@@ -3290,7 +3296,7 @@ double AL1OP_new(int J,  GlobalState * state) /* Cross-section                  
   return al1op;
 }
 
-double SI1OP(int J,  GlobalState * state) /* Cross-section                                */
+double SI1OP(int J, GlobalState *state) /* Cross-section                                */
 {
   static double PEACH[19][9] =
       /* TEMP:4000   5000   6000   7000   8000   9000  10000  11000  12000   WAVE(A)*/
@@ -3341,8 +3347,8 @@ double SI1OP(int J,  GlobalState * state) /* Cross-section                      
   return exp(-(XWL1 * (1. - DT) + XWL2 * DT)) * 9.;
 }
 
-double SI1OP_new(int J,  GlobalState * state) /* Cross-section                                */
-{                       /* This routine is based on R.L. Kurucz Atlas12 */
+double SI1OP_new(int J, GlobalState *state) /* Cross-section                                */
+{                                           /* This routine is based on R.L. Kurucz Atlas12 */
   static double ELEV[33] = {
       59962.284, 59100., 59077.112, 58893.40, 58801.529,
       58777., 57488.974, 56503.346, 54225.621, 53387.34,
@@ -3745,7 +3751,7 @@ double SI1OP_new(int J,  GlobalState * state) /* Cross-section                  
   return aSi1op;
 }
 
-double FE1OP(int J,  GlobalState * state)
+double FE1OP(int J, GlobalState *state)
 {
   /* 
   Cross-section time partition functions 
@@ -3791,7 +3797,7 @@ double FE1OP(int J,  GlobalState * state)
   return FE1OPACITY;
 }
 
-double FE1OP_new(int J,  GlobalState * state)
+double FE1OP_new(int J, GlobalState *state)
 {
   /*
   Cross-sections of Fe 1 photoionization time
@@ -3873,7 +3879,7 @@ double FE1OP_new(int J,  GlobalState * state)
   return fe1op; ///state->PARTITION_FUNCTIONS[J][state->IXFE1];
 }
 
-double CHOP(int J,  GlobalState * state) /* Cross-section for CH molecule */
+double CHOP(int J, GlobalState *state) /* Cross-section for CH molecule */
 {
   static double CROSSCH[105][15] =
       {{-38.000, -38.000, -38.000, -38.000, -38.000, -38.000, -38.000,            // 0.1
@@ -4108,7 +4114,7 @@ double CHOP(int J,  GlobalState * state) /* Cross-section for CH molecule */
   return CHop * state->PARTITION_FUNCTIONS[J][state->IXCH];
 }
 
-double NHOP(int J,  GlobalState * state)
+double NHOP(int J, GlobalState *state)
 {
   /*
   Cross-sections of Fe 1 photoionization time
@@ -4215,7 +4221,7 @@ double NHOP(int J,  GlobalState * state)
   return NHop * state->PARTITION_FUNCTIONS[J][state->IXNH];
 }
 
-double OHOP(int J,  GlobalState * state)
+double OHOP(int J, GlobalState *state)
 {
   static double CROSSOH[130][15] =
       {{-30.855, -29.121, -27.976, -27.166, -26.566, -26.106, -25.742,              // 2.1
@@ -4500,7 +4506,7 @@ double OHOP(int J,  GlobalState * state)
   return OHop * state->PARTITION_FUNCTIONS[J][state->IXOH];
 }
 
-void COOLOP(double *acool,  GlobalState * state) /* Si1, Mg1, Al1, C1, Fe1 */
+void COOLOP(double *acool, GlobalState *state) /* Si1, Mg1, Al1, C1, Fe1 */
 {
   int J;
 
@@ -4521,7 +4527,7 @@ void COOLOP(double *acool,  GlobalState * state) /* Si1, Mg1, Al1, C1, Fe1 */
   return;
 }
 
-double N1OP(int J,  GlobalState * state) /* Cross-section */
+double N1OP(int J, GlobalState *state) /* Cross-section */
 {
   double C1130, C1020, X1130, X1020, X853;
 
@@ -4539,12 +4545,12 @@ double N1OP(int J,  GlobalState * state) /* Cross-section */
   return X853 * 4. + X1020 * C1020 + X1130 * C1130;
 }
 
-double O1OP(int J,  GlobalState * state) /*  CROSS-SECTION TIMES PARTITION FUNCTION */
+double O1OP(int J, GlobalState *state) /*  CROSS-SECTION TIMES PARTITION FUNCTION */
 {
   return (state->FREQ >= 3.28805e15) ? 9. * SEATON(state->FREQ, 3.28805e15, 2.94e-18, 1., 2.66) : 0;
 }
 
-double MG2OP(int J,  GlobalState * state) /* CROSS-SECTION TIMES PARTITION FUNCTION */
+double MG2OP(int J, GlobalState *state) /* CROSS-SECTION TIMES PARTITION FUNCTION */
 {
   double C1169, X1169, X824, XXX;
 
@@ -4563,7 +4569,7 @@ double MG2OP(int J,  GlobalState * state) /* CROSS-SECTION TIMES PARTITION FUNCT
   return X824 * 2. + X1169 * C1169;
 }
 
-double SI2OP(int J,  GlobalState * state) /* CROSS-SECTION TIMES THE PARTITION FUNCTION */
+double SI2OP(int J, GlobalState *state) /* CROSS-SECTION TIMES THE PARTITION FUNCTION */
 {
   static double PEACH[14][6] =
       /*    10000     12000     14000     16000     18000     20000       WAVE(A) */
@@ -4612,7 +4618,7 @@ double SI2OP(int J,  GlobalState * state) /* CROSS-SECTION TIMES THE PARTITION F
   return exp(XWL1 * (1. - DT) + XWL2 * DT) * 6.;
 }
 
-double CA2OP(int J,  GlobalState * state) /* CROSS-SECTION TIMES THE PARTITION FUNCTION */
+double CA2OP(int J, GlobalState *state) /* CROSS-SECTION TIMES THE PARTITION FUNCTION */
 {
   double C1218, C1420, X1218, X1420, X1044, XXX;
 
@@ -4634,7 +4640,7 @@ double CA2OP(int J,  GlobalState * state) /* CROSS-SECTION TIMES THE PARTITION F
   return X1044 + X1218 * C1218 + X1420 * C1420;
 }
 
-void LUKEOP(double *aluke,  GlobalState * state) /*  SI2,MG2,CA2,N1,O1 */
+void LUKEOP(double *aluke, GlobalState *state) /*  SI2,MG2,CA2,N1,O1 */
 {
   int J;
 
@@ -4646,7 +4652,7 @@ void LUKEOP(double *aluke,  GlobalState * state) /*  SI2,MG2,CA2,N1,O1 */
   return;
 }
 
-void HOTOP(double *ahot,  GlobalState * state)
+void HOTOP(double *ahot, GlobalState *state)
 {
   static int NUM = 60;
   static double A[420] = {
@@ -4801,7 +4807,7 @@ void HOTOP(double *ahot,  GlobalState * state)
   }
 }
 
-void ELECOP(double *sigel,  GlobalState * state)
+void ELECOP(double *sigel, GlobalState *state)
 {
   int J;
 
@@ -4809,7 +4815,7 @@ void ELECOP(double *sigel,  GlobalState * state)
     sigel[J] = 0.6653e-24 * state->XNE[J] / state->RHO[J];
 }
 
-void H2RAOP(double *sigh2, int iH2mol,  GlobalState * state)
+void H2RAOP(double *sigh2, int iH2mol, GlobalState *state)
 {
   double WAVE, WW, SIG, ARG;
   int J;
@@ -4823,7 +4829,7 @@ void H2RAOP(double *sigh2, int iH2mol,  GlobalState * state)
   }
 }
 
-extern "C" char const *SME_DLL GetOpacity(int n, void *arg[],  GlobalState * state) /* Returns specific cont. opacity */
+extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], GlobalState *state) /* Returns specific cont. opacity */
 {
   short i, j, nrhox, key;
   double *a1;
@@ -5156,7 +5162,7 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[],  GlobalState * sta
   }
 }
 
-void AutoIonization( GlobalState * state)
+void AutoIonization(GlobalState *state)
 {
   /*  CHECK FOR AUTOIONIZATION LINES */
   int OPEN, LINE;
@@ -5202,7 +5208,7 @@ void AutoIonization( GlobalState * state)
    JUST PUT IT IN HERE!!! */
 }
 
-extern "C" char const *SME_DLL Ionization(int n, void *arg[],  GlobalState * state)
+extern "C" char const *SME_DLL Ionization(int n, void *arg[], GlobalState *state)
 {
   /*
    Interface routine between the C++ part of SME the FORTRAN 77 code
@@ -5513,8 +5519,6 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[],  GlobalState * sta
             nelem, state->SPINDEX, state->SPLIST, state->FRACT[i], state->PARTITION_FUNCTIONS[i], state->POTION,
             state->MOLWEIGHT, state->NLINES, state->N_SPLIST, XNE_estim, XNA_estim, RHO_estim, NITER, 3, 8);
 
-
-
     if (fabs(state->XNE[i] - XNE_estim) / state->XNE[i] > max_Ne_err)
     {
       i_max_Ne_err = i;
@@ -5571,7 +5575,7 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[],  GlobalState * sta
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL GetFraction(int n, void *arg[],  GlobalState * state)
+extern "C" char const *SME_DLL GetFraction(int n, void *arg[], GlobalState *state)
 {
   short i, l, mode;
   IDL_STRING *a0;
@@ -5633,7 +5637,7 @@ extern "C" char const *SME_DLL GetFraction(int n, void *arg[],  GlobalState * st
   return state->result;
 }
 
-extern "C" char const *SME_DLL GetDensity(int n, void *arg[],  GlobalState * state)
+extern "C" char const *SME_DLL GetDensity(int n, void *arg[], GlobalState *state)
 {
   short l;
   char sp[9];
@@ -5664,7 +5668,7 @@ extern "C" char const *SME_DLL GetDensity(int n, void *arg[],  GlobalState * sta
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL GetNatom(int n, void *arg[],  GlobalState * state)
+extern "C" char const *SME_DLL GetNatom(int n, void *arg[], GlobalState *state)
 {
   short l;
   int j;
@@ -5694,7 +5698,7 @@ extern "C" char const *SME_DLL GetNatom(int n, void *arg[],  GlobalState * state
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL GetNelec(int n, void *arg[],  GlobalState * state)
+extern "C" char const *SME_DLL GetNelec(int n, void *arg[], GlobalState *state)
 {
   short l;
   int j;
@@ -5724,7 +5728,7 @@ extern "C" char const *SME_DLL GetNelec(int n, void *arg[],  GlobalState * state
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL Transf(int n, void *arg[],  GlobalState * state)
+extern "C" char const *SME_DLL Transf(int n, void *arg[], GlobalState *state)
 {
   /*  THIS SUBROUTINE EXPLICITLY SOLVES THE TRANSFER EQUATION
     FOR A SET OF NODES ON THE STAR DISK. THE RESULTS ARE:
@@ -5925,11 +5929,11 @@ extern "C" char const *SME_DLL Transf(int n, void *arg[],  GlobalState * state)
         for (nrhox = 1; nrhox < state->NRHOX; nrhox++)
           if (P_impact >= state->RADIUS + state->RAD_ATMO[nrhox])
             break;
-        deltaR = state->RAD_ATMO[nrhox - 1] - state->RAD_ATMO[nrhox];      // The layer where we do not cross both
-        path = state->RAD_ATMO[nrhox - 1] + state->RADIUS;                 // boundaries gets special treatment
-        path = 2. * sqrt(path * path - P_impact * P_impact); // Geometrical path through the inner ring
-        rhox_sph[imu][0] = state->RHOX[0] / MU[imu];                // Scale the top mass value by projected path
-        for (im = 1; im < nrhox; im++)                       // Loop from the surface to the deepest layer
+        deltaR = state->RAD_ATMO[nrhox - 1] - state->RAD_ATMO[nrhox]; // The layer where we do not cross both
+        path = state->RAD_ATMO[nrhox - 1] + state->RADIUS;            // boundaries gets special treatment
+        path = 2. * sqrt(path * path - P_impact * P_impact);          // Geometrical path through the inner ring
+        rhox_sph[imu][0] = state->RHOX[0] / MU[imu];                  // Scale the top mass value by projected path
+        for (im = 1; im < nrhox; im++)                                // Loop from the surface to the deepest layer
         {
           meanR = state->RAD_ATMO[im] + state->RAD_ATMO[im - 1] + 2 * state->RADIUS;
           meanZ = sqrt((state->RAD_ATMO[im] + state->RADIUS) * (state->RAD_ATMO[im] + state->RADIUS) - P_impact * P_impact) +
@@ -5977,7 +5981,7 @@ extern "C" char const *SME_DLL Transf(int n, void *arg[],  GlobalState * state)
   return iret ? "Not enough array length to store all the points" : "";
 }
 
-extern "C" char const *SME_DLL GetLineRange(int n, void *arg[],  GlobalState * state) /* Get importance range for every line */
+extern "C" char const *SME_DLL GetLineRange(int n, void *arg[], GlobalState *state) /* Get importance range for every line */
 {
   int nlines, line;
   double *b;
@@ -6043,7 +6047,7 @@ extern "C" char const *SME_DLL GetLineRange(int n, void *arg[],  GlobalState * s
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL CentralDepth(int n, void *arg[],  GlobalState * state)
+extern "C" char const *SME_DLL CentralDepth(int n, void *arg[], GlobalState *state)
 {
   /*
   THIS SUBROUTINE EXPLICITLY SOLVES THE TRANSFER EQUATION
@@ -6176,7 +6180,7 @@ extern "C" char const *SME_DLL CentralDepth(int n, void *arg[],  GlobalState * s
 
 int RKINTS_sph(double rhox[][2 * MOSIZE], int NMU, int NRHOXs[], double EPS1, double EPS2,
                double *FCBLUE, double *FCRED, double *TABLE, int NWSIZE, int &NWL,
-               double *WL, short long_continuum, int grazing[],  GlobalState * state)
+               double *WL, short long_continuum, int grazing[], GlobalState *state)
 {
   /* 
   THIS SUBROUTINE CALLS SUBROUTINE FCINTG TO INTEGRATE THE EMMERGING
@@ -6493,7 +6497,7 @@ int RKINTS_sph(double rhox[][2 * MOSIZE], int NMU, int NRHOXs[], double EPS1, do
 int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
            double *FCBLUE, double *FCRED, double *TABLE,
            int NWSIZE, int &NWL, double *WL,
-           short long_continuum,  GlobalState * state)
+           short long_continuum, GlobalState *state)
 {
   /*
   THIS SUBROUTINE CALLS SUBROUTINE FCINTG TO INTEGRATE THE EMERGING
@@ -6728,7 +6732,7 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
 
 #define FLUX_SCALE 1.0686475e5
 
-double FCINTG(double MU, double WAVE, double *COPWL,  GlobalState * state)
+double FCINTG(double MU, double WAVE, double *COPWL, GlobalState *state)
 {
   /*
   Quadratic DELO with Bezier spline RT solver
@@ -6758,8 +6762,8 @@ double FCINTG(double MU, double WAVE, double *COPWL,  GlobalState * state)
   SPRIME_SAVE = 0.0; // Initialize S'
 
   for (IM = state->NRHOX - 2; IM > 0; IM--) // Work your way from the deepest
-  {                                  // layer to the surface
-    SRC_A = SRC_B;                   // Shift source functions and opacities
+  {                                         // layer to the surface
+    SRC_A = SRC_B;                          // Shift source functions and opacities
     OPC_A = OPC_B;
     SRC_B = SRC_C;
     OPC_B = OPC_C;
@@ -6907,7 +6911,7 @@ double FCINTG(double MU, double WAVE, double *COPWL,  GlobalState * state)
 }
 
 void TBINTG_sph(int nrhox, double rhox[], double opacity[], double source[],
-                double *RESULT, int grazing,  GlobalState * state)
+                double *RESULT, int grazing, GlobalState *state)
 {
   /*
   RT solver
@@ -7004,7 +7008,7 @@ void TBINTG_sph(int nrhox, double rhox[], double opacity[], double source[],
   *RESULT = INTENSITY * FLUX_SCALE;
 }
 
-void TBINTG1(double rhox[], double opacity[], double source[], double *RESULT,  GlobalState * state)
+void TBINTG1(double rhox[], double opacity[], double source[], double *RESULT, GlobalState *state)
 {
   /*
   RT solver
@@ -7032,8 +7036,8 @@ void TBINTG1(double rhox[], double opacity[], double source[], double *RESULT,  
   SPRIME_SAVE = 0.0; // Initialize S'
 
   for (IM = state->NRHOX - 2; IM > 0; IM--) // Work your way from the deepest
-  {                                  // layer to the surface
-    SRC_A = SRC_B;                   // Shift source functions and opacities
+  {                                         // layer to the surface
+    SRC_A = SRC_B;                          // Shift source functions and opacities
     OPC_A = OPC_B;
     SRC_B = SRC_C;
     OPC_B = OPC_C;
@@ -7102,7 +7106,7 @@ void TBINTG1(double rhox[], double opacity[], double source[], double *RESULT,  
 }
 
 void TBINTG(int Nmu, double rhox[], double opacity[], double source[],
-            double RESULT[],  GlobalState * state)
+            double RESULT[], GlobalState *state)
 {
   /*
   RT solver for plane parallel geometry
@@ -7134,8 +7138,8 @@ void TBINTG(int Nmu, double rhox[], double opacity[], double source[],
   }
 
   for (IM = state->NRHOX - 2; IM > 0; IM--) // Work your way from the deepest
-  {                                  // layer to the surface
-    SRC_A = SRC_B;                   // Shift source functions and opacities
+  {                                         // layer to the surface
+    SRC_A = SRC_B;                          // Shift source functions and opacities
     OPC_A = OPC_B;
     SRC_B = SRC_C;
     OPC_B = OPC_C;
@@ -7207,7 +7211,7 @@ void TBINTG(int Nmu, double rhox[], double opacity[], double source[],
     RESULT[imu] = INTENSITY[imu] * FLUX_SCALE;
 }
 
-void CENTERINTG(double *MUs, int NMU, int LINE, double *contop, double *RESULT,  GlobalState * state)
+void CENTERINTG(double *MUs, int NMU, int LINE, double *contop, double *RESULT, GlobalState *state)
 {
   /*
   Quadratic DELO with Bezier spline RT solver
@@ -7248,8 +7252,8 @@ void CENTERINTG(double *MUs, int NMU, int LINE, double *contop, double *RESULT, 
     SPRIME_SAVE = 0.0; // Initialize S'
 
     for (IM = state->NRHOX - 2; IM > 0; IM--) // Work your way from the deepest
-    {                                  // layer to the surface
-      SRC_A = SRC_B;                   // Shift source functions and opacities
+    {                                         // layer to the surface
+      SRC_A = SRC_B;                          // Shift source functions and opacities
       OPC_A = OPC_B;
       SRC_B = SRC_C;
       OPC_B = OPC_C;
@@ -7320,7 +7324,7 @@ void CENTERINTG(double *MUs, int NMU, int LINE, double *contop, double *RESULT, 
 
 #undef FLUX_SCALE
 
-extern "C" char const *SME_DLL GetLineOpacity(int n, void *arg[],  GlobalState * state) /* Returns specific line opacity */
+extern "C" char const *SME_DLL GetLineOpacity(int n, void *arg[], GlobalState *state) /* Returns specific line opacity */
 {
   int MOTYPE_orig;
   short i, j, nrhox;
@@ -7334,13 +7338,13 @@ extern "C" char const *SME_DLL GetLineOpacity(int n, void *arg[],  GlobalState *
   WAVE = *(double *)arg[0]; /* Wavelength */
   i = *(short *)arg[1];     /* Length of IDL opacity array */
   nrhox = min(state->NRHOX, i);
-  a1 = (double *)arg[2]; /* Line opacity */
-  a2 = (double *)arg[3]; /* Continuum opacity including scatter */
-  a3 = (double *)arg[4]; /* Scatter */
-  a4 = (double *)arg[5]; /* Total source function */
-  a5 = (double *)arg[6]; /* Continuum source function */
-  MOTYPE_orig = state->MOTYPE;  /* Save state->MOTYPE */
-  state->MOTYPE = -1;           /* Set state->MOTYPE to return only line opacity */
+  a1 = (double *)arg[2];       /* Line opacity */
+  a2 = (double *)arg[3];       /* Continuum opacity including scatter */
+  a3 = (double *)arg[4];       /* Scatter */
+  a4 = (double *)arg[5];       /* Total source function */
+  a5 = (double *)arg[6];       /* Continuum source function */
+  MOTYPE_orig = state->MOTYPE; /* Save state->MOTYPE */
+  state->MOTYPE = -1;          /* Set state->MOTYPE to return only line opacity */
 
   /* Allocate temporary arrays */
 
@@ -7377,7 +7381,7 @@ extern "C" char const *SME_DLL GetLineOpacity(int n, void *arg[],  GlobalState *
 #define M0 1.660540e-27
 #define A0 5.29177249e-11
 
-void LINEOPAC(int LINE,  GlobalState * state)
+void LINEOPAC(int LINE, GlobalState *state)
 {
   /*
    This function computes central line opacity without the
@@ -7685,7 +7689,7 @@ void LINEOPAC(int LINE,  GlobalState * state)
 }
 
 void OPMTRX(double WAVE, double *XK, double *XC, double *source_line,
-            double *source_cont, int LINE_START, int LINE_FINISH,  GlobalState * state)
+            double *source_cont, int LINE_START, int LINE_FINISH, GlobalState *state)
 {
   /*
    THIS FUNCTION CALCULATES THE OPACITY OR OPACITY RATIO (OPACWL/OPACSTD)
@@ -7957,7 +7961,7 @@ void OPMTRX(double WAVE, double *XK, double *XC, double *source_line,
 #undef M0
 #undef A0
 
-void OPMTRX1(int LINE, double *XK,  GlobalState * state)
+void OPMTRX1(int LINE, double *XK, GlobalState *state)
 {
   /*
    THIS FUNCTION CALCULATES THE OPACITY OR OPACITY RATIO (OPACWL/OPACSTD)
@@ -8061,7 +8065,7 @@ void OPMTRX1(int LINE, double *XK,  GlobalState * state)
 #undef A0
 
 void GAMHE(short IND, double temp, double ANE, double ANP,
-           double &GAM, double &SHIFT, GlobalState * state)
+           double &GAM, double &SHIFT, GlobalState *state)
 {
   /*   NEUTRAL HELIUM STARK BROADENING PARAMETERS
      AFTER DIMITRIJEVIC AND SAHAL-BRECHOT, 1984, J.Q.S.R.state->T. 31, 301

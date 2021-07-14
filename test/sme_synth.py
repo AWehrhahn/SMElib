@@ -5,7 +5,7 @@ from pathlib import Path
 
 import numpy as np
 
-from cwrapper import get_lib_name, IDL_DLL, GlobalState, idl_call_external
+from cwrapper import get_lib_name, IDL_DLL
 
 logger = logging.getLogger(__name__)
 

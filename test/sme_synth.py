@@ -41,6 +41,7 @@ class SME_DLL:
         self.ion = None
 
         self.lib = IDL_DLL(libfile)
+        self.parallel = False
         self.state = self.NewState()
 
         if datadir is not None:
@@ -94,14 +95,17 @@ class SME_DLL:
     def NewState(self, delete_old=True):
         if delete_old and hasattr(self, "state") and self.state is not None:
             self.FreeState()
-        self.state = self.lib.call(
-            "NewState", restype="state", raise_error=False, raise_warning=False
-        )
+        self.state = self.lib.new_state()
+        if self.state is None:   
+            self.parallel = False
+        else:
+            self.parallel = True
+
         return self.state
 
     def FreeState(self):
         if self.state is not None:
-            self.lib.call("FreeState", raise_error=False, raise_warning=False, state=self.state)
+            self.lib.free_state(self.state)
             self.state = None
 
     def SMELibraryVersion(self):

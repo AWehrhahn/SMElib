@@ -440,3 +440,12 @@ class IDL_DLL:
                     "{name} (call external): {error}".format(name=name, error=error)
                 )
         return error
+
+    def new_state(self):
+        try:
+            return idl_call_external("NewState", lib=self.lib, restype="state")
+        except AttributeError:
+            return None
+
+    def free_state(self, state):
+        return idl_call_external("FreeState", state=state)

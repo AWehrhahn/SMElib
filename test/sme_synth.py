@@ -13,16 +13,7 @@ logger = logging.getLogger(__name__)
 class SME_DLL:
     """ Object Oriented interface for the SME C library """
 
-    _instance = None
-
-    def __new__(cls, *args, **kwargs):
-        if cls._instance is None:
-            cls._instance = object.__new__(cls)
-            SME_DLL.init(cls._instance, *args, **kwargs)
-        return cls._instance
-
-    @staticmethod
-    def init(self, libfile=None, datadir=None):
+    def __init__(self, libfile=None, datadir=None):
         #:LineList: Linelist passed to the library
         self.linelist = None
         #:int: Number of mu points passed to the library
@@ -50,13 +41,16 @@ class SME_DLL:
         self.ion = None
 
         self.lib = IDL_DLL(libfile)
-        self.state = None
         self.state = self.NewState()
 
         if datadir is not None:
             self.SetLibraryPath(datadir)
 
         self.check_data_files_exist()
+
+    def __del__(self):
+        # Free the memory from the state when this is closed
+        self.FreeState()
 
     @property
     def ndepth(self):
@@ -97,8 +91,8 @@ class SME_DLL:
                     )
                 )
 
-    def NewState(self, delete_old = True):
-        if delete_old and self.state is not None:
+    def NewState(self, delete_old=True):
+        if delete_old and hasattr(self, "state") and self.state is not None:
             self.FreeState()
         self.state = self.lib.call(
             "NewState", restype="state", raise_error=False, raise_warning=False

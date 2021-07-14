@@ -627,5 +627,6 @@ if __name__ == "__main__":
     datadir = join(dirname(__file__), "../share/libsme")
     dll = SME_DLL(libfile, datadir)
     version = dll.SMELibraryVersion()
+    dll2 = SME_DLL(libfile, datadir)
     print(version)
     test_radiative_transfer(dll, libfile, datadir)

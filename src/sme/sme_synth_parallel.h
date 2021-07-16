@@ -110,11 +110,13 @@ extern "C" typedef struct
 } GlobalState;
 
 // define global parameter access
-extern "C" int SME_DLL GetNLINES(GlobalState *state);
-extern "C" short SME_DLL GetNRHOX(GlobalState *state);
-extern "C" char *SME_DLL GetSPNAME(GlobalState *state);
-extern "C" GlobalState *SME_DLL NewState(void);
-extern "C" void SME_DLL FreeState(GlobalState *state);
+extern "C" int SME_DLL GetNLINES(int n, void *args[], GlobalState *state);
+extern "C" short SME_DLL GetNRHOX(int n, void *args[], GlobalState *state);
+extern "C" char *SME_DLL GetSPNAME(int n, void *args[], GlobalState *state);
+extern "C" GlobalState *SME_DLL NewState(int n, void *args[]);
+extern "C" const char * SME_DLL FreeState(int n, void *args[], GlobalState *state);
+extern "C" GlobalState *SME_DLL CopyState(int n, void *args[], GlobalState *state);
+
 
 // define the external methods
 extern "C" const char *SME_DLL SMELibraryVersion(int n, void *arg[], GlobalState *state); /* Return SME library version */

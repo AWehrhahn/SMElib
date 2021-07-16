@@ -216,7 +216,7 @@ int compress(char *target, char *source)
   return t - 1;
 }
 
-extern "C" GlobalState *SME_DLL NewState()
+extern "C" GlobalState *SME_DLL NewState(int n, void *args[])
 {
   GlobalState *state = (GlobalState *)malloc(sizeof(GlobalState));
 
@@ -224,7 +224,7 @@ extern "C" GlobalState *SME_DLL NewState()
   state->FREQLG = 0;
   state->NRHOX = -1;
   state->NRHOX_allocated = -1;
-  state->MOTYPE = -1;
+  state->MOTYPE = 0;
   state->TEFF = -1;
   state->GRAV = -1;
   state->WLSTD = -1;
@@ -264,10 +264,16 @@ extern "C" GlobalState *SME_DLL NewState()
   // double FREQ, FREQLG, EHVKT[MOSIZE], STIM[MOSIZE], BNU[MOSIZE];
   // float H1FRACT[MOSIZE], HE1FRACT[MOSIZE], H2molFRACT[MOSIZE];
   // double COPBLU[MOSIZE], COPRED[MOSIZE], COPSTD[MOSIZE];
-  // double *LINEOP[MOSIZE], *AVOIGT[MOSIZE], *VVOIGT[MOSIZE];
   // double LTE_b[MOSIZE];
   // char PATH[MAX_PATHLEN];
 
+  // double *LINEOP[MOSIZE], *AVOIGT[MOSIZE], *VVOIGT[MOSIZE];
+  for (int i = 0; i < MOSIZE; i++)
+  {
+    state->LINEOP[i] = NULL;
+    state->AVOIGT[i] = NULL;
+    state->VVOIGT[i] = NULL;
+  }
   state->debug_print = 0;
 
   // dynamic arrays
@@ -306,22 +312,180 @@ extern "C" GlobalState *SME_DLL NewState()
   return state;
 }
 
-extern "C" void SME_DLL FreeState(GlobalState *state)
+extern "C" const char *SME_DLL FreeState(int n, void *args[], GlobalState *state)
 {
   free(state);
+  return OK_response;
 }
 
-extern "C" int SME_DLL GetNLINES(GlobalState *state)
+extern "C" GlobalState *SME_DLL CopyState(int n, void *args[], GlobalState *state)
+{
+  // NOTE: This is a shallow copy
+  GlobalState *new_state = NewState(0, NULL);
+  new_state->FREQ = state->FREQ;
+  new_state->FREQLG = state->FREQLG;
+  new_state->NRHOX = state->NRHOX;
+  new_state->NRHOX_allocated = state->NRHOX_allocated;
+  new_state->MOTYPE = state->MOTYPE;
+  new_state->TEFF = state->TEFF;
+  new_state->GRAV = state->GRAV;
+  new_state->WLSTD = state->WLSTD;
+  new_state->RADIUS = state->RADIUS;
+  new_state->NumberSpectralSegments = state->NumberSpectralSegments;
+  new_state->NLINES = state->NLINES;
+  new_state->NWAVE_C = state->NWAVE_C;
+  new_state->WFIRST = state->WFIRST;
+  new_state->WLAST = state->WLAST;
+  new_state->VW_scale = state->VW_scale;
+  new_state->N_SPLIST = state->N_SPLIST;
+  new_state->IXH1 = state->IXH1;
+  new_state->IXH2 = state->IXH2;
+  new_state->IXH2mol = state->IXH2mol;
+  new_state->IXH2pl = state->IXH2pl;
+  new_state->IXHMIN = state->IXHMIN;
+  new_state->IXHE1 = state->IXHE1;
+  new_state->IXHE2 = state->IXHE2;
+  new_state->IXHE3 = state->IXHE3;
+  new_state->IXC1 = state->IXC1;
+  new_state->IXAL1 = state->IXAL1;
+  new_state->IXSI1 = state->IXSI1;
+  new_state->IXSI2 = state->IXSI2;
+  new_state->IXCA1 = state->IXCA1;
+  new_state->IXMG1 = state->IXMG1;
+  new_state->IXMG2 = state->IXMG2;
+  new_state->IXCA2 = state->IXCA2;
+  new_state->IXN1 = state->IXN1;
+  new_state->IXFE1 = state->IXFE1;
+  new_state->IXO1 = state->IXO1;
+  new_state->IXCH = state->IXCH;
+  new_state->IXNH = state->IXNH;
+  new_state->IXOH = state->IXOH;
+  new_state->PATHLEN = state->PATHLEN;
+  new_state->change_byte_order = state->change_byte_order;
+  new_state->allocated_NLTE_lines = state->allocated_NLTE_lines;
+  // consistency flags
+  new_state->flagMODEL = state->flagMODEL;
+  new_state->flagWLRANGE = state->flagWLRANGE;
+  new_state->flagABUND = state->flagABUND;
+  new_state->flagLINELIST = state->flagLINELIST;
+  new_state->flagIONIZ = state->flagIONIZ;
+  new_state->flagCONTIN = state->flagCONTIN;
+  new_state->lineOPACITIES = state->lineOPACITIES;
+  new_state->flagH2broad = state->flagH2broad;
+  new_state->initNLTE = state->initNLTE;
+
+  /* Global pointers for dynamically allocated arrays */
+
+  // statically sized arrays
+  // These have been assigned new memory, so the contents are copied
+  for (int i = 0; i < 20; i++)
+  {
+    new_state->IFOP[i] = state->IFOP[i];
+  }
+  for (int i = 0; i < MAX_ELEM; i++)
+  {
+    new_state->ABUND[i] = state->ABUND[i];
+  }
+  for (int i = 0; i < MOSIZE; i++)
+  {
+    new_state->RHOX[i] = state->RHOX[i];
+    new_state->T[i] = state->T[i];
+    new_state->XNE[i] = state->XNE[i];
+    new_state->XNA[i] = state->XNA[i];
+    new_state->RHO[i] = state->RHO[i];
+    new_state->VTURB[i] = state->VTURB[i];
+    new_state->RAD_ATMO[i] = state->RAD_ATMO[i];
+    new_state->XNA_eos[i] = state->XNA_eos[i];
+    new_state->XNE_eos[i] = state->XNE_eos[i];
+    new_state->RHO_eos[i] = state->RHO_eos[i];
+    new_state->AHYD[i] = state->AHYD[i];
+    new_state->AH2P[i] = state->AH2P[i];
+    new_state->AHMIN[i] = state->AHMIN[i];
+    new_state->SIGH[i] = state->SIGH[i];
+    new_state->AHE1[i] = state->AHE1[i];
+    new_state->AHE2[i] = state->AHE2[i];
+    new_state->AHEMIN[i] = state->AHEMIN[i];
+    new_state->SIGHE[i] = state->SIGHE[i];
+    new_state->ACOOL[i] = state->ACOOL[i];
+    new_state->ALUKE[i] = state->ALUKE[i];
+    new_state->AHOT[i] = state->AHOT[i];
+    new_state->SIGEL[i] = state->SIGEL[i];
+    new_state->SIGH2[i] = state->SIGH2[i];
+    new_state->TKEV[i] = state->TKEV[i];
+    new_state->TK[i] = state->TK[i];
+    new_state->HKT[i] = state->HKT[i];
+    new_state->TLOG[i] = state->TLOG[i];
+    new_state->EHVKT[i] = state->EHVKT[i];
+    new_state->STIM[i] = state->STIM[i];
+    new_state->BNU[i] = state->BNU[i];
+    new_state->H1FRACT[i] = state->H1FRACT[i];
+    new_state->HE1FRACT[i] = state->HE1FRACT[i];
+    new_state->H2molFRACT[i] = state->H2molFRACT[i];
+    new_state->COPBLU[i] = state->COPBLU[i];
+    new_state->COPRED[i] = state->COPRED[i];
+    new_state->COPSTD[i] = state->COPSTD[i];
+    new_state->LTE_b[i] = state->LTE_b[i];
+
+    // Allocate space for the line opacities and Voigt parameters
+    for (int i = 0; i < state->NRHOX; i++)
+    {
+      new_state->LINEOP[i] = state->LINEOP[i];
+      new_state->AVOIGT[i] = state->AVOIGT[i];
+      new_state->VVOIGT[i] = state->VVOIGT[i];
+    }
+  }
+
+  strncpy(new_state->PATH, state->PATH, MAX_PATHLEN);
+
+  new_state->debug_print = state->debug_print;
+
+  // dynamic arrays
+  // for those we don't know the size, we just copy the pointer;
+  new_state->ATOTAL = state->ATOTAL;
+  new_state->INDX_C = state->INDX_C;
+  new_state->YABUND = state->YABUND;
+  new_state->XMASS = state->XMASS;
+  new_state->EXCUP = state->EXCUP;
+  new_state->ENU4 = state->ENU4;
+  new_state->ENL4 = state->ENL4;
+  new_state->BNLTE_low = state->BNLTE_low;
+  new_state->BNLTE_upp = state->BNLTE_upp;
+  new_state->flagNLTE = state->flagNLTE;
+  new_state->FRACT = state->FRACT;
+  new_state->PARTITION_FUNCTIONS = state->PARTITION_FUNCTIONS;
+  new_state->POTION = state->POTION;
+  new_state->MOLWEIGHT = state->MOLWEIGHT;
+  new_state->MARK = state->MARK;
+  new_state->AUTOION = state->AUTOION;
+  new_state->IDHEL = state->IDHEL;
+  new_state->ION = state->ION;
+  new_state->ANSTEE = state->ANSTEE;
+  new_state->WLCENT = state->WLCENT;
+  new_state->EXCIT = state->EXCIT;
+  new_state->GF = state->GF;
+  new_state->GAMRAD = state->GAMRAD;
+  new_state->GAMQST = state->GAMQST;
+  new_state->GAMVW = state->GAMVW;
+  new_state->ALMAX = state->ALMAX;
+  new_state->Wlim_left = state->Wlim_left;
+  new_state->Wlim_right = state->Wlim_right;
+  new_state->SPLIST = state->SPLIST;
+  new_state->spname = state->spname;
+  new_state->SPINDEX = state->SPINDEX;
+  return new_state;
+}
+
+extern "C" int SME_DLL GetNLINES(int n, void *args[], GlobalState *state)
 {
   return state->NLINES;
 }
 
-extern "C" short SME_DLL GetNRHOX(GlobalState *state)
+extern "C" short SME_DLL GetNRHOX(int n, void *args[], GlobalState *state)
 {
   return state->NRHOX;
 }
 
-extern "C" char *SME_DLL GetSPNAME(GlobalState *state)
+extern "C" char *SME_DLL GetSPNAME(int n, void *args[], GlobalState *state)
 {
   return state->spname;
 }
@@ -1142,6 +1306,7 @@ extern "C" char const *SME_DLL InputAbund(int n, void *arg[], GlobalState *state
     return state->result;
   }
   a = (double *)arg[0];
+  state->ABUND[0] = 1;
   for (i = 1; i < MAX_ELEM; i++)
   {
     state->ABUND[i] = (a[i - 1] >= 0.) ? a[i - 1] : pow10(a[i - 1]);
@@ -1180,7 +1345,6 @@ extern "C" char const *SME_DLL Opacity(int n, void *arg[], GlobalState *state) /
     strcpy(state->result, "Abundances were not set");
     return state->result;
   }
-
   if (!state->flagIONIZ)
   {
     strcpy(state->result, "Molecular-ionization equilibrium was not computed");
@@ -5325,7 +5489,7 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[], GlobalState *state
   /* Construct a complete list of species */
 
   i = 0;
-  switch (eqlist_(state->ABUND, ELEMEN + 1, species_list, state->ION, state->SPINDEX, state->SPLIST,
+  switch (eqlist_(state->ABUND + 1, ELEMEN + 1, species_list, state->ION, state->SPINDEX, state->SPLIST,
                   state->NLINES, i, state->N_SPLIST, nelem, 3, 8, 8))
   {
   case 0:

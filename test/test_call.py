@@ -6,6 +6,10 @@ import logging
 
 from sme_synth import SME_DLL
 from cwrapper import get_lib_name
+from tqdm import tqdm
+import matplotlib.pyplot as plt
+
+from concurrent.futures import ProcessPoolExecutor, as_completed
 
 
 logger = logging.getLogger(__name__)
@@ -36,9 +40,7 @@ def test_simple_call(dll):
 def test_call_with_input(dll):
     dll.InputWaveRange(5000, 6000)
 
-
-def test_radiative_transfer(dll, libfile, datadir):
-
+def get_linelist():
     #     species    wlcent  gflog     excit  j_lo  ...    term_lower     term_upper  error  atom_number  ionization
     # 35    Ca 1  6439.075   0.39  2.525682   3.0  ...  3p6.3d.4s 3D  3p6.3d.4p 3F*    0.5          1.0         1.0
     linelist = {
@@ -68,7 +70,9 @@ def test_radiative_transfer(dll, libfile, datadir):
             ]
         ),
     }
+    return linelist
 
+def get_abund():
     nan = np.nan
     abund = np.array(
         [
@@ -174,7 +178,10 @@ def test_radiative_transfer(dll, libfile, datadir):
         ]
     )
     abund[np.isnan(abund)] = -99
+    return abund
 
+def get_atmo():
+    abund = get_abund()
     atmo = {
         "teff": 5777.0,
         "logg": 4.4,
@@ -606,15 +613,23 @@ def test_radiative_transfer(dll, libfile, datadir):
         ),
         "citation_info": "",
     }
+    return atmo
+
+def test_radiative_transfer(dll, libfile, datadir):
+
+    linelist = get_linelist()
+    abund = get_abund()
+    atmo = get_atmo()
     
     dll.SetLibraryPath(datadir)
     dll.InputLineList(linelist)
     dll.InputModel(5770, 4.44, 0.7, atmo)
     dll.InputAbund(lambda *_, **__: abund)
-    dll.InputWaveRange(6436, 6442)
     dll.SetVWscale(1.0)
     dll.SetH2broad(True)
     dll.Ionization(0)
+    # Per Segment
+    dll.InputWaveRange(6436, 6442)
     dll.Opacity()
     _, wint, sint, cint = dll.Transf([1], 0.01, 0.03)
 
@@ -624,9 +639,62 @@ def test_radiative_transfer(dll, libfile, datadir):
 
 if __name__ == "__main__":
     libfile = join(dirname(__file__), "../lib/", "libsme.so")
-    datadir = join(dirname(__file__), "../share/libsme")
+    datadir = join(dirname(__file__), "../share/libsme/")
     dll = SME_DLL(libfile, datadir)
     version = dll.SMELibraryVersion()
-    dll2 = SME_DLL(libfile, datadir)
     print(version)
-    test_radiative_transfer(dll, libfile, datadir)
+    dll2 = dll.copy()
+    version = dll.SMELibraryVersion()
+    print(version)
+
+
+    linelist = get_linelist()
+    abund = get_abund()
+    atmo = get_atmo()
+    
+    dll.SetLibraryPath(datadir)
+    dll.InputLineList(linelist)
+    dll.InputModel(5770, 4.44, 0.7, atmo)
+    dll.InputAbund(lambda *_, **__: abund)
+    dll.SetVWscale(1.0)
+    dll.SetH2broad(True)
+    dll.Ionization(0)
+
+    def sequential(wfirst, wlast):
+        dll.InputWaveRange(wfirst, wlast)
+        dll.Opacity()
+        _, wint, sint, cint = dll.Transf([1], 0.01, 0.03)
+        return wint, sint, cint
+
+    def parallel(wfirst, wlast):
+        dll2 = dll.copy()
+        dll2.InputWaveRange(wfirst, wlast)
+        dll2.Opacity()
+        _, wint, sint, cint = dll2.Transf([1], 0.01, 0.03)
+        del dll2
+        return wint, sint, cint
+    
+    wrange = [(6436, 6438), (6438, 6440), (6440, 6442)]
+    wint = [None for _ in range(len(wrange))]
+    sint = [None for _ in range(len(wrange))]
+    cint = [None for _ in range(len(wrange))]
+
+    # for i, (wfirst, wlast) in enumerate(tqdm(wrange)):
+    #     wint[i], sint[i], cint[i] = sequential(wfirst, wlast)
+
+    with ProcessPoolExecutor() as executor:
+        futures = {}
+        for i, (wfirst, wlast) in enumerate(tqdm(wrange)):
+            futures[executor.submit(parallel, wfirst, wlast)] = i
+
+        for future in as_completed(tqdm(futures)):
+            seg = futures[future]
+            wint[seg], sint[seg], cint[seg] = future.result()
+        pass
+
+    for i in range(len(wrange)):
+        plt.plot(wint[i], sint[i][0])
+    plt.show()
+
+    test_radiative_transfer(dll2, libfile, datadir)
+    pass

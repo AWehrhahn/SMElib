@@ -448,4 +448,7 @@ class IDL_DLL:
             return None
 
     def free_state(self, state):
-        return idl_call_external("FreeState", state=state)
+        return idl_call_external("FreeState", state=state, lib=self.lib)
+
+    def copy_state(self, state):
+        return idl_call_external("CopyState", restype="state", state=state, lib=self.lib)

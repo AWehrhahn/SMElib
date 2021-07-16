@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class SME_DLL:
     """ Object Oriented interface for the SME C library """
 
-    def __init__(self, libfile=None, datadir=None):
+    def __init__(self, libfile=None, datadir=None, state=None):
         #:LineList: Linelist passed to the library
         self.linelist = None
         #:int: Number of mu points passed to the library
@@ -37,13 +37,17 @@ class SME_DLL:
         #:Atmo: Atmosphere structure in the model
         self.atmo = None
         #:dict: NLTE subgrids for nlte coefficient interpolation
-        self._nlte_grids = {}
+        self.nlte_grids = {}
         self.ion = None
 
         self.lib = IDL_DLL(libfile)
         self.parallel = False
-        self.state = self.NewState()
+        if state is None:
+            self.state = self.NewState()
+        else:
+            self.state = state
 
+        self.datadir = datadir
         if datadir is not None:
             self.SetLibraryPath(datadir)
 
@@ -52,6 +56,23 @@ class SME_DLL:
     def __del__(self):
         # Free the memory from the state when this is closed
         self.FreeState()
+
+    @property
+    def libfile(self):
+        """str: Location of the library file"""
+        return self.lib.libfile
+
+    @property
+    def file(self):
+        """str: Location of the library file"""
+        # Deprecated
+        return self.libfile
+
+    @property
+    def datadir(self):
+        """str: Expected directory of the data files"""
+        return self.GetLibraryPath()
+
 
     @property
     def ndepth(self):
@@ -107,6 +128,34 @@ class SME_DLL:
         if self.state is not None:
             self.lib.free_state(self.state)
             self.state = None
+
+    def CopyState(self):
+        if self.state is None:
+            return None
+        else:
+            return self.lib.copy_state(self.state)
+
+    def copy(self):
+        return self.__copy__()
+
+    def __copy__(self):
+        cls = self.__class__
+        state = self.CopyState()
+        obj = cls(libfile=self.lib.libfile, datadir=self.datadir, state=state)
+        obj.linelist = self.linelist
+        obj.nmu = self.nmu
+        obj.abund = self.abund
+        obj.wfirst = self.wfirst
+        obj.wlast = self.wlast
+        obj.vw_scale = self.vw_scale
+        obj.h2broad = self.h2broad
+        obj.teff = self.teff
+        obj.grav = self.grav
+        obj.vturb = self.vturb
+        obj.atmo = self.atmo
+        obj.nlte_grids = self.nlte_grids
+        obj.ion = self.ion
+        return obj
 
     def SMELibraryVersion(self):
         """

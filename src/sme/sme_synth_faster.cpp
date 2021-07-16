@@ -5296,7 +5296,7 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[])
   /* Construct a complete list of species */
 
   i = 0;
-  switch (eqlist_(ABUND, ELEMEN + 1, species_list, ION, SPINDEX, SPLIST,
+  switch (eqlist_(ABUND + 1, ELEMEN + 1, species_list, ION, SPINDEX, SPLIST,
                   NLINES, i, N_SPLIST, nelem, 3, 8, 8))
   {
   case 0:

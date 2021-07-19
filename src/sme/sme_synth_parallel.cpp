@@ -54,6 +54,8 @@ FREE macro to avoid freeing empty pointers
 The second version below can be used to trace any attempts to
 to do such a terrible thing!
 */
+#define DEBUG_MEMORY_CHECK 0
+
 #if DEBUG_MEMORY_CHECK
 #define CALLOC(ptr, varlen, vartype)                                \
   if (ptr != NULL)                                                  \
@@ -75,7 +77,8 @@ to do such a terrible thing!
     exit(98);                                                                        \
   }
 #else
-#define CALLOC(ptr, varlen, vartype) ptr = (vartype *)calloc(varlen, sizeof(vartype))
+#define CALLOC(ptr, varlen, vartype) \
+  ptr = (vartype *)calloc(varlen, sizeof(vartype))
 
 #define FREE(ptr)      \
   if (ptr != NULL)     \
@@ -218,7 +221,8 @@ int compress(char *target, char *source)
 
 extern "C" GlobalState *SME_DLL NewState(int n, void *args[])
 {
-  GlobalState *state = (GlobalState *)malloc(sizeof(GlobalState));
+  GlobalState *state;
+  CALLOC(state, 1, GlobalState);
 
   state->FREQ = 0;
   state->FREQLG = 0;
@@ -314,12 +318,36 @@ extern "C" GlobalState *SME_DLL NewState(int n, void *args[])
 
 extern "C" const char *SME_DLL FreeState(int n, void *args[], GlobalState *state)
 {
-  free(state);
+  short clean_lineopacities = 0;
+  if (n >= 1){
+    clean_lineopacities = *(short*) args[0];
+  }
+
+  if (clean_lineopacities){
+    if (state->lineOPACITIES){
+      for (int i = 0; i < state->NRHOX; i++){
+        FREE(state->LINEOP[i]);
+        FREE(state->AVOIGT[i]);
+        FREE(state->VVOIGT[i]);
+      }
+    }
+    FREE(state->FRACT);
+    FREE(state->PARTITION_FUNCTIONS);
+    FREE(state->POTION);
+    FREE(state->MOLWEIGHT);
+  }
+
+  FREE(state);
   return OK_response;
 }
 
 extern "C" GlobalState *SME_DLL CopyState(int n, void *args[], GlobalState *state)
 {
+  short clean_lineopacities = 0;
+  if (n >= 1){
+    clean_lineopacities = *(short*) args[0];
+  }
+
   // NOTE: This is a shallow copy
   GlobalState *new_state = NewState(0, NULL);
   new_state->FREQ = state->FREQ;
@@ -374,6 +402,10 @@ extern "C" GlobalState *SME_DLL CopyState(int n, void *args[], GlobalState *stat
   new_state->flagH2broad = state->flagH2broad;
   new_state->initNLTE = state->initNLTE;
 
+  if (clean_lineopacities){
+    new_state->lineOPACITIES = 0;
+  }
+
   /* Global pointers for dynamically allocated arrays */
 
   // statically sized arrays
@@ -425,13 +457,11 @@ extern "C" GlobalState *SME_DLL CopyState(int n, void *args[], GlobalState *stat
     new_state->COPRED[i] = state->COPRED[i];
     new_state->COPSTD[i] = state->COPSTD[i];
     new_state->LTE_b[i] = state->LTE_b[i];
-
     // Allocate space for the line opacities and Voigt parameters
-    for (int i = 0; i < state->NRHOX; i++)
-    {
-      new_state->LINEOP[i] = state->LINEOP[i];
-      new_state->AVOIGT[i] = state->AVOIGT[i];
-      new_state->VVOIGT[i] = state->VVOIGT[i];
+    if (!clean_lineopacities){
+        new_state->LINEOP[i] = state->LINEOP[i];
+        new_state->AVOIGT[i] = state->AVOIGT[i];
+        new_state->VVOIGT[i] = state->VVOIGT[i];
     }
   }
 
@@ -440,7 +470,7 @@ extern "C" GlobalState *SME_DLL CopyState(int n, void *args[], GlobalState *stat
   new_state->debug_print = state->debug_print;
 
   // dynamic arrays
-  // for those we don't know the size, we just copy the pointer;
+  // I need to figure out which ones are shared between segments and which ones arent
   new_state->ATOTAL = state->ATOTAL;
   new_state->INDX_C = state->INDX_C;
   new_state->YABUND = state->YABUND;
@@ -451,10 +481,6 @@ extern "C" GlobalState *SME_DLL CopyState(int n, void *args[], GlobalState *stat
   new_state->BNLTE_low = state->BNLTE_low;
   new_state->BNLTE_upp = state->BNLTE_upp;
   new_state->flagNLTE = state->flagNLTE;
-  new_state->FRACT = state->FRACT;
-  new_state->PARTITION_FUNCTIONS = state->PARTITION_FUNCTIONS;
-  new_state->POTION = state->POTION;
-  new_state->MOLWEIGHT = state->MOLWEIGHT;
   new_state->MARK = state->MARK;
   new_state->AUTOION = state->AUTOION;
   new_state->IDHEL = state->IDHEL;
@@ -469,9 +495,15 @@ extern "C" GlobalState *SME_DLL CopyState(int n, void *args[], GlobalState *stat
   new_state->ALMAX = state->ALMAX;
   new_state->Wlim_left = state->Wlim_left;
   new_state->Wlim_right = state->Wlim_right;
-  new_state->SPLIST = state->SPLIST;
   new_state->spname = state->spname;
   new_state->SPINDEX = state->SPINDEX;
+  if (!clean_lineopacities){
+    new_state->FRACT = state->FRACT;
+    new_state->PARTITION_FUNCTIONS = state->PARTITION_FUNCTIONS;
+    new_state->POTION = state->POTION;
+    new_state->MOLWEIGHT = state->MOLWEIGHT;
+    new_state->SPLIST = state->SPLIST;
+  }
   return new_state;
 }
 
@@ -1306,7 +1338,7 @@ extern "C" char const *SME_DLL InputAbund(int n, void *arg[], GlobalState *state
     return state->result;
   }
   a = (double *)arg[0];
-  state->ABUND[0] = 1;
+  state->ABUND[0] = 0;
   for (i = 1; i < MAX_ELEM; i++)
   {
     state->ABUND[i] = (a[i - 1] >= 0.) ? a[i - 1] : pow10(a[i - 1]);

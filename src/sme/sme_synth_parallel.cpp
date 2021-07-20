@@ -18,37 +18,6 @@
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 #define round(x) (x >= 0) ? (int)(x + 0.5) : (int)(x - 0.5)
 
-/* Useful data */
-
-float AMASS[MAX_ELEM] = {0.,
-                         1.008, 4.003, 6.941, 9.012, 10.811, 12.011, 14.007, 15.999,
-                         18.998, 20.179, 22.990, 24.305, 26.982, 28.086, 30.974, 32.060,
-                         35.453, 39.948, 39.102, 40.080, 44.956, 47.900, 50.941, 51.996,
-                         54.938, 55.847, 58.933, 58.710, 63.546, 65.370, 69.720, 72.590,
-                         74.922, 78.960, 79.904, 83.800, 85.468, 87.620, 88.906, 91.220,
-                         92.906, 95.940, 98.906, 101.070, 102.905, 106.400, 107.868, 112.400,
-                         114.820, 118.690, 121.750, 127.600, 126.905, 131.300, 132.905, 137.340,
-                         138.906, 140.120, 140.908, 144.240, 146.000, 150.400, 151.960, 157.250,
-                         158.925, 162.500, 164.930, 167.260, 168.934, 170.040, 174.970, 178.490,
-                         180.948, 183.850, 186.200, 190.200, 192.200, 195.090, 196.967, 200.590,
-                         204.370, 207.190, 208.981, 210.000, 210.000, 222.000, 223.000, 226.025,
-                         227.000, 232.038, 230.040, 238.029, 237.048, 242.000, 242.000, 245.000,
-                         248.000, 252.000, 253.000};
-char ELEMEN[MAX_ELEM][3] = {" ",
-                            "H ", "He", "Li", "Be", "B ", "C ", "N ", "O ", "F ", "Ne",
-                            "Na", "Mg", "Al", "Si", "P ", "S ", "Cl", "Ar", "K ", "Ca",
-                            "Sc", "Ti", "V ", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn",
-                            "Ga", "Ge", "As", "Se", "Br", "Kr", "Rb", "Sr", "Y ", "Zr",
-                            "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd", "In", "Sn",
-                            "Sb", "Te", "I ", "Xe", "Cs", "Ba", "La", "Ce", "Pr", "Nd",
-                            "Pm", "Sm", "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm", "Yb",
-                            "Lu", "Hf", "Ta", "W ", "Re", "Os", "Ir", "Pt", "Au", "Hg",
-                            "Tl", "Pb", "Bi", "Po", "At", "Rn", "Fr", "Ra", "Ac", "Th",
-                            "Pa", "U ", "Np", "Pu", "Am", "Cm", "Bk", "Cs", "Es"};
-
-/* Default OK response */
-const char OK_response = '\0';
-
 /*
 FREE macro to avoid freeing empty pointers
 The second version below can be used to trace any attempts to
@@ -87,6 +56,38 @@ to do such a terrible thing!
     ptr = NULL;        \
   }
 #endif
+
+/* Useful data */
+
+float AMASS[MAX_ELEM] = {0.,
+                         1.008, 4.003, 6.941, 9.012, 10.811, 12.011, 14.007, 15.999,
+                         18.998, 20.179, 22.990, 24.305, 26.982, 28.086, 30.974, 32.060,
+                         35.453, 39.948, 39.102, 40.080, 44.956, 47.900, 50.941, 51.996,
+                         54.938, 55.847, 58.933, 58.710, 63.546, 65.370, 69.720, 72.590,
+                         74.922, 78.960, 79.904, 83.800, 85.468, 87.620, 88.906, 91.220,
+                         92.906, 95.940, 98.906, 101.070, 102.905, 106.400, 107.868, 112.400,
+                         114.820, 118.690, 121.750, 127.600, 126.905, 131.300, 132.905, 137.340,
+                         138.906, 140.120, 140.908, 144.240, 146.000, 150.400, 151.960, 157.250,
+                         158.925, 162.500, 164.930, 167.260, 168.934, 170.040, 174.970, 178.490,
+                         180.948, 183.850, 186.200, 190.200, 192.200, 195.090, 196.967, 200.590,
+                         204.370, 207.190, 208.981, 210.000, 210.000, 222.000, 223.000, 226.025,
+                         227.000, 232.038, 230.040, 238.029, 237.048, 242.000, 242.000, 245.000,
+                         248.000, 252.000, 253.000};
+char ELEMEN[MAX_ELEM][3] = {" ",
+                            "H ", "He", "Li", "Be", "B ", "C ", "N ", "O ", "F ", "Ne",
+                            "Na", "Mg", "Al", "Si", "P ", "S ", "Cl", "Ar", "K ", "Ca",
+                            "Sc", "Ti", "V ", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn",
+                            "Ga", "Ge", "As", "Se", "Br", "Kr", "Rb", "Sr", "Y ", "Zr",
+                            "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd", "In", "Sn",
+                            "Sb", "Te", "I ", "Xe", "Cs", "Ba", "La", "Ce", "Pr", "Nd",
+                            "Pm", "Sm", "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm", "Yb",
+                            "Lu", "Hf", "Ta", "W ", "Re", "Os", "Ir", "Pt", "Au", "Hg",
+                            "Tl", "Pb", "Bi", "Po", "At", "Rn", "Fr", "Ra", "Ac", "Th",
+                            "Pa", "U ", "Np", "Pu", "Am", "Cm", "Bk", "Cs", "Es"};
+
+/* Default OK response */
+const char OK_response = '\0';
+
 /* Modules */
 
 void ALAM(double *, GlobalState *state);
@@ -163,6 +164,11 @@ extern "C" void hlinprof_(double &, double &, float &, float &, int &, int &,
 
 /* Code */
 
+extern "C" const char *GetInterfaces()
+{
+  return "IDL;Parallel;Cython";
+}
+
 char *ByteSwap(char *s, int n)
 {
   char c;
@@ -177,7 +183,7 @@ char *ByteSwap(char *s, int n)
   return s;
 }
 
-char *Terminator(char *s, int len)
+char *Terminator(const char *s, int len)
 {
   static char tmpstore[128];
   strncpy(tmpstore, s, min(len, 127));
@@ -219,7 +225,7 @@ int compress(char *target, char *source)
   return t - 1;
 }
 
-extern "C" GlobalState *SME_DLL NewState(int n, void *args[])
+GlobalState *_NewState()
 {
   GlobalState *state;
   CALLOC(state, 1, GlobalState);
@@ -316,16 +322,14 @@ extern "C" GlobalState *SME_DLL NewState(int n, void *args[])
   return state;
 }
 
-extern "C" const char *SME_DLL FreeState(int n, void *args[], GlobalState *state)
+const char *_FreeState(short clean_pointers, GlobalState *state)
 {
-  short clean_lineopacities = 0;
-  if (n >= 1){
-    clean_lineopacities = *(short*) args[0];
-  }
-
-  if (clean_lineopacities){
-    if (state->lineOPACITIES){
-      for (int i = 0; i < state->NRHOX; i++){
+  if (clean_pointers)
+  {
+    if (state->lineOPACITIES)
+    {
+      for (int i = 0; i < state->NRHOX; i++)
+      {
         FREE(state->LINEOP[i]);
         FREE(state->AVOIGT[i]);
         FREE(state->VVOIGT[i]);
@@ -341,15 +345,10 @@ extern "C" const char *SME_DLL FreeState(int n, void *args[], GlobalState *state
   return OK_response;
 }
 
-extern "C" GlobalState *SME_DLL CopyState(int n, void *args[], GlobalState *state)
+GlobalState *_CopyState(short clean_pointers, GlobalState *state)
 {
-  short clean_lineopacities = 0;
-  if (n >= 1){
-    clean_lineopacities = *(short*) args[0];
-  }
-
   // NOTE: This is a shallow copy
-  GlobalState *new_state = NewState(0, NULL);
+  GlobalState *new_state = _NewState();
   new_state->FREQ = state->FREQ;
   new_state->FREQLG = state->FREQLG;
   new_state->NRHOX = state->NRHOX;
@@ -402,7 +401,8 @@ extern "C" GlobalState *SME_DLL CopyState(int n, void *args[], GlobalState *stat
   new_state->flagH2broad = state->flagH2broad;
   new_state->initNLTE = state->initNLTE;
 
-  if (clean_lineopacities){
+  if (clean_pointers)
+  {
     new_state->lineOPACITIES = 0;
   }
 
@@ -458,10 +458,11 @@ extern "C" GlobalState *SME_DLL CopyState(int n, void *args[], GlobalState *stat
     new_state->COPSTD[i] = state->COPSTD[i];
     new_state->LTE_b[i] = state->LTE_b[i];
     // Allocate space for the line opacities and Voigt parameters
-    if (!clean_lineopacities){
-        new_state->LINEOP[i] = state->LINEOP[i];
-        new_state->AVOIGT[i] = state->AVOIGT[i];
-        new_state->VVOIGT[i] = state->VVOIGT[i];
+    if (!clean_pointers)
+    {
+      new_state->LINEOP[i] = state->LINEOP[i];
+      new_state->AVOIGT[i] = state->AVOIGT[i];
+      new_state->VVOIGT[i] = state->VVOIGT[i];
     }
   }
 
@@ -497,7 +498,8 @@ extern "C" GlobalState *SME_DLL CopyState(int n, void *args[], GlobalState *stat
   new_state->Wlim_right = state->Wlim_right;
   new_state->spname = state->spname;
   new_state->SPINDEX = state->SPINDEX;
-  if (!clean_lineopacities){
+  if (!clean_pointers)
+  {
     new_state->FRACT = state->FRACT;
     new_state->PARTITION_FUNCTIONS = state->PARTITION_FUNCTIONS;
     new_state->POTION = state->POTION;
@@ -507,81 +509,58 @@ extern "C" GlobalState *SME_DLL CopyState(int n, void *args[], GlobalState *stat
   return new_state;
 }
 
-extern "C" int SME_DLL GetNLINES(int n, void *args[], GlobalState *state)
+char const *_SMELibraryVersion() /* Return SME library version */
 {
-  return state->NLINES;
+  return "SME Library version: " VERSION ", " PLATFORM;
 }
 
-extern "C" short SME_DLL GetNRHOX(int n, void *args[], GlobalState *state)
+char const *_GetDataFiles() /* Return SME library version */
 {
-  return state->NRHOX;
+  return DATAFILE_FE ";" DATAFILE_NH ";" DATAFILE_STEHLE ";" DATAFILE_VCS ";" DATAFILE_BPO;
 }
 
-extern "C" char *SME_DLL GetSPNAME(int n, void *args[], GlobalState *state)
+char const *_GetLibraryPath(GlobalState *state)
 {
-  return state->spname;
-}
-
-extern "C" char const *SME_DLL SMELibraryVersion(int n, void *arg[], GlobalState *state) /* Return SME library version */
-{
-  sprintf(state->result, "SME Library version: %s, %s", VERSION, PLATFORM);
-  return state->result;
-}
-
-extern "C" char const *SME_DLL GetDataFiles(int n, void *arg[], GlobalState *state) /* Return SME library version */
-{
-  sprintf(state->result, "%s;%s;%s;%s;%s", DATAFILE_FE, DATAFILE_NH, DATAFILE_STEHLE, DATAFILE_VCS, DATAFILE_BPO);
-  return state->result;
-}
-
-extern "C" char const *SME_DLL GetLibraryPath(int n, void *arg[], GlobalState *state)
-{
-  sprintf(state->result, "%s", state->PATH);
-  return state->result;
+  return state->PATH;
 }
 
 /*
   Set SME library datafile location
   If smelib was installed using make install the default location should point to the data files already
 */
-extern "C" char const *SME_DLL SetLibraryPath(int n, void *arg[], GlobalState *state)
+const char *_SetLibraryPath(const char *path, int pathlen, GlobalState *state)
 {
-  state->PATHLEN = 0;
-  if (n == 1)
+  if (pathlen > MAX_PATHLEN)
   {
-    state->PATHLEN = (*(IDL_STRING *)arg[0]).slen;
-    strncpy(state->PATH, (*(IDL_STRING *)arg[0]).s, state->PATHLEN); /* Copy path to the Hydrogen line data files */
-    state->PATH[state->PATHLEN] = '\0';
-    state->change_byte_order = 1;
-    state->change_byte_order = (*((char *)(&state->change_byte_order))) ? 0 : 1; /* Check if big-endian than need to change byte order */
-    return &OK_response;
+    return "ERROR: Not enough space to store the path";
   }
-  strcpy(state->result, "No path was specified");
-  return state->result;
+  /* Copy path to the Hydrogen line data files */
+  state->PATHLEN = pathlen;
+  strncpy(state->PATH, path, pathlen);
+  state->PATH[state->PATHLEN] = '\0';
+
+  /* Check if big-endian than need to change byte order */
+  state->change_byte_order = 1;
+  state->change_byte_order = (*((char *)(&state->change_byte_order))) ? 0 : 1;
+  return &OK_response;
 }
 
-extern "C" char const *SME_DLL InputWaveRange(int n, void *arg[], GlobalState *state) /* Read in Wavelength range */
+const char *_InputWaveRange(double wfirst, double wlast, GlobalState *state) /* Read in Wavelength range */
 {
   int i;
 
-  if (n < 2)
-  {
-    strcpy(state->result, "Only one argument found");
-    return state->result;
-  }
   if (state->flagWLRANGE)
   {
-    if (fabs(state->WFIRST - *(double *)arg[0]) < 1.e-3 &&
-        fabs(state->WLAST - *(double *)arg[1]) < 1.e-3)
+    if (fabs(state->WFIRST - wfirst) < 1.e-3 &&
+        fabs(state->WLAST - wlast) < 1.e-3)
       return &OK_response;
   }
-  state->WFIRST = *(double *)arg[0];
-  state->WLAST = *(double *)arg[1];
+  state->WFIRST = wfirst;
+  state->WLAST = wlast;
   if (state->WFIRST >= state->WLAST || state->WFIRST <= 0.0 || state->WLAST <= 0.)
   {
     state->flagWLRANGE = 0;
-    strcpy(state->result, "Wrong wavelength range");
-    return state->result;
+    return "Wrong wavelength range";
   }
   else
   {
@@ -591,35 +570,25 @@ extern "C" char const *SME_DLL InputWaveRange(int n, void *arg[], GlobalState *s
   }
 }
 
-extern "C" char const *SME_DLL SetVWscale(int n, void *arg[], GlobalState *state) /* Set van der Waals scaling factor */
+char const *_SetVWscale(double vw_scale, GlobalState *state) /* Set van der Waals scaling factor */
 {
-  if (n < 1)
-  {
-    strcpy(state->result, "Not enough arguments");
-    return state->result;
-  }
-  state->VW_scale = *(double *)arg[0];
-  state->VW_scale = fabs(state->VW_scale);
+  state->VW_scale = fabs(vw_scale);
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL SetH2broad(int n, void *arg[], GlobalState *state) /* Set flag for H2 molecule */
+/* Set flag for H2 molecule */
+char const *_SetH2broad(short flag, GlobalState *state)
 {
-  state->flagH2broad = 1;
+  state->flagH2broad = flag ? 1 : 0;
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL ClearH2broad(int n, void *arg[], GlobalState *state) /* Clear flag for H2 molecule */
-{
-  state->flagH2broad = 0;
-  return &OK_response;
-}
-
-extern "C" char const *SME_DLL InputLineList(int n, void *arg[], GlobalState *state) /* Read in line list */
+/* Read in line list */
+char const *_InputLineList(int nlines, int slen, const char *species, double *linelist, GlobalState *state)
 {
   short l;
   int LINE, i;
-  IDL_STRING *a0;
+  const char *a0;
   double GFLOG, GRLG10, GSLG10, GWLG10,
       *a1, *a2, *a3, *a4, *a5, *a6, *a7, *a8;
   /*
@@ -633,11 +602,6 @@ extern "C" char const *SME_DLL InputLineList(int n, void *arg[], GlobalState *st
    state->GAMQST - QUADRATIC STARK DUMPING (C4);
    state->GAMVW  - VAN DER WAALS DUMPING (C6);
   */
-  if (n < 2)
-  {
-    strcpy(state->result, "Not enough arguments");
-    return state->result;
-  }
   if (state->flagLINELIST)
   {
     if (state->spname != NULL)
@@ -689,23 +653,21 @@ extern "C" char const *SME_DLL InputLineList(int n, void *arg[], GlobalState *st
     state->lineOPACITIES = 0;
   }
 
-  state->NLINES = *(int *)arg[0];
+  state->NLINES = nlines;
   if (state->NLINES < 1)
   {
     state->flagLINELIST = 0;
-    strcpy(state->result, "No line list");
-    return state->result;
+    return "No line list";
   }
 
-  a3 = (double *)arg[2]; /* Setup pointers to line parameters */
+  a3 = linelist; /* Setup pointers to line parameters */
   a3 += 2 * state->NLINES;
   for (LINE = 0; LINE < state->NLINES - 1; LINE++)
   {
     if (a3[LINE] > a3[LINE + 1]) /* Check that central wavelength are monotoneously increasing */
     {
       state->flagLINELIST = 0;
-      strcpy(state->result, "Line list is not sorted in wavelength ascending order");
-      return state->result;
+      return "Line list is not sorted in wavelength ascending order";
     }
   }
 
@@ -767,8 +729,8 @@ extern "C" char const *SME_DLL InputLineList(int n, void *arg[], GlobalState *st
     return state->result;
   }
 
-  a0 = (IDL_STRING *)arg[1]; /* Pointer to the list of species    */
-  a1 = (double *)arg[2];     /* Setup pointers to line parameters */
+  a0 = species;  /* Pointer to the list of species    */
+  a1 = linelist; /* Setup pointers to line parameters */
   a2 = a1 + state->NLINES;
   a3 = a2 + state->NLINES;
   a4 = a3 + state->NLINES;
@@ -782,15 +744,14 @@ extern "C" char const *SME_DLL InputLineList(int n, void *arg[], GlobalState *st
   {
     /* state->spname will be passed to FORTRAN, so no trailing zero's, fixed length
    padded with spaces instead */
-    memcpy(state->spname + 8 * LINE, a0[LINE].s, a0[LINE].slen);
-    if (a0[LINE].slen < 8)
-      for (l = a0[LINE].slen; l < 8; l++)
+    memcpy(state->spname + 8 * LINE, species + slen * LINE, slen);
+    if (slen < 8)
+      for (l = slen; l < 8; l++)
         state->spname[8 * LINE + l] = ' ';
-    //    state->ION[LINE]   =(int)a2[LINE]; /* Ionization            */
-    for (l = 0; l < a0[LINE].slen; l++)
-      if (*(a0[LINE].s + l) == ' ')
+    for (l = 0; l < slen; l++)
+      if (*(species + slen * LINE + l) == ' ')
         break;
-    state->ION[LINE] = (l == a0[LINE].slen) ? 1 : atoi(a0[LINE].s + l + 1);
+    state->ION[LINE] = (l == slen) ? 1 : atoi(species + slen * LINE + l + 1);
     state->WLCENT[LINE] = a3[LINE];                      /* Central wavelength    */
     state->EXCIT[LINE] = a4[LINE];                       /* Excitation            */
     GFLOG = a5[LINE];                                    /* Oscillator strength   */
@@ -849,7 +810,8 @@ extern "C" char const *SME_DLL InputLineList(int n, void *arg[], GlobalState *st
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL OutputLineList(int n, void *arg[], GlobalState *state) /* Return line list */
+/* Return line list */
+char const *_OutputLineList(int nlines, double *linelist, GlobalState *state)
 {
   int LINE, Nlines;
   double *a1;
@@ -861,24 +823,17 @@ extern "C" char const *SME_DLL OutputLineList(int n, void *arg[], GlobalState *s
    state->GAMVW  - VAN DER WAALS DUMPING (C6);
 */
 
-  if (n < 2)
-  {
-    strcpy(state->result, "Not enough arguments");
-    return state->result;
-  }
   if (!state->flagLINELIST)
   {
-    strcpy(state->result, "No line list");
-    return state->result;
+    return "No line list";
   }
-  Nlines = *(int *)arg[0];
+  Nlines = nlines;
   if (state->NLINES < 1)
   {
     state->flagLINELIST = 0;
-    strcpy(state->result, "No line list");
-    return state->result;
+    return "No line list";
   }
-  a1 = (double *)arg[1];
+  a1 = linelist;
 
   for (LINE = 0; LINE < min(Nlines, state->NLINES); LINE++)
   {
@@ -903,14 +858,15 @@ extern "C" char const *SME_DLL OutputLineList(int n, void *arg[], GlobalState *s
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL UpdateLineList(int n, void *arg[], GlobalState *state) /* Change line list parameters */
+/* Change line list parameters */
+char const *_UpdateLineList(short nlines, int slen, short *index, const char *species, double *linelist, GlobalState *state)
 {
   static char ERRMES[60];
   char tmpname[8];
   short LINE, NUPDTE, *INDEX;
   double GFLOG, GRLG10, GSLG10, GWLG10,
       *a1, *a2, *a3, *a4, *a5, *a6, *a7, *a8;
-  IDL_STRING *a0;
+  const char *a0;
   /*
    NUPDTE - NUMBERS OF SPECTRAL LINES;
    INDEX  - ARRAY OF INDICES IN EXISTING LINE LIST;
@@ -924,22 +880,17 @@ extern "C" char const *SME_DLL UpdateLineList(int n, void *arg[], GlobalState *s
    state->GAMVW  - VAN DER WAALS DUMPING (C6).
 */
 
-  if (n < 4)
-  {
-    strcpy(state->result, "Not enough arguments");
-    return state->result;
-  }
   if (!state->flagLINELIST)
   {
     strcpy(state->result, "Line list was not set. Cannot update.");
     return state->result;
   }
-  NUPDTE = *(short *)arg[0];
+  NUPDTE = nlines;
   if (NUPDTE < 1)
     return &OK_response;
 
-  a0 = (IDL_STRING *)arg[1]; /* Setup pointers for species        */
-  a1 = (double *)arg[2];     /* Setup pointers to line parameters */
+  a0 = species;  /* Setup pointers for species        */
+  a1 = linelist; /* Setup pointers to line parameters */
   a2 = a1 + NUPDTE;
   a3 = a2 + NUPDTE;
   a4 = a3 + NUPDTE;
@@ -947,7 +898,7 @@ extern "C" char const *SME_DLL UpdateLineList(int n, void *arg[], GlobalState *s
   a6 = a5 + NUPDTE;
   a7 = a6 + NUPDTE;
   a8 = a7 + NUPDTE;
-  INDEX = (short *)arg[3];
+  INDEX = index;
   for (LINE = 0; LINE < NUPDTE; LINE++)
   {
     double WW, EXC;
@@ -956,16 +907,15 @@ extern "C" char const *SME_DLL UpdateLineList(int n, void *arg[], GlobalState *s
     i = INDEX[LINE];
     if (i < 0 || i >= state->NLINES)
     {
-      strcpy(state->result, "Replacement index is out of range");
-      return state->result;
+      return "Replacement index is out of range";
     }
 
     /* state->spname will be passed to FORTRAN, so no trailing
    zero's, fixed length padded with spaces instead */
 
-    memcpy(tmpname, a0[LINE].s, a0[LINE].slen);
-    if (a0[LINE].slen < 8)
-      for (l = a0[LINE].slen; l < 8; l++)
+    memcpy(tmpname, a0 + LINE * slen, slen);
+    if (slen < 8)
+      for (l = slen; l < 8; l++)
         tmpname[l] = ' ';
     WW = a3[LINE]; /* Wavelength */
     EXC = a4[LINE];
@@ -1020,21 +970,32 @@ extern "C" char const *SME_DLL UpdateLineList(int n, void *arg[], GlobalState *s
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL InputModel(int n, void *arg[], GlobalState *state) /* Read in model atmosphere */
+/* Read in model atmosphere */
+char const *_InputModel(
+    short ndepth,
+    double teff,
+    double grav,
+    double wlstd,
+    const char *motype_str,
+    int motype_slen,
+    short *opflag,
+    double *depth,
+    double *temp,
+    double *xne,
+    double *xna,
+    double *rho,
+    double *vt,
+    double radius,
+    double *height,
+    GlobalState *state)
 {
   int IM, im, i, arg_offset;
   short *ifop, l;
-  char motype[5];
-  IDL_STRING *s;
+  const char *s;
+  char motype[8];
   double TAU, DTAU1, DTAU2;
   double *a1, *a2, *a3, *a4, *a5, *a6, *a7;
   int L;
-
-  if (n < 12)
-  {
-    strcpy(state->result, "Not enough arguments");
-    return state->result;
-  }
 
   // Free invalidated arrays
   if (state->lineOPACITIES)
@@ -1051,22 +1012,28 @@ extern "C" char const *SME_DLL InputModel(int n, void *arg[], GlobalState *state
   state->flagCONTIN = 0;
   state->lineOPACITIES = 0;
 
-  state->NRHOX = *(short *)arg[0];
+  state->NRHOX = ndepth;
   if (state->NRHOX > MOSIZE)
   {
-    sprintf(state->result, "SME library supports atmospheric model with maximum %d depth layers", MOSIZE);
-    return state->result;
+    static char errmsg[64];
+    sprintf(errmsg, "SME library supports atmospheric model with maximum %d depth layers", MOSIZE);
+    return errmsg;
   }
 
-  state->TEFF = *(double *)arg[1];
-  state->GRAV = *(double *)arg[2];
-  state->WLSTD = *(double *)arg[3];
+  state->TEFF = teff;
+  state->GRAV = grav;
+  state->WLSTD = wlstd;
 
-  s = (IDL_STRING *)arg[4];
-  l = min(4, s->slen);
-  strncpy(motype, s->s, l);
+  if (motype_slen < 0)
+  {
+    return "ERROR: MOTYPE length must be positive";
+  }
+
+  s = motype_str;
+  l = min(7, motype_slen);
+  strncpy(motype, s, l);
   motype[l] = 0;
-  for (i = 0; i < strlen(motype); i++)
+  for (i = 0; i < l; i++)
     motype[i] = toupper(motype[i]);
 
   // Adding provision for spherical models
@@ -1086,12 +1053,11 @@ extern "C" char const *SME_DLL InputModel(int n, void *arg[], GlobalState *state
   {
     state->MOTYPE = 3;
     arg_offset = 1;
-    state->RADIUS = *(double *)arg[5];
+    state->RADIUS = radius;
   }
 
-  ifop = (short *)arg[5 + arg_offset];
   for (i = 0; i < 20; i++)
-    state->IFOP[i] = ifop[i];
+    state->IFOP[i] = opflag[i];
 
   // Allocate space for the line opacities and Voigt parameters
   if (!state->lineOPACITIES)
@@ -1105,14 +1071,13 @@ extern "C" char const *SME_DLL InputModel(int n, void *arg[], GlobalState *state
     state->lineOPACITIES = 1;
   }
 
-  a1 = (double *)arg[6 + arg_offset];
-  a2 = (double *)arg[7 + arg_offset];
-  a3 = (double *)arg[8 + arg_offset];
-  a4 = (double *)arg[9 + arg_offset];
-  a5 = (double *)arg[10 + arg_offset];
-  a6 = (double *)arg[11 + arg_offset];
-  if (state->MOTYPE == 3)
-    a7 = (double *)arg[12 + arg_offset];
+  a1 = depth;
+  a2 = temp;
+  a3 = xne;
+  a4 = xna;
+  a5 = rho;
+  a6 = vt;
+  a7 = height;
 
   for (IM = im = 0; IM < state->NRHOX; im++, IM++) /* Copy model on the original grid */
   {                                                /* Intermediate points are found   */
@@ -1138,7 +1103,7 @@ extern "C" char const *SME_DLL InputModel(int n, void *arg[], GlobalState *state
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL InputDepartureCoefficients(int n, void *arg[], GlobalState *state)
+char const *_InputDepartureCoefficients(double *bmat, int lineindex, GlobalState *state)
 {
   /* Reads in NLTE b's  for one transition at a time. The calling sequence
    requires a pointer to a double array of the size 2*state->NRHOX and an integer
@@ -1160,21 +1125,13 @@ extern "C" char const *SME_DLL InputDepartureCoefficients(int n, void *arg[], Gl
   int im, line;
   double *b;
 
-  if (n < 2) // We assume that the caller will provide 2*state->NRHOX element array, so
-             // be careful on the IDL side. The other argument is the line number.
-  {
-    strcpy(state->result, "No arguments found");
-    return state->result;
-  }
   if (!state->flagMODEL)
   {
-    strcpy(state->result, "Model atmosphere must be set before departure coefficients");
-    return state->result;
+    return "Model atmosphere must be set before departure coefficients";
   }
   if (!state->flagLINELIST)
   {
-    strcpy(state->result, "Line list must be set before departure coefficients");
-    return state->result;
+    return "Line list must be set before departure coefficients";
   }
 
   if (!state->initNLTE) // Initialize the departure arrays for the first time
@@ -1195,13 +1152,12 @@ extern "C" char const *SME_DLL InputDepartureCoefficients(int n, void *arg[], Gl
     state->initNLTE = 1;
   } // End of initialization
 
-  b = (double *)arg[0];
-  line = *(int *)arg[1];
+  b = bmat;
+  line = lineindex;
 
   if (line < 0 || line >= state->allocated_NLTE_lines)
   {
-    strcpy(state->result, "Attempt to set departure coefficients for non-existing transition");
-    return state->result;
+    return "Attempt to set departure coefficients for non-existing transition";
   }
 
   if (state->flagNLTE[line])
@@ -1223,34 +1179,23 @@ extern "C" char const *SME_DLL InputDepartureCoefficients(int n, void *arg[], Gl
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL GetDepartureCoefficients(int n, void *arg[], GlobalState *state) /* Get NLTE b's for specific line */
+/* Get NLTE b's for specific line */
+char const *_GetDepartureCoefficients(double *bmat, int nrhox, int line, GlobalState *state)
 {
   int im;
-  int nrhox, line;
   double *b;
-
-  if (n < 3) // Check if arguments are present
-  {
-    strcpy(state->result, "Requires an array pointer, its length and line number");
-    return state->result;
-  }
 
   if (!state->initNLTE)
   {
-    strcpy(state->result, "NLTE mode was not initialized. No departure coefficients available.");
-    return state->result;
+    return "NLTE mode was not initialized. No departure coefficients available";
   }
 
-  line = *(int *)arg[2];
   if (line < 0 || line >= state->NLINES)
   {
-    strcpy(state->result, "Attempt to set departure coefficients for non-existing transition");
-    return state->result;
+    return "Attempt to set departure coefficients for non-existing transition";
   }
 
-  b = (double *)arg[0];
-  nrhox = *(int *)arg[1];
-
+  b = bmat;
   if (state->flagNLTE[line])
   {
     for (im = 0; im < min(nrhox, state->NRHOX); im++)
@@ -1271,19 +1216,12 @@ extern "C" char const *SME_DLL GetDepartureCoefficients(int n, void *arg[], Glob
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL GetNLTEflags(int n, void *arg[], GlobalState *state) /* Get NLTE flag for every line */
+char const *_GetNLTEflags(short *nlte_flags, int nlines, GlobalState *state) /* Get NLTE flag for every line */
 {
-  int nlines, line;
+  int line;
   short *b;
 
-  if (n < 2) // Check if arguments are present
-  {
-    strcpy(state->result, "GetNLTELines: Requires an array pointer and its length");
-    return state->result;
-  }
-
-  b = (short *)arg[0];
-  nlines = *(int *)arg[1];
+  b = nlte_flags;
 
   if (!state->initNLTE)
   {
@@ -1303,7 +1241,8 @@ extern "C" char const *SME_DLL GetNLTEflags(int n, void *arg[], GlobalState *sta
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL ResetDepartureCoefficients(int n, void *arg[], GlobalState *state) /* Reset LTE */
+/* Reset LTE */
+char const *_ResetDepartureCoefficients(GlobalState *state)
 {
   int line;
 
@@ -1327,17 +1266,17 @@ extern "C" char const *SME_DLL ResetDepartureCoefficients(int n, void *arg[], Gl
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL InputAbund(int n, void *arg[], GlobalState *state) /* Read in abundances */
+char const *_InputAbund(double *abund, int nelements, GlobalState *state) /* Read in abundances */
 {
   int i;
   double *a;
 
-  if (n < 1)
+  if (nelements != 99)
   {
-    strcpy(state->result, "Not enough arguments");
-    return state->result;
+    return "Abundance array needs to have 99 elements";
   }
-  a = (double *)arg[0];
+
+  a = abund;
   state->ABUND[0] = 0;
   for (i = 1; i < MAX_ELEM; i++)
   {
@@ -1348,20 +1287,12 @@ extern "C" char const *SME_DLL InputAbund(int n, void *arg[], GlobalState *state
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL Opacity(int n, void *arg[], GlobalState *state) /* Calculate opacities */
+/* Calculate opacities */
+char const *_Opacity(short request_output, short nout, double *out1, double *out2, double *out3, GlobalState *state)
 {
   short i, nrhox;
   double *a1, *a2, *a3;
 
-  if (n > 0)
-  {
-    if ((state->MOTYPE != 0 && n < 3) ||
-        (state->MOTYPE == 0 && n < 4))
-    {
-      strcpy(state->result, "Opacity: Not enough arguments");
-      return state->result;
-    }
-  }
   if (!state->flagMODEL)
   {
     strcpy(state->result, "Model atmosphere not set");
@@ -1395,19 +1326,19 @@ extern "C" char const *SME_DLL Opacity(int n, void *arg[], GlobalState *state) /
 
   CONTOP(state->WFIRST, state->COPBLU, state);
 
-  if (n >= 3)
+  if (request_output)
   {
-    i = *(short *)arg[0]; /* Length of IDL arrays */
+    i = nout; /* Length of IDL arrays */
     nrhox = min(state->NRHOX, i);
-    a1 = (double *)arg[1];
-    a2 = (double *)arg[2];
+    a1 = out1;
+    a2 = out2;
     if (state->MOTYPE == 0)
-      a3 = (double *)arg[3];
+      a3 = out3;
     for (i = 0; i < nrhox; i++)
     {
       a1[i] = state->COPBLU[i];
       a2[i] = state->COPRED[i];
-      if (n >= 4 && state->MOTYPE == 0)
+      if (state->MOTYPE == 0)
         a3[i] = state->COPSTD[i];
     }
   }
@@ -5025,26 +4956,21 @@ void H2RAOP(double *sigh2, int iH2mol, GlobalState *state)
   }
 }
 
-extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], GlobalState *state) /* Returns specific cont. opacity */
+char const *_GetOpacity(short ifop, short length, double *result, const char *species, int slen, const char *type, int tlen, GlobalState *state) /* Returns specific cont. opacity */
 {
   short i, j, nrhox, key;
   double *a1;
-  IDL_STRING *species, *a4;
+  const char *a4;
 
-  if (n < 3)
-  {
-    strcpy(state->result, "Not enough arguments");
-    return state->result;
-  }
   if (!state->flagCONTIN)
   {
     strcpy(state->result, "Opacity has not been calculated");
     return state->result;
   }
-  j = *(short *)arg[0]; /* state->IFOP number */
-  i = *(short *)arg[1]; /* Length of IDL arrays */
+  j = ifop;   /* state->IFOP number */
+  i = length; /* Length of IDL arrays */
   nrhox = min(state->NRHOX, i);
-  a1 = (double *)arg[2];
+  a1 = result;
   switch (j)
   {
   case -3:
@@ -5092,21 +5018,20 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], GlobalState *state
       a1[i] = state->SIGHE[i];
     return &OK_response;
   case 8:
-    if (n > 3)
+    if (1)
     {
-      species = (IDL_STRING *)arg[3];
       key = 0;
-      if (n == 5)
+      if (1)
       {
-        a4 = (IDL_STRING *)arg[4];
-        if (!strncmp(a4->s, "new", a4->slen))
+        a4 = type;
+        if (!strcmp(a4, "new"))
           key = 1;
-        if (!strncmp(a4->s, "old", a4->slen))
+        if (!strcmp(a4, "old"))
           key = 2;
-        if (!strncmp(a4->s, "fraction", a4->slen))
+        if (!strcmp(a4, "fraction"))
           key = 3;
       }
-      if (!strcmp(species->s, "C1"))
+      if (!strcmp(species, "C1"))
       {
         switch (key)
         {
@@ -5128,7 +5053,7 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], GlobalState *state
           return &OK_response;
         }
       }
-      else if (!strcmp(species->s, "Mg1"))
+      else if (!strcmp(species, "Mg1"))
       {
         switch (key)
         {
@@ -5150,7 +5075,7 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], GlobalState *state
           return &OK_response;
         }
       }
-      else if (!strcmp(species->s, "Al1"))
+      else if (!strcmp(species, "Al1"))
       {
         switch (key)
         {
@@ -5172,7 +5097,7 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], GlobalState *state
           return &OK_response;
         }
       }
-      else if (!strcmp(species->s, "Si1"))
+      else if (!strcmp(species, "Si1"))
       {
         switch (key)
         {
@@ -5194,7 +5119,7 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], GlobalState *state
           return &OK_response;
         }
       }
-      else if (!strcmp(species->s, "Fe1"))
+      else if (!strcmp(species, "Fe1"))
       {
         switch (key)
         {
@@ -5216,7 +5141,7 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], GlobalState *state
           return &OK_response;
         }
       }
-      else if (!strcmp(species->s, "CH"))
+      else if (!strcmp(species, "CH"))
       {
         switch (key)
         {
@@ -5238,7 +5163,7 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], GlobalState *state
           return &OK_response;
         }
       }
-      else if (!strcmp(species->s, "NH"))
+      else if (!strcmp(species, "NH"))
       {
         switch (key)
         {
@@ -5260,7 +5185,7 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], GlobalState *state
           return &OK_response;
         }
       }
-      else if (!strcmp(species->s, "OH"))
+      else if (!strcmp(species, "OH"))
       {
         switch (key)
         {
@@ -5284,8 +5209,9 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], GlobalState *state
       }
       else
       {
-        sprintf(state->result, "SME cannot compute continuous opacity for %s", species->s);
-        return state->result;
+        static char errmsg[64];
+        sprintf(errmsg, "SME cannot compute continuous opacity for %s", species);
+        return errmsg;
       }
     }
     else
@@ -5295,34 +5221,33 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], GlobalState *state
       return &OK_response;
     }
   case 9:
-    if (n > 3)
+    if (1)
     {
-      species = (IDL_STRING *)arg[3];
-      if (!strcmp(species->s, "N1"))
+      if (!strcmp(species, "N1"))
       {
         for (i = 0; i < nrhox; i++)
           a1[i] = N1OP(i, state) * state->FRACT[i][state->IXN1] * state->STIM[i] / state->RHO[i];
         return &OK_response;
       }
-      else if (!strcmp(species->s, "O1"))
+      else if (!strcmp(species, "O1"))
       {
         for (i = 0; i < nrhox; i++)
           a1[i] = O1OP(i, state) * state->FRACT[i][state->IXO1] * state->STIM[i] / state->RHO[i];
         return &OK_response;
       }
-      else if (!strcmp(species->s, "Mg2"))
+      else if (!strcmp(species, "Mg2"))
       {
         for (i = 0; i < nrhox; i++)
           a1[i] = MG2OP(i, state) * state->FRACT[i][state->IXMG2] * state->STIM[i] / state->RHO[i];
         return &OK_response;
       }
-      else if (!strcmp(species->s, "Si2"))
+      else if (!strcmp(species, "Si2"))
       {
         for (i = 0; i < nrhox; i++)
           a1[i] = SI2OP(i, state) * state->FRACT[i][state->IXSI2] * state->STIM[i] / state->RHO[i];
         return &OK_response;
       }
-      else if (!strcmp(species->s, "Ca2"))
+      else if (!strcmp(species, "Ca2"))
       {
         for (i = 0; i < nrhox; i++)
           a1[i] = CA2OP(i, state) * state->FRACT[i][state->IXCA2] * state->STIM[i] / state->RHO[i];
@@ -5330,8 +5255,9 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], GlobalState *state
       }
       else
       {
-        sprintf(state->result, "SME cannot compute continuous opacity for %s", species->s);
-        return state->result;
+        static char errmsg[64];
+        sprintf(errmsg, "SME cannot compute continuous opacity for %s", species);
+        return errmsg;
       }
     }
     else
@@ -5353,8 +5279,7 @@ extern "C" char const *SME_DLL GetOpacity(int n, void *arg[], GlobalState *state
       a1[i] = state->SIGH2[i];
     return &OK_response;
   default:
-    strcpy(state->result, "Wrong opacity switch number");
-    return state->result;
+    return "Wrong opacity switch number";
   }
 }
 
@@ -5404,7 +5329,7 @@ void AutoIonization(GlobalState *state)
    JUST PUT IT IN HERE!!! */
 }
 
-extern "C" char const *SME_DLL Ionization(int n, void *arg[], GlobalState *state)
+char const *_Ionization(short ion, GlobalState *state)
 {
   /*
    Interface routine between the C++ part of SME the FORTRAN 77 code
@@ -5456,25 +5381,13 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[], GlobalState *state
   /* The only allowed argument in call to Ionization contains switches
    indicating that electron and/or particle density
    must be substituted with number densities computed by EOS*/
-  if (n > 0)
-  {
-    switches = *(short *)arg[0];
-    use_particle_density_from_EOS = (switches & 0x01);
-    use_electron_density_from_EOS = (switches & 0x02);
-    use_gas_density_from_EOS = (switches & 0x04);
-    dump01 = (switches & 0x08);
-    dump02 = (switches & 0x10);
-    return_pfs = (switches & 0x20);
-  }
-  else
-  {
-    use_particle_density_from_EOS = 0;
-    use_electron_density_from_EOS = 0;
-    use_gas_density_from_EOS = 0;
-    dump01 = 0;
-    dump02 = 0;
-    return_pfs = 0;
-  }
+  switches = ion;
+  use_particle_density_from_EOS = (switches & 0x01);
+  use_electron_density_from_EOS = (switches & 0x02);
+  use_gas_density_from_EOS = (switches & 0x04);
+  dump01 = (switches & 0x08);
+  dump02 = (switches & 0x10);
+  return_pfs = (switches & 0x20);
 
   for (LINE = 0; LINE < state->NLINES; LINE++)
   {
@@ -5771,10 +5684,13 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[], GlobalState *state
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL GetFraction(int n, void *arg[], GlobalState *state)
+/* Return mode=0 - number densities
+=1 - partition functions
+other - number densities/pf */
+char const *_GetFraction(short mode, const char *species, int slen, short length, double *array, GlobalState *state)
 {
-  short i, l, mode;
-  IDL_STRING *a0;
+  short i, l;
+  const char *a0;
   char sp[9];
   int j;
   double *a;
@@ -5785,31 +5701,23 @@ extern "C" char const *SME_DLL GetFraction(int n, void *arg[], GlobalState *stat
     return state->result;
   }
 
-  mode = *(short *)arg[1]; /* Return mode=0 - number densities
-                                             =1 - partition functions
-                                          other - number densities/pf */
   if (!state->flagIONIZ && mode != 1)
   {
     strcpy(state->result, "Molecular-ionization equilibrium was not computed");
     return state->result;
   }
 
-  if (n < 4)
-  {
-    strcpy(state->result, "Not enough arguments");
-    return state->result;
-  }
-  a0 = (IDL_STRING *)arg[0]; /* Pointer to the name of species */
+  a0 = species; /* Pointer to the name of species */
 
-  if (!strncmp("e-", a0->s, a0->slen))
-    mode = 10;          /* Ignore PF when dealing
+  if (!strncmp("e-", a0, slen))
+    mode = 10; /* Ignore PF when dealing
                                                   with electrons */
-  l = *(short *)arg[2]; /* Array length */
-  a = (double *)arg[3]; /* Array */
+  l = length;  /* Array length */
+  a = array;   /* Array */
 
   for (i = 0; i < state->N_SPLIST; i++) /* Search for requested species */
   {
-    if (!strncmp(state->SPLIST + 8 * i, a0->s, a0->slen))
+    if (!strncmp(state->SPLIST + 8 * i, a0, slen))
     {
       switch (mode)
       {
@@ -5829,11 +5737,12 @@ extern "C" char const *SME_DLL GetFraction(int n, void *arg[], GlobalState *stat
       }
     }
   }
-  sprintf(state->result, "Requested species %s not found", Terminator(a0->s, a0->slen));
-  return state->result;
+  static char errmsg[64];
+  sprintf(errmsg, "Requested species %s not found", Terminator(a0, slen));
+  return errmsg;
 }
 
-extern "C" char const *SME_DLL GetDensity(int n, void *arg[], GlobalState *state)
+char const *_GetDensity(short length, double *result, GlobalState *state)
 {
   short l;
   char sp[9];
@@ -5842,29 +5751,22 @@ extern "C" char const *SME_DLL GetDensity(int n, void *arg[], GlobalState *state
 
   if (!state->flagMODEL)
   {
-    strcpy(state->result, "No model atmosphere has been set");
-    return state->result;
+    return "No model atmosphere has been set";
   }
 
   if (!state->flagIONIZ)
   {
-    strcpy(state->result, "Molecular-ionization equilibrium was not computed");
-    return state->result;
+    return "Molecular-ionization equilibrium was not computed";
   }
 
-  if (n < 2)
-  {
-    strcpy(state->result, "Not enough arguments");
-    return state->result;
-  }
-  l = *(short *)arg[0]; /* Array length */
-  a = (double *)arg[1]; /* Array */
+  l = length; /* Array length */
+  a = result; /* Array */
   for (j = 0; j < min(state->NRHOX, l); j++)
     a[j] = state->RHO_eos[j];
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL GetNatom(int n, void *arg[], GlobalState *state)
+char const *_GetNatom(short length, double *result, GlobalState *state)
 {
   short l;
   int j;
@@ -5872,29 +5774,22 @@ extern "C" char const *SME_DLL GetNatom(int n, void *arg[], GlobalState *state)
 
   if (!state->flagMODEL)
   {
-    strcpy(state->result, "No model atmosphere has been set");
-    return state->result;
+    return "No model atmosphere has been set";
   }
 
   if (!state->flagIONIZ)
   {
-    strcpy(state->result, "Molecular-ionization equilibrium was not computed");
-    return state->result;
+    return "Molecular-ionization equilibrium was not computed";
   }
 
-  if (n < 2)
-  {
-    strcpy(state->result, "Not enough arguments");
-    return state->result;
-  }
-  l = *(short *)arg[0]; /* Array length */
-  a = (double *)arg[1]; /* Array */
+  l = length; /* Array length */
+  a = result; /* Array */
   for (j = 0; j < min(state->NRHOX, l); j++)
     a[j] = state->XNA_eos[j];
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL GetNelec(int n, void *arg[], GlobalState *state)
+char const *_GetNelec(short length, double *result, GlobalState *state)
 {
   short l;
   int j;
@@ -5902,29 +5797,22 @@ extern "C" char const *SME_DLL GetNelec(int n, void *arg[], GlobalState *state)
 
   if (!state->flagMODEL)
   {
-    strcpy(state->result, "No model atmosphere has been set");
-    return state->result;
+    return "No model atmosphere has been set";
   }
 
   if (!state->flagIONIZ)
   {
-    strcpy(state->result, "Molecular-ionization equilibrium was not computed");
-    return state->result;
+    return "Molecular-ionization equilibrium was not computed";
   }
 
-  if (n < 2)
-  {
-    strcpy(state->result, "Not enough arguments");
-    return state->result;
-  }
-  l = *(short *)arg[0]; /* Array length */
-  a = (double *)arg[1]; /* Array */
+  l = length; /* Array length */
+  a = result; /* Array */
   for (j = 0; j < min(state->NRHOX, l); j++)
     a[j] = state->XNE_eos[j];
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL Transf(int n, void *arg[], GlobalState *state)
+char const *_Transf(short nmu, double *mu, double *cint_seg, double *cintr_seg, int nwmax, int nw, double *wint_seg, double *sint_seg, double accrt, double accwi, short keep_lineop, short long_continuum, GlobalState *state)
 {
   /*  THIS SUBROUTINE EXPLICITLY SOLVES THE TRANSFER EQUATION
     FOR A SET OF NODES ON THE STAR DISK. THE RESULTS ARE:
@@ -5949,97 +5837,67 @@ extern "C" char const *SME_DLL Transf(int n, void *arg[], GlobalState *state)
       P_impact, WW, delta_lambda;
   double opacity_tot[MOSIZE], opacity_cont[MOSIZE], source[MOSIZE],
       source_cont[MOSIZE];
-  short NMU, iret, keep_lineop, long_continuum;
+  short NMU, iret;
   int line;
 
   /* Check if everything is set and pre-calculated */
 
   if (!state->flagMODEL)
   {
-    strcpy(state->result, "No model atmosphere has been set");
-    return state->result;
+    return "No model atmosphere has been set";
   }
   if (!state->flagWLRANGE)
   {
-    strcpy(state->result, "No wavelength range has been set");
-    return state->result;
+    return "No wavelength range has been set";
   }
   if (!state->flagABUND)
   {
-    strcpy(state->result, "No list of abundances has been set");
-    return state->result;
+    return "No list of abundances has been set";
   }
   if (!state->flagLINELIST)
   {
-    strcpy(state->result, "No line list has been set");
-    return state->result;
+    return "No line list has been set";
   }
   if (!state->flagIONIZ)
   {
-    strcpy(state->result, "Molecular-ionization equilibrium was not computed");
-    return state->result;
+    return "Molecular-ionization equilibrium was not computed";
   }
   if (!state->flagCONTIN)
   {
-    strcpy(state->result, "No arrays have been allocated for continous opacity calculations");
-    return state->result;
+    return "No arrays have been allocated for continous opacity calculations";
   }
   if (!state->lineOPACITIES)
   {
-    strcpy(state->result, "No memory has been allocated for storing line opacities");
-    return state->result;
+    return "No memory has been allocated for storing line opacities";
   }
 
   /* Get the arguments */
 
-  if (n < 9)
-  {
-    strcpy(state->result, "Not enough arguments");
-    return state->result;
-  }
-  if (n > 10) /* New SME software capable of using predefined wavelength grid */
-  {
-    NMU = *(short *)arg[0];          /* Number of limb points */
-    MU = (double *)arg[1];           /* Array of limb points */
-    FCBLUE = (double *)arg[2];       /* Continuum specific intensity on the blue end */
-    FCRED = (double *)arg[3];        /* Continuum specific intensity on the red end */
-    NWSIZE = *(int *)arg[4];         /* Length of the arrays for synthesis */
-    NWL = *(int *)arg[5];            /* Length of predefined wavelength vector */
-    WL = (double *)arg[6];           /* Array for wavelengths */
-    TABLE = (double *)arg[7];        /* Array for synthetic spectrum */
-    EPS1 = *(double *)arg[8];        /* Accuracy of the radiative transfer integration */
-    EPS2 = *(double *)arg[9];        /* Accuracy of the interpolation on wl grid */
-    keep_lineop = *(short *)arg[10]; /* For several spectral segments there is no 
-                                      point recomputing line opacities. This flag
-                                      tells when recalculations are needed */
-  }
-  else /* Old SME software */
-  {
-    NMU = *(short *)arg[0];    /* Number of limb points */
-    MU = (double *)arg[1];     /* Array of limb points */
-    FCBLUE = (double *)arg[2]; /* Continuum specific intensity on the blue end */
-    FCRED = (double *)arg[3];  /* Continuum specific intensity on the red end */
-    NWSIZE = *(long *)arg[4];  /* Length of the arrays for synthesis */
-    WL = (double *)arg[5];     /* Array for wavelengths */
-    TABLE = (double *)arg[6];  /* Array for synthetic spectrum */
-    EPS1 = *(double *)arg[7];  /* Accuracy of the radiative transfer integration */
-    EPS2 = *(double *)arg[8];  /* Accuracy of the interpolation on wl grid */
-    state->change_byte_order = 0;
-  }
+  NMU = nmu;         /* Number of limb points */
+  MU = mu;           /* Array of limb points */
+  FCBLUE = cint_seg; /* Continuum specific intensity on the blue end */
+  FCRED = cintr_seg; /* Continuum specific intensity on the red end */
+  NWSIZE = nwmax;    /* Length of the arrays for synthesis */
+  NWL = nw;          /* Length of predefined wavelength vector */
+  WL = wint_seg;     /* Array for wavelengths */
+  TABLE = sint_seg;  /* Array for synthetic spectrum */
+  EPS1 = accrt;      /* Accuracy of the radiative transfer integration */
+  EPS2 = accwi;      /* Accuracy of the interpolation on wl grid */
+  // keep_lineop = keep_lineop;
+  /* For several spectral segments there is no 
+                                    point recomputing line opacities. This flag
+                                    tells when recalculations are needed */
 
   if (NMU > MUSIZE)
   {
-    snprintf(state->result, 511, "Specified number of limb angles (%d) exceeds MUSIZE (%d)", NMU, MUSIZE);
-    return state->result;
+    static char errmsg[64];
+    sprintf(errmsg, "Specified number of limb angles (%d) exceeds MUSIZE (%d)", NMU, MUSIZE);
+    return errmsg;
   }
 
-  if (n > 11) /* Check of continuum is needed at every wavelength */
-  {           /* If this flag is true FCBLUE must be an arrays of */
-              /* the size NWSIZE. On exit FCRED keeps its meaning */
-    long_continuum = *(short *)arg[11];
-  }
-  else
-    long_continuum = 0;
+  /* Check of continuum is needed at every wavelength */
+  /* If this flag is true FCBLUE must be an arrays of */
+  /* the size NWSIZE. On exit FCRED keeps its meaning */
 
   if (!keep_lineop)
   {
@@ -6051,8 +5909,7 @@ extern "C" char const *SME_DLL Transf(int n, void *arg[], GlobalState *state)
     CALLOC(state->ENL4, state->NLINES, double);
     if (state->ENL4 == NULL)
     {
-      strcpy(state->result, "Not enough memory");
-      return state->result;
+      return "Not enough memory";
     }
 
     /* Check autoionization lines */
@@ -6172,60 +6029,46 @@ extern "C" char const *SME_DLL Transf(int n, void *arg[], GlobalState *state)
                   WL, long_continuum, state);
   }
 
-  *((int *)arg[5]) = NWL;
+  nw = NWL;
 
   return iret ? "Not enough array length to store all the points" : "";
 }
 
-extern "C" char const *SME_DLL GetLineRange(int n, void *arg[], GlobalState *state) /* Get importance range for every line */
+char const *_GetLineRange(double *linerange, int nlines, GlobalState *state) /* Get importance range for every line */
 {
-  int nlines, line;
+  int line;
   double *b;
 
   if (!state->flagMODEL)
   {
-    strcpy(state->result, "No model atmosphere has been set");
-    return state->result;
+    return "No model atmosphere has been set";
   }
   if (!state->flagWLRANGE)
   {
-    strcpy(state->result, "No wavelength range has been set");
-    return state->result;
+    return "No wavelength range has been set";
   }
   if (!state->flagABUND)
   {
-    strcpy(state->result, "No list of abundances has been set");
-    return state->result;
+    return "No list of abundances has been set";
   }
   if (!state->flagLINELIST)
   {
-    strcpy(state->result, "No line list has been set");
-    return state->result;
+    return "No line list has been set";
   }
   if (!state->flagIONIZ)
   {
-    strcpy(state->result, "Molecular-ionization equilibrium was not computed");
-    return state->result;
+    return "Molecular-ionization equilibrium was not computed";
   }
   if (!state->flagCONTIN)
   {
-    strcpy(state->result, "No arrays have been allocated for continous opacity calculations");
-    return state->result;
+    return "No arrays have been allocated for continous opacity calculations";
   }
   if (!state->lineOPACITIES)
   {
-    strcpy(state->result, "No memory has been allocated for storing line opacities");
-    return state->result;
+    return "No memory has been allocated for storing line opacities";
   }
 
-  if (n < 2) // Check if arguments are present
-  {
-    strcpy(state->result, "GetLineRange: Requires an double array pointer and its length");
-    return state->result;
-  }
-
-  b = (double *)arg[0];
-  nlines = *(int *)arg[1];
+  b = linerange;
 
   for (line = 0; line < min(nlines, state->NLINES); line++)
   {
@@ -6243,7 +6086,7 @@ extern "C" char const *SME_DLL GetLineRange(int n, void *arg[], GlobalState *sta
   return &OK_response;
 }
 
-extern "C" char const *SME_DLL CentralDepth(int n, void *arg[], GlobalState *state)
+char const *_CentralDepth(int nmu, double *mu, int nwsize, float *table, double accrt, GlobalState *state)
 {
   /*
   THIS SUBROUTINE EXPLICITLY SOLVES THE TRANSFER EQUATION
@@ -6264,57 +6107,44 @@ extern "C" char const *SME_DLL CentralDepth(int n, void *arg[], GlobalState *sta
 
   if (!state->flagMODEL)
   {
-    strcpy(state->result, "No model atmosphere has been set");
-    return state->result;
+    return "No model atmosphere has been set";
   }
   if (!state->flagWLRANGE)
   {
-    strcpy(state->result, "No wavelength range has been set");
-    return state->result;
+    return "No wavelength range has been set";
   }
   if (!state->flagABUND)
   {
-    strcpy(state->result, "No list of abundances has been set");
-    return state->result;
+    return "No list of abundances has been set";
   }
   if (!state->flagLINELIST)
   {
-    strcpy(state->result, "No line list has been set");
-    return state->result;
+    return "No line list has been set";
   }
   if (!state->flagIONIZ)
   {
-    strcpy(state->result, "Molecular-ionization equilibrium was not computed");
-    return state->result;
+    return "Molecular-ionization equilibrium was not computed";
   }
   if (!state->flagCONTIN)
   {
-    strcpy(state->result, "No arrays have been allocated for continous opacity calculations");
-    return state->result;
+    return "No arrays have been allocated for continous opacity calculations";
   }
   if (!state->lineOPACITIES)
   {
-    strcpy(state->result, "No memory has been allocated for storing line opacities");
-    return state->result;
+    return "No memory has been allocated for storing line opacities";
   }
 
   /* Get the arguments */
 
-  if (n < 5)
-  {
-    strcpy(state->result, "Not enough arguments");
-    return state->result;
-  }
-  NMU = *(int *)arg[0]; /* Number of limb points */
+  NMU = nmu; /* Number of limb points */
   if (NMU > 81)
   {
-    strcpy(state->result, "SME library is limited to maximum 81 mu angles");
-    return state->result;
+    return "SME library is limited to maximum 81 mu angles";
   }
-  MU = (double *)arg[1];    /* Array of limb points */
-  NWSIZE = *(int *)arg[2];  /* Length of the arrays for synthesis */
-  TABLE = (float *)arg[3];  /* Array for synthetic spectrum */
-  EPS1 = *(double *)arg[4]; /* Accuracy of the radiative transfer integration */
+  MU = mu;         /* Array of limb points */
+  NWSIZE = nwsize; /* Length of the arrays for synthesis */
+  TABLE = table;   /* Array for synthetic spectrum */
+  EPS1 = accrt;    /* Accuracy of the radiative transfer integration */
   if (NWSIZE < state->NLINES)
   {
     strcpy(state->result, "Array size is smaller than the number of sp.lines");
@@ -7520,25 +7350,20 @@ void CENTERINTG(double *MUs, int NMU, int LINE, double *contop, double *RESULT, 
 
 #undef FLUX_SCALE
 
-extern "C" char const *SME_DLL GetLineOpacity(int n, void *arg[], GlobalState *state) /* Returns specific line opacity */
+char const *_GetLineOpacity(double wave, short nrhox, double *lop, double *cop, double *scr, double *tsf, double *csf, GlobalState *state) /* Returns specific line opacity */
 {
   int MOTYPE_orig;
-  short i, j, nrhox;
+  short i, j;
   double *a1, *a2, *a3, *a4, *a5, WAVE, *XK, *XC, *SRC, *SRC_CONT;
 
-  if (n < 3)
-  {
-    strcpy(state->result, "Not enough arguments");
-    return state->result;
-  }
-  WAVE = *(double *)arg[0]; /* Wavelength */
-  i = *(short *)arg[1];     /* Length of IDL opacity array */
+  WAVE = wave; /* Wavelength */
+  i = nrhox;   /* Length of IDL opacity array */
   nrhox = min(state->NRHOX, i);
-  a1 = (double *)arg[2];       /* Line opacity */
-  a2 = (double *)arg[3];       /* Continuum opacity including scatter */
-  a3 = (double *)arg[4];       /* Scatter */
-  a4 = (double *)arg[5];       /* Total source function */
-  a5 = (double *)arg[6];       /* Continuum source function */
+  a1 = lop;                    /* Line opacity */
+  a2 = cop;                    /* Continuum opacity including scatter */
+  a3 = scr;                    /* Scatter */
+  a4 = tsf;                    /* Total source function */
+  a5 = csf;                    /* Continuum source function */
   MOTYPE_orig = state->MOTYPE; /* Save state->MOTYPE */
   state->MOTYPE = -1;          /* Set state->MOTYPE to return only line opacity */
 

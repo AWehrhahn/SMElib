@@ -47,7 +47,6 @@ class SME_DLL:
         else:
             self.state = state
 
-        self.datadir = datadir
         if datadir is not None:
             self.SetLibraryPath(datadir)
 
@@ -61,6 +60,10 @@ class SME_DLL:
     def libfile(self):
         """str: Location of the library file"""
         return self.lib.libfile
+
+    @property
+    def interface(self):
+        return self.lib.interface
 
     @property
     def file(self):

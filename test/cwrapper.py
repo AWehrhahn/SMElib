@@ -231,7 +231,7 @@ def load_library(libfile=None):
     if libfile is None:
         localdir = Path(__file__).parent
         libfile = get_lib_name()
-        libfile = localdir / "dll" / libfile
+        libfile = localdir / ".." / "lib" / libfile
     return ct.CDLL(str(libfile))
 
 
@@ -398,6 +398,15 @@ class IDL_DLL:
         self.libfile = libfile
         self.lib = load_library(libfile)
 
+        # Pick best interface
+        self.interfaces = self.get_interfaces()
+        if "Parallel" in self.interfaces:
+            self.interface = "Parallel"
+        elif "IDL" in self.interfaces:
+            self.interface = "IDL"
+        else:
+            self.interface = self.interfaces[0]
+
     def __getattr__(self, name):
         return lambda *args, **kwargs: self.call(name, *args, **kwargs)
 
@@ -421,7 +430,7 @@ class IDL_DLL:
         """
         error = ""
         try:
-            error = idl_call_external(name, *args, lib=self.lib, **kwargs)
+            error = idl_call_external(self.get_name(name), *args, lib=self.lib, **kwargs)
         except AttributeError as ex:
             error = "Using obsolete SME Library; {ex}".format(ex=ex)
             raise_error = False
@@ -441,14 +450,34 @@ class IDL_DLL:
                 )
         return error
 
+    def get_name(self, funname):
+        if self.interface == "Parallel":
+            return f"Parallel_{funname}"
+        elif self.interface == "IDL":
+            return funname
+        elif self.interface == "Cython":
+            return f"Cython_{funname}"
+        else:
+            raise ValueError
+
     def new_state(self):
         try:
-            return idl_call_external("NewState", lib=self.lib, restype="state")
+            return idl_call_external(self.get_name("NewState"), lib=self.lib, restype="state")
         except AttributeError:
             return None
 
     def free_state(self, state):
-        return idl_call_external("FreeState", state=state, lib=self.lib)
+        return idl_call_external(self.get_name("FreeState"), state=state, lib=self.lib)
 
     def copy_state(self, state):
-        return idl_call_external("CopyState", restype="state", state=state, lib=self.lib)
+        return idl_call_external(self.get_name("CopyState"), restype="state", state=state, lib=self.lib)
+
+    def get_interfaces(self):
+        try:
+            interfaces = idl_call_external("GetInterfaces")
+            interfaces = interfaces.decode()
+            interfaces = interfaces.split(";")
+        except AttributeError:
+            # Old Library without that function
+            interfaces = ["IDL"]
+        return interfaces

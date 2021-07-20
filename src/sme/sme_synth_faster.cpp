@@ -285,15 +285,18 @@ int compress(char *target, char *source)
   return t - 1;
 }
 
-extern "C" int SME_DLL GetNLINES(){
-    return NLINES;
+extern "C" int SME_DLL GetNLINES()
+{
+  return NLINES;
 }
 
-extern "C" short SME_DLL GetNRHOX(){
-    return NRHOX;
+extern "C" short SME_DLL GetNRHOX()
+{
+  return NRHOX;
 }
 
-extern "C" char * SME_DLL GetSPNAME(){
+extern "C" char *SME_DLL GetSPNAME()
+{
   return spname;
 }
 
@@ -5489,8 +5492,6 @@ extern "C" char const *SME_DLL Ionization(int n, void *arg[])
     eqstat_(eos_mode, TEMP, Pgas, Pelec, ABUND + 1, ELEMEN + 1, AMASS + 1,
             nelem, SPINDEX, SPLIST, FRACT[i], PARTITION_FUNCTIONS[i], POTION,
             MOLWEIGHT, NLINES, N_SPLIST, XNE_estim, XNA_estim, RHO_estim, NITER, 3, 8);
-
-
 
     if (fabs(XNE[i] - XNE_estim) / XNE[i] > max_Ne_err)
     {

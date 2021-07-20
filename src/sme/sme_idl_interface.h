@@ -6,20 +6,6 @@
 #endif
 #endif
 
-// The SME library version (and compilation date)
-#ifndef VERSION
-#define VERSION "6.03, July 2019"
-#endif
-
-/* Datafile locations */
-// DATA_DIR is defined in platform.h
-
-#define DATAFILE_FE "Fe1_Bautista2017.dat.INTEL"
-#define DATAFILE_NH "NH_Stancil2018.dat.INTEL"
-#define DATAFILE_STEHLE "stehle_long.dat.INTEL"
-#define DATAFILE_BPO "bpo_self.grid.INTEL"
-#define DATAFILE_VCS "vcsbalmer.dat"
-
 #ifndef IDL_DEFINE
 #define IDL_DEFINE
 // Define IDL String
@@ -33,10 +19,11 @@ typedef struct
   char *s;                /* Addr of string */
 } IDL_STRING;
 #endif
+
 // define global parameter access
-extern "C" int SME_DLL GetNLINES(void);
-extern "C" short SME_DLL GetNRHOX(void);
-extern "C" char *SME_DLL GetSPNAME(void);
+extern "C" int SME_DLL GetNLINES(int n, void *arg[]);
+extern "C" short SME_DLL GetNRHOX(int n, void *arg[]);
+extern "C" char *SME_DLL GetSPNAME(int n, void *arg[]);
 
 // define the external methods
 extern "C" const char *SME_DLL SMELibraryVersion(int n, void *arg[]); /* Return SME library version */

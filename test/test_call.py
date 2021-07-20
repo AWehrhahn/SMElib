@@ -679,19 +679,9 @@ if __name__ == "__main__":
     sint = [None for _ in range(len(wrange))]
     cint = [None for _ in range(len(wrange))]
 
-    # for i, (wfirst, wlast) in enumerate(tqdm(wrange)):
-    #     wint[i], sint[i], cint[i] = sequential(wfirst, wlast)
-
-    with ProcessPoolExecutor() as executor:
-        futures = {}
-        for i, (wfirst, wlast) in enumerate(tqdm(wrange)):
-            futures[executor.submit(parallel, wfirst, wlast)] = i
-
-        for future in as_completed(tqdm(futures)):
-            seg = futures[future]
-            wint[seg], sint[seg], cint[seg] = future.result()
-        pass
-
+    for i, (wfirst, wlast) in enumerate(tqdm(wrange)):
+        wint[i], sint[i], cint[i] = sequential(wfirst, wlast)
+   
     for i in range(len(wrange)):
         plt.plot(wint[i], sint[i][0])
     plt.show()

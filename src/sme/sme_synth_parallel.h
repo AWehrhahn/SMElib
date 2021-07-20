@@ -1,11 +1,5 @@
 // This just contains all the definitions necessary for the parallel version
 
-#ifdef BUILDING_SME_WIN_DLL
-#define SME_DLL __declspec(dllexport)
-#else
-#define SME_DLL
-#endif
-
 // The SME library version (and compilation date)
 #ifndef VERSION
 #define VERSION "6.03, July 2019"
@@ -20,19 +14,9 @@
 #define DATAFILE_BPO "bpo_self.grid.INTEL"
 #define DATAFILE_VCS "vcsbalmer.dat"
 
-#ifndef IDL_DEFINE
-#define IDL_DEFINE
-// Define IDL String
-typedef int IDL_STRING_SLEN_T;
-#define IDL_STRING_MAX_SLEN 2147483647
 
-typedef struct
-{                         /* Define string descriptor */
-  IDL_STRING_SLEN_T slen; /* Length of string, 0 for null */
-  short stype;            /* type of string, static or dynamic */
-  char *s;                /* Addr of string */
-} IDL_STRING;
-#endif
+#ifndef STATE_DEFINE
+#define STATE_DEFINE
 
 /* Global static variables and arrays */
 #define MAX_ELEM 100 // Maximum Number of elements
@@ -40,7 +24,6 @@ typedef struct
 #define MUSIZE 77    // Maximum Number of mu angles
 #define MAX_PATHLEN 512
 #define MAX_OUT_LEN 511
-
 extern "C" typedef struct
 {
   /* IMPORTANT NOTE
@@ -108,41 +91,39 @@ extern "C" typedef struct
   short *flagNLTE;
   char result[MAX_OUT_LEN + 1]; /* leave a space for a '\0' */
 } GlobalState;
+#endif
+
+extern "C" const char * GetInterfaces();
 
 // define global parameter access
-extern "C" int SME_DLL GetNLINES(int n, void *args[], GlobalState *state);
-extern "C" short SME_DLL GetNRHOX(int n, void *args[], GlobalState *state);
-extern "C" char *SME_DLL GetSPNAME(int n, void *args[], GlobalState *state);
-extern "C" GlobalState *SME_DLL NewState(int n, void *args[]);
-extern "C" const char * SME_DLL FreeState(int n, void *args[], GlobalState *state);
-extern "C" GlobalState *SME_DLL CopyState(int n, void *args[], GlobalState *state);
-
+GlobalState * _NewState();
+const char * _FreeState(short clean_pointers, GlobalState *state);
+GlobalState * _CopyState(short clean_pointers, GlobalState *state);
 
 // define the external methods
-extern "C" const char *SME_DLL SMELibraryVersion(int n, void *arg[], GlobalState *state); /* Return SME library version */
-extern "C" const char *SME_DLL GetDataFiles(int n, void *arg[], GlobalState *state);      /* Return the required data files */
-extern "C" const char *SME_DLL GetLibraryPath(int n, void *arg[], GlobalState *state);    /* Return the current data file directory */
-extern "C" const char *SME_DLL SetLibraryPath(int n, void *arg[], GlobalState *state);    /* Set the data file directory */
-extern "C" const char *SME_DLL InputWaveRange(int n, void *arg[], GlobalState *state);    /* Read in Wavelength range */
-extern "C" const char *SME_DLL SetVWscale(int n, void *arg[], GlobalState *state);        /* Set van der Waals scaling factor */
-extern "C" const char *SME_DLL SetH2broad(int n, void *arg[], GlobalState *state);        /* Set flag for H2 molecule */
-extern "C" const char *SME_DLL ClearH2broad(int n, void *arg[], GlobalState *state);      /* Clear flag for H2 molecule */
-extern "C" const char *SME_DLL InputLineList(int n, void *arg[], GlobalState *state);     /* Read in line list */
-extern "C" const char *SME_DLL OutputLineList(int n, void *arg[], GlobalState *state);    /* Return line list */
-extern "C" const char *SME_DLL UpdateLineList(int n, void *arg[], GlobalState *state);    /* Change line list parameters */
-extern "C" const char *SME_DLL InputModel(int n, void *arg[], GlobalState *state);        /* Read in model atmosphere */
-extern "C" const char *SME_DLL InputDepartureCoefficients(int n, void *arg[], GlobalState *state);
-extern "C" const char *SME_DLL GetDepartureCoefficients(int n, void *arg[], GlobalState *state);   /* Get NLTE b's for specific line */
-extern "C" const char *SME_DLL GetNLTEflags(int n, void *arg[], GlobalState *state);               /* Get line list NLTE flags */
-extern "C" const char *SME_DLL ResetDepartureCoefficients(int n, void *arg[], GlobalState *state); /* Reset LTE */
-extern "C" const char *SME_DLL InputAbund(int n, void *arg[], GlobalState *state);                 /* Read in abundances */
-extern "C" const char *SME_DLL Opacity(int n, void *arg[], GlobalState *state);                    /* Calculate opacities */
-extern "C" const char *SME_DLL GetOpacity(int n, void *arg[], GlobalState *state);                 /* Returns specific cont. opacity */
-extern "C" const char *SME_DLL Ionization(int n, void *arg[], GlobalState *state);                 /* Perfrom EOS calculations */
-extern "C" const char *SME_DLL GetDensity(int n, void *arg[], GlobalState *state);                 /* Returns density in g/cm^3 */
-extern "C" const char *SME_DLL GetNatom(int n, void *arg[], GlobalState *state);                   /* Returns atomic number density */
-extern "C" const char *SME_DLL GetNelec(int n, void *arg[], GlobalState *state);                   /* Returns electron number density */
-extern "C" const char *SME_DLL Transf(int n, void *arg[], GlobalState *state);                     /* Computes spectral synthesis */
-extern "C" const char *SME_DLL CentralDepth(int n, void *arg[], GlobalState *state);               /* Computes line central depths */
-extern "C" const char *SME_DLL GetLineOpacity(int n, void *arg[], GlobalState *state);             /* Returns specific line opacity */
-extern "C" const char *SME_DLL GetLineRange(int n, void *arg[], GlobalState *state);               /* Get validity range for every line */
+const char * _SMELibraryVersion(); /* Return SME library version */
+const char * _GetDataFiles();      /* Return the required data files */
+const char * _GetLibraryPath(GlobalState *state);    /* Return the current data file directory */
+const char * _SetLibraryPath(const char * path, int pathlen, GlobalState *state);    /* Set the data file directory */
+const char * _InputWaveRange(double wfirst, double wlast, GlobalState *state);    /* Read in Wavelength range */
+const char * _SetVWscale(double vw_scale, GlobalState *state);        /* Set van der Waals scaling factor */
+const char * _SetH2broad(short flag, GlobalState *state);        /* Set flag for H2 molecule */
+const char * _InputLineList(int nlines, int slen, const char * species, double * linelist, GlobalState *state);     /* Read in line list */
+const char * _OutputLineList(int nlines, double * linelist, GlobalState *state);    /* Return line list */
+const char * _UpdateLineList(short nlines, int slen, short * index, const char * species,  double * linelist, GlobalState *state);    /* Change line list parameters */
+const char * _InputModel(short ndepth, double teff, double grav, double wlstd, const char * motype_str,int motype_slen,short * opflag, double * depth, double * temp, double * xne, double * xna, double * rho, double * vt, double radius, double * height, GlobalState *state);        /* Read in model atmosphere */
+const char * _InputDepartureCoefficients(double * bmat, int lineindex, GlobalState *state);
+const char * _GetDepartureCoefficients(double * bmat, int nrhox, int line, GlobalState *state);   /* Get NLTE b's for specific line */
+const char * _GetNLTEflags(short * nlte_flags, int nlines, GlobalState *state);               /* Get line list NLTE flags */
+const char * _ResetDepartureCoefficients(GlobalState *state); /* Reset LTE */
+const char * _InputAbund(double * abund, int nelements, GlobalState *state);                 /* Read in abundances */
+const char * _Opacity(short request_output, short nout, double * out1, double * out2, double * out3, GlobalState *state);                    /* Calculate opacities */
+const char * _GetOpacity(short ifop, short length, double * result, const char * species, int slen, const char * type, int tlen, GlobalState *state);                 /* Returns specific cont. opacity */
+const char * _Ionization(short ion, GlobalState *state);                 /* Perfrom EOS calculations */
+const char * _GetDensity(short length, double * result, GlobalState *state);                 /* Returns density in g/cm^3 */
+const char * _GetNatom(short length, double * result, GlobalState *state);                   /* Returns atomic number density */
+const char * _GetNelec(short length, double * result, GlobalState *state);                   /* Returns electron number density */
+const char * _Transf(short nmu, double * mu, double * cint_seg, double * cintr_seg, int nwmax, int nw, double * wint_seg, double * sint_seg, double accrt, double accwi, short keep_lineop, short long_continuum, GlobalState *state);                     /* Computes spectral synthesis */
+const char * _CentralDepth(int nmu, double * mu, int nwsize, float * table, double accrt, GlobalState *state);               /* Computes line central depths */
+const char * _GetLineOpacity(double wave, short nrhox, double * lop, double * cop, double * scr, double * tsf, double * csf, GlobalState *state);             /* Returns specific line opacity */
+const char * _GetLineRange(double * linerange, int nlines, GlobalState *state);               /* Get validity range for every line */

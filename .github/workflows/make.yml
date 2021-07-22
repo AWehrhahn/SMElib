@@ -45,11 +45,11 @@ jobs:
           - name: gfortran
             container: manylinux2014_x86_64
             compiler: gfortran
-            makefile: Makefile.am
+            makefile: Makefile_sequential.am
           - name: gfortran-parallel
             container: manylinux2014_x86_64
             compiler: gfortran
-            makefile: Makefile_parallel.am
+            makefile: Makefile.am
           # F2C fails the test on manylinux for some reason , f2c]
 
     container:

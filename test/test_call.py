@@ -638,53 +638,54 @@ def test_radiative_transfer(dll, libfile, datadir):
 
 
 if __name__ == "__main__":
+    import time
     libfile = join(dirname(__file__), "../lib/", "libsme.so")
     datadir = join(dirname(__file__), "../share/libsme/")
     dll = SME_DLL(libfile, datadir)
-    version = dll.SMELibraryVersion()
-    print(version)
     dll2 = dll.copy()
-    version = dll.SMELibraryVersion()
-    print(version)
 
+    # linelist = get_linelist()
+    # abund = get_abund()
+    # atmo = get_atmo()
 
-    linelist = get_linelist()
-    abund = get_abund()
-    atmo = get_atmo()
+    # dll.SetLibraryPath(datadir)
+    # dll.InputLineList(linelist)
+    # dll.InputModel(5770, 4.44, 0.7, atmo)
+    # dll.InputAbund(lambda *_, **__: abund)
+    # dll.SetVWscale(1.0)
+    # dll.SetH2broad(True)
+    # dll.Ionization(0)
+
+    # def sequential(wfirst, wlast):
+    #     dll.InputWaveRange(wfirst, wlast)
+    #     dll.Opacity()
+    #     _, wint, sint, cint = dll.Transf([1], 0.01, 0.03)
+    #     return wint, sint, cint
+
+    # def parallel(wfirst, wlast):
+    #     dll2 = dll.copy()
+    #     dll2.InputWaveRange(wfirst, wlast)
+    #     dll2.Opacity()
+    #     _, wint, sint, cint = dll2.Transf([1], 0.01, 0.03)
+    #     del dll2
+    #     return wint, sint, cint
     
-    dll.SetLibraryPath(datadir)
-    dll.InputLineList(linelist)
-    dll.InputModel(5770, 4.44, 0.7, atmo)
-    dll.InputAbund(lambda *_, **__: abund)
-    dll.SetVWscale(1.0)
-    dll.SetH2broad(True)
-    dll.Ionization(0)
+    # wrange = [(6436, 6438), (6438, 6440), (6440, 6442)]
+    # wint = [None for _ in range(len(wrange))]
+    # sint = [None for _ in range(len(wrange))]
+    # cint = [None for _ in range(len(wrange))]
 
-    def sequential(wfirst, wlast):
-        dll.InputWaveRange(wfirst, wlast)
-        dll.Opacity()
-        _, wint, sint, cint = dll.Transf([1], 0.01, 0.03)
-        return wint, sint, cint
+    # for i, (wfirst, wlast) in enumerate(tqdm(wrange)):
+    #     wint[i], sint[i], cint[i] = sequential(wfirst, wlast)
 
-    def parallel(wfirst, wlast):
-        dll2 = dll.copy()
-        dll2.InputWaveRange(wfirst, wlast)
-        dll2.Opacity()
-        _, wint, sint, cint = dll2.Transf([1], 0.01, 0.03)
-        del dll2
-        return wint, sint, cint
-    
-    wrange = [(6436, 6438), (6438, 6440), (6440, 6442)]
-    wint = [None for _ in range(len(wrange))]
-    sint = [None for _ in range(len(wrange))]
-    cint = [None for _ in range(len(wrange))]
-
-    for i, (wfirst, wlast) in enumerate(tqdm(wrange)):
-        wint[i], sint[i], cint[i] = sequential(wfirst, wlast)
-   
-    for i in range(len(wrange)):
-        plt.plot(wint[i], sint[i][0])
-    plt.show()
+    # for i in range(len(wrange)):
+    #     plt.plot(wint[i], sint[i][0])
+    # plt.show()
 
     test_radiative_transfer(dll2, libfile, datadir)
+
+    dll2.FreeState()
+    dll.FreeState()
+    exit()
+
     pass

@@ -258,6 +258,9 @@ GlobalState *_NewState()
       state->flagIONIZ = state->flagCONTIN = state->lineOPACITIES = state->flagH2broad =
           state->initNLTE = 0;
 
+  printf("WHAT? %i\n", state->flagLINELIST);
+
+
   /* Global pointers for dynamically allocated arrays */
 
   // statically sized arrays
@@ -348,6 +351,9 @@ const char *_FreeState(short clean_pointers, GlobalState *state)
 GlobalState *_CopyState(short clean_pointers, GlobalState *state)
 {
   // NOTE: This is a shallow copy
+  printf("Hello ");
+  printf("There %i\n", state->flagLINELIST);
+  
   GlobalState *new_state = _NewState();
   new_state->FREQ = state->FREQ;
   new_state->FREQLG = state->FREQLG;
@@ -400,6 +406,9 @@ GlobalState *_CopyState(short clean_pointers, GlobalState *state)
   new_state->lineOPACITIES = state->lineOPACITIES;
   new_state->flagH2broad = state->flagH2broad;
   new_state->initNLTE = state->initNLTE;
+
+
+  printf("General %i\n", new_state->flagLINELIST);
 
   if (clean_pointers)
   {
@@ -506,6 +515,8 @@ GlobalState *_CopyState(short clean_pointers, GlobalState *state)
     new_state->MOLWEIGHT = state->MOLWEIGHT;
     new_state->SPLIST = state->SPLIST;
   }
+  printf("Kenobi");
+
   return new_state;
 }
 
@@ -671,7 +682,7 @@ char const *_InputLineList(int nlines, int slen, const char *species, double *li
     }
   }
 
-  CALLOC(state->spname, state->NLINES * 8, char);
+  CALLOC(state->spname, state->NLINES * SP_LEN, char);
   CALLOC(state->SPINDEX, state->NLINES, int);
   CALLOC(state->ION, state->NLINES, int);
   CALLOC(state->MARK, state->NLINES, short);
@@ -743,13 +754,13 @@ char const *_InputLineList(int nlines, int slen, const char *species, double *li
   for (LINE = 0; LINE < state->NLINES; LINE++)
   {
     /* state->spname will be passed to FORTRAN, so no trailing zero's, fixed length
-   padded with spaces instead */
-    memcpy(state->spname + 8 * LINE, species + slen * LINE, slen);
-    if (slen < 8)
-      for (l = slen; l < 8; l++)
-        state->spname[8 * LINE + l] = ' ';
+    padded with spaces instead */
+    strncpy(&(state->spname[SP_LEN * LINE]), &(species[slen * LINE]), min(slen, SP_LEN));
+    if (slen < SP_LEN)
+      for (l = slen; l < SP_LEN; l++)
+        state->spname[SP_LEN * LINE + l] = ' ';
     for (l = 0; l < slen; l++)
-      if (*(species + slen * LINE + l) == ' ')
+      if (species[slen * LINE + l] == ' ')
         break;
     state->ION[LINE] = (l == slen) ? 1 : atoi(species + slen * LINE + l + 1);
     state->WLCENT[LINE] = a3[LINE];                      /* Central wavelength    */
@@ -769,7 +780,7 @@ char const *_InputLineList(int nlines, int slen, const char *species, double *li
     GRLG10 = 0.;
     if (state->GAMRAD[LINE] > 0.)
       GRLG10 = log10(state->GAMRAD[LINE]);
-    if (strncmp(state->spname + 8 * LINE, "H 1", 3)) /* Non-Hydrogen line */
+    if (strncmp(&(state->spname[SP_LEN * LINE]), "H 1", 3)) /* Non-Hydrogen line */
     {
       if (state->GAMQST[LINE] < 0.)
         state->GAMQST[LINE] = pow10(state->GAMQST[LINE]);
@@ -841,7 +852,7 @@ char const *_OutputLineList(int nlines, double *linelist, GlobalState *state)
     a1[6 * LINE + 1] = state->GF[LINE];
     a1[6 * LINE + 2] = state->EXCIT[LINE];
     a1[6 * LINE + 3] = (state->GAMRAD[LINE] > 0.) ? log10(state->GAMRAD[LINE]) : 0.; /* Radiative damping     */
-    if (strncmp(state->spname + 8 * LINE, "H ", 2))                                  /* Non-Hydrogen line     */
+    if (strncmp(&(state->spname[SP_LEN * LINE]), "H ", 2))                                  /* Non-Hydrogen line     */
     {
       a1[6 * LINE + 4] = (state->GAMQST[LINE] > 0.) ? log10(state->GAMQST[LINE]) : 0.; /* Stark damping         */
       a1[6 * LINE + 5] = (state->GAMVW[LINE] > 0. &&
@@ -862,7 +873,7 @@ char const *_OutputLineList(int nlines, double *linelist, GlobalState *state)
 char const *_UpdateLineList(short nlines, int slen, short *index, const char *species, double *linelist, GlobalState *state)
 {
   static char ERRMES[60];
-  char tmpname[8];
+  char tmpname[SP_LEN];
   short LINE, NUPDTE, *INDEX;
   double GFLOG, GRLG10, GSLG10, GWLG10,
       *a1, *a2, *a3, *a4, *a5, *a6, *a7, *a8;
@@ -914,8 +925,8 @@ char const *_UpdateLineList(short nlines, int slen, short *index, const char *sp
    zero's, fixed length padded with spaces instead */
 
     memcpy(tmpname, a0 + LINE * slen, slen);
-    if (slen < 8)
-      for (l = slen; l < 8; l++)
+    if (slen < SP_LEN)
+      for (l = slen; l < SP_LEN; l++)
         tmpname[l] = ' ';
     WW = a3[LINE]; /* Wavelength */
     EXC = a4[LINE];
@@ -925,11 +936,11 @@ char const *_UpdateLineList(short nlines, int slen, short *index, const char *sp
     /* Make sure we are talking about the same line.
    Check species name and excitation potential */
 
-    if (strncmp(state->spname + 8 * i, tmpname, 8) || fabs(EXC - state->EXCIT[i]) > 0.005)
+    if (strncmp(&(state->spname[SP_LEN * i]), tmpname, SP_LEN) || fabs(EXC - state->EXCIT[i]) > 0.005)
     {
       sprintf(ERRMES, "Attempt to replace line %d with another line", i);
       printf("Subst: %10.4f, '%s', %f, %f\n", WW, tmpname, EXC, a5[LINE]);
-      printf("Orig:  %10.4f, '%4s', %f, %f\n", state->WLCENT[i], state->spname + 8 * i, state->EXCIT[i],
+      printf("Orig:  %10.4f, '%4s', %f, %f\n", state->WLCENT[i], &(state->spname[SP_LEN * i]), state->EXCIT[i],
              log10(state->GF[i]));
       return ERRMES;
     }
@@ -944,7 +955,7 @@ char const *_UpdateLineList(short nlines, int slen, short *index, const char *sp
     GRLG10 = 0.;
     if (state->GAMRAD[i] > 0.)
       GRLG10 = log10(state->GAMRAD[i]);
-    if (strncmp(state->spname + 8 * i, "H ", 2)) /* Non-Hydrogen line */
+    if (strncmp(&(state->spname[SP_LEN * i]), "H ", 2)) /* Non-Hydrogen line */
     {
       if (state->GAMQST[i] < 0.)
         state->GAMQST[i] = pow10(state->GAMQST[i]);
@@ -5311,13 +5322,13 @@ void AutoIonization(GlobalState *state)
       {
         if (OPEN)
           fprintf(file12, "Autoionizing line \'%s\' #%d will be computed\n",
-                  strtrim(Terminator(state->SPLIST + 8 * state->SPINDEX[LINE], 8)), LINE);
+                  strtrim(Terminator(state->SPLIST + SP_LEN * state->SPINDEX[LINE], SP_LEN)), LINE);
       }
       else
       {
         if (OPEN)
           fprintf(file12, "Autoionizing line \'%s\' #%d will not be computed\n",
-                  strtrim(Terminator(state->SPLIST + 8 * state->SPINDEX[LINE], 8)), LINE);
+                  strtrim(Terminator(state->SPLIST + SP_LEN * state->SPINDEX[LINE], SP_LEN)), LINE);
         state->MARK[LINE] = 2;
       }
     }
@@ -5347,7 +5358,7 @@ char const *_Ionization(short ion, GlobalState *state)
   int use_electron_density_from_EOS, use_particle_density_from_EOS,
       use_gas_density_from_EOS;
   short switches;
-  char *c, tmpname[13];
+  char *c, tmpname[SP_LEN + 1];
   float xna, xne, TEMP, XNATOM, XNELEC, XNA_estim, XNE_estim, RHO_estim,
       Pgas, Pelec, max_Ne_err;
   int dump01, dump02, return_pfs, return1, return2, return3, i_max_Ne_err;
@@ -5371,7 +5382,7 @@ char const *_Ionization(short ion, GlobalState *state)
     FREE(state->SPLIST);
 
   species_list = NULL;
-  CALLOC(species_list, state->NLINES * 8, char);
+  CALLOC(species_list, state->NLINES * SP_LEN, char);
   if (species_list == NULL)
   {
     strcpy(state->result, "No enough space in EOS_count_species");
@@ -5391,16 +5402,16 @@ char const *_Ionization(short ion, GlobalState *state)
 
   for (LINE = 0; LINE < state->NLINES; LINE++)
   {
-    strncpy(tmpname, state->spname + 8 * LINE, 8);
-    tmpname[8] = '\0';
+    strncpy(tmpname, &(state->spname[SP_LEN * LINE]), SP_LEN);
+    tmpname[SP_LEN] = '\0';
     c = strchr(tmpname, ' ');
     if (c != NULL)
       *c = '\0'; /* Cut the ionization stage */
-    strcpy(species_list + 8 * LINE, tmpname);
+    strcpy(species_list + SP_LEN * LINE, tmpname);
     i = strlen(tmpname);
-    if (i < 8)
-      for (; i < 8; i++)
-        species_list[8 * LINE + i] = ' ';
+    if (i < SP_LEN)
+      for (; i < SP_LEN; i++)
+        species_list[SP_LEN * LINE + i] = ' ';
   }
 
   /* First determine the size of the complete list returned by eqcount in as state->N_SPLIST */
@@ -5408,7 +5419,7 @@ char const *_Ionization(short ion, GlobalState *state)
   state->N_SPLIST = 0; /* That is to indicate that no default list has been set yet */
 
   nelem = MAX_ELEM - 1;
-  switch (i = eqcount_(ELEMEN + 1, species_list, state->ION, state->NLINES, state->N_SPLIST, nelem, 3, 8))
+  switch (i = eqcount_(ELEMEN + 1, species_list, state->ION, state->NLINES, state->N_SPLIST, nelem, 3, SP_LEN))
   {
   case 0:
     break;
@@ -5424,7 +5435,7 @@ char const *_Ionization(short ion, GlobalState *state)
 
   /* Now allocate space for the complete list of species and the index */
 
-  CALLOC(state->SPLIST, state->N_SPLIST * 8, char);
+  CALLOC(state->SPLIST, state->N_SPLIST * SP_LEN, char);
   if (state->SPLIST == NULL)
   {
     strcpy(state->result, "Not enough space in EOS_count_species");
@@ -5435,7 +5446,7 @@ char const *_Ionization(short ion, GlobalState *state)
 
   i = 0;
   switch (eqlist_(state->ABUND + 1, ELEMEN + 1, species_list, state->ION, state->SPINDEX, state->SPLIST,
-                  state->NLINES, i, state->N_SPLIST, nelem, 3, 8, 8))
+                  state->NLINES, i, state->N_SPLIST, nelem, 3, SP_LEN, SP_LEN))
   {
   case 0:
     break;
@@ -5553,49 +5564,49 @@ char const *_Ionization(short ion, GlobalState *state)
 
   for (i = 0; i < state->N_SPLIST; i++)
   {
-    if (!strncmp(state->SPLIST + 8 * i, "H ", 2))
+    if (!strncmp(state->SPLIST + SP_LEN * i, "H ", 2))
       state->IXH1 = i;
-    else if (!strncmp(state->SPLIST + 8 * i, "H+ ", 3))
+    else if (!strncmp(state->SPLIST + SP_LEN * i, "H+ ", 3))
       state->IXH2 = i;
-    else if (!strncmp(state->SPLIST + 8 * i, "H- ", 3))
+    else if (!strncmp(state->SPLIST + SP_LEN * i, "H- ", 3))
       state->IXHMIN = i;
-    else if (!strncmp(state->SPLIST + 8 * i, "H2 ", 3))
+    else if (!strncmp(state->SPLIST + SP_LEN * i, "H2 ", 3))
       state->IXH2mol = i;
-    else if (!strncmp(state->SPLIST + 8 * i, "H2+ ", 4))
+    else if (!strncmp(state->SPLIST + SP_LEN * i, "H2+ ", 4))
       state->IXH2pl = i;
-    else if (!strncmp(state->SPLIST + 8 * i, "He ", 3))
+    else if (!strncmp(state->SPLIST + SP_LEN * i, "He ", 3))
       state->IXHE1 = i;
-    else if (!strncmp(state->SPLIST + 8 * i, "He+ ", 4))
+    else if (!strncmp(state->SPLIST + SP_LEN * i, "He+ ", 4))
       state->IXHE2 = i;
-    else if (!strncmp(state->SPLIST + 8 * i, "He++ ", 5))
+    else if (!strncmp(state->SPLIST + SP_LEN * i, "He++ ", 5))
       state->IXHE3 = i;
-    else if (!strncmp(state->SPLIST + 8 * i, "C ", 2))
+    else if (!strncmp(state->SPLIST + SP_LEN * i, "C ", 2))
       state->IXC1 = i;
-    else if (!strncmp(state->SPLIST + 8 * i, "Al ", 3))
+    else if (!strncmp(state->SPLIST + SP_LEN * i, "Al ", 3))
       state->IXAL1 = i;
-    else if (!strncmp(state->SPLIST + 8 * i, "Si ", 3))
+    else if (!strncmp(state->SPLIST + SP_LEN * i, "Si ", 3))
       state->IXSI1 = i;
-    else if (!strncmp(state->SPLIST + 8 * i, "Si+ ", 4))
+    else if (!strncmp(state->SPLIST + SP_LEN * i, "Si+ ", 4))
       state->IXSI2 = i;
-    else if (!strncmp(state->SPLIST + 8 * i, "Ca ", 3))
+    else if (!strncmp(state->SPLIST + SP_LEN * i, "Ca ", 3))
       state->IXCA1 = i;
-    else if (!strncmp(state->SPLIST + 8 * i, "Ca+ ", 4))
+    else if (!strncmp(state->SPLIST + SP_LEN * i, "Ca+ ", 4))
       state->IXCA2 = i;
-    else if (!strncmp(state->SPLIST + 8 * i, "Mg ", 3))
+    else if (!strncmp(state->SPLIST + SP_LEN * i, "Mg ", 3))
       state->IXMG1 = i;
-    else if (!strncmp(state->SPLIST + 8 * i, "Mg+ ", 4))
+    else if (!strncmp(state->SPLIST + SP_LEN * i, "Mg+ ", 4))
       state->IXMG2 = i;
-    else if (!strncmp(state->SPLIST + 8 * i, "N ", 2))
+    else if (!strncmp(state->SPLIST + SP_LEN * i, "N ", 2))
       state->IXN1 = i;
-    else if (!strncmp(state->SPLIST + 8 * i, "Fe ", 3))
+    else if (!strncmp(state->SPLIST + SP_LEN * i, "Fe ", 3))
       state->IXFE1 = i;
-    else if (!strncmp(state->SPLIST + 8 * i, "O ", 2))
+    else if (!strncmp(state->SPLIST + SP_LEN * i, "O ", 2))
       state->IXO1 = i;
-    else if (!strncmp(state->SPLIST + 8 * i, "CH ", 3))
+    else if (!strncmp(state->SPLIST + SP_LEN * i, "CH ", 3))
       state->IXCH = i;
-    else if (!strncmp(state->SPLIST + 8 * i, "NH ", 3))
+    else if (!strncmp(state->SPLIST + SP_LEN * i, "NH ", 3))
       state->IXNH = i;
-    else if (!strncmp(state->SPLIST + 8 * i, "OH ", 3))
+    else if (!strncmp(state->SPLIST + SP_LEN * i, "OH ", 3))
       state->IXOH = i;
     state->POTION[i] = -1.;
     state->MOLWEIGHT[i] = -1.;
@@ -5611,7 +5622,7 @@ char const *_Ionization(short ion, GlobalState *state)
       Pgas = Pelec + state->XNA[i] * state->TK[i];
       eqpf_(TEMP, Pgas, Pelec, state->ABUND + 1, ELEMEN + 1, AMASS + 1,
             nelem, state->SPLIST, state->N_SPLIST, state->PARTITION_FUNCTIONS[i],
-            3, 8);
+            3, SP_LEN);
     }
     return &OK_response;
   }
@@ -5626,7 +5637,7 @@ char const *_Ionization(short ion, GlobalState *state)
 
     eqstat_(eos_mode, TEMP, Pgas, Pelec, state->ABUND + 1, ELEMEN + 1, AMASS + 1,
             nelem, state->SPINDEX, state->SPLIST, state->FRACT[i], state->PARTITION_FUNCTIONS[i], state->POTION,
-            state->MOLWEIGHT, state->NLINES, state->N_SPLIST, XNE_estim, XNA_estim, RHO_estim, NITER, 3, 8);
+            state->MOLWEIGHT, state->NLINES, state->N_SPLIST, XNE_estim, XNA_estim, RHO_estim, NITER, 3, SP_LEN);
 
     if (fabs(state->XNE[i] - XNE_estim) / state->XNE[i] > max_Ne_err)
     {
@@ -5642,13 +5653,13 @@ char const *_Ionization(short ion, GlobalState *state)
 
     if (dump02)
     {
-      printf("%f %d %d %s %f %f\n", TEMP, i, 79, Terminator(state->SPLIST + 8 * 79, 8),
+      printf("%f %d %d %s %f %f\n", TEMP, i, 79, Terminator(state->SPLIST + SP_LEN * 79, SP_LEN),
              state->PARTITION_FUNCTIONS[i][79], // Fe
              log10(state->FRACT[i][79] * state->PARTITION_FUNCTIONS[i][79] / state->RHO[i]));
-      printf("%f %d %d %s %f %f\n", TEMP, i, 80, Terminator(state->SPLIST + 8 * 80, 8),
+      printf("%f %d %d %s %f %f\n", TEMP, i, 80, Terminator(state->SPLIST + SP_LEN * 80, SP_LEN),
              state->PARTITION_FUNCTIONS[i][80], // Fe+
              log10(state->FRACT[i][80] * state->PARTITION_FUNCTIONS[i][80] / state->RHO[i]));
-      printf("%f %d %d %s %f %f\n", TEMP, i, 145, Terminator(state->SPLIST + 8 * 145, 8),
+      printf("%f %d %d %s %f %f\n", TEMP, i, 145, Terminator(state->SPLIST + SP_LEN * 145, SP_LEN),
              state->PARTITION_FUNCTIONS[i][145], // CN
              log10(state->FRACT[i][145] * state->PARTITION_FUNCTIONS[i][145] / state->RHO[i]));
     }
@@ -5657,7 +5668,7 @@ char const *_Ionization(short ion, GlobalState *state)
     {
       printf("Atmospheric layer #%d out of %d (%g %g %g)\n", i, state->NRHOX - 1, state->T[i], state->XNE[i], state->XNA[i]);
       for (j = 0; j < state->N_SPLIST; j++)
-        printf("%d %s %f %10.4g %f\n", j, Terminator(state->SPLIST + 8 * j, 8),
+        printf("%d %s %f %10.4g %f\n", j, Terminator(state->SPLIST + SP_LEN * j, SP_LEN),
                state->PARTITION_FUNCTIONS[i][j],
                state->FRACT[i][j],
                state->FRACT[i][j] / state->RHO[i]);
@@ -5717,7 +5728,7 @@ char const *_GetFraction(short mode, const char *species, int slen, short length
 
   for (i = 0; i < state->N_SPLIST; i++) /* Search for requested species */
   {
-    if (!strncmp(state->SPLIST + 8 * i, a0, slen))
+    if (!strncmp(state->SPLIST + SP_LEN * i, a0, slen))
     {
       switch (mode)
       {
@@ -7520,7 +7531,7 @@ void LINEOPAC(int LINE, GlobalState *state)
       Stark damping for those will be computed in subroutine GAMHE */
 
       state->IDHEL[LINE] = -1;
-      if (!strncmp(state->spname + 8 * LINE, "He ", 3) && !state->MARK[LINE])
+      if (!strncmp(&(state->spname[SP_LEN * LINE]), "He ", 3) && !state->MARK[LINE])
       {
         switch ((int)floor(WLC))
         {
@@ -7603,7 +7614,7 @@ void LINEOPAC(int LINE, GlobalState *state)
       state->VVOIGT[ITAU][LINE] = 1. / DLDOPL;
       DNDOPL = DOPL / WAVE;
 
-      if (!strncmp(state->spname + 8 * LINE, "H ", 2)) // This is a hydrogen line
+      if (!strncmp(&(state->spname[SP_LEN * LINE]), "H ", 2)) // This is a hydrogen line
       {
         double HNORM;
 
@@ -7816,7 +7827,7 @@ void OPMTRX(double WAVE, double *XK, double *XC, double *source_line,
                    (state->BNLTE_low[LINE][ITAU] / state->BNLTE_upp[LINE][ITAU] * EHNUKT - 1.);
       }
 
-      if (!strncmp(state->spname + 8 * LINE, "H ", 2)) // This is a hydrogen line
+      if (!strncmp(&(state->spname[SP_LEN * LINE]), "H ", 2)) // This is a hydrogen line
       {
         int NBLO, NBUP;
         double HNORM;
@@ -8019,7 +8030,7 @@ void OPMTRX1(int LINE, double *XK, GlobalState *state)
 
     ALINE = 0.;
     {
-      if (!strncmp(state->spname + 8 * LINE, "H ", 2)) // This is a hydrogen line
+      if (!strncmp(&(state->spname[SP_LEN * LINE]), "H ", 2)) // This is a hydrogen line
       {
         int NBLO, NBUP;
         float temper, xnelec, h1frc, he1frc, dopl, aline;

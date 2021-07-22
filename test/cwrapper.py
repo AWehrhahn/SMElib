@@ -27,11 +27,13 @@ class IDL_String(ct.Structure):
 
     _fields_ = [("slen", ct.c_int), ("stype", ct.c_ushort), ("s", ct.c_char_p)]
 
+
 MAX_ELEM = 100
 MOSIZE = 288
 MUSIZE = 77
 MAX_PATHLEN = 512
 MAX_OUT_LEN = 511
+SP_LEN = 8
 class GlobalState(ct.Structure):
     _fields_ = [
         ("NRHOX", ct.c_short),
@@ -48,8 +50,8 @@ class GlobalState(ct.Structure):
         ("WLAST", ct.c_double),
         ("VW_SCALE", ct.c_double),
         ("N_SPLIST", ct.c_int),
-        ("IXH1",ct.c_int),
-        ("IXH2",ct.c_int),
+        ("IXH1", ct.c_int),
+        ("IXH2", ct.c_int),
         ("IXH2mol", ct.c_int),
         ("IXH2pl", ct.c_int),
         ("IXHMIN", ct.c_int),
@@ -57,16 +59,16 @@ class GlobalState(ct.Structure):
         ("IXHE2", ct.c_int),
         ("IXHE3", ct.c_int),
         ("IXC1", ct.c_int),
-        ("IXAL1", ct.c_int), 
+        ("IXAL1", ct.c_int),
         ("IXSI1", ct.c_int),
         ("IXSI2", ct.c_int),
         ("IXCA1", ct.c_int),
         ("IXMG1", ct.c_int),
         ("IXMG2", ct.c_int),
         ("IXCA2", ct.c_int),
-        ("IXN1",ct.c_int),
+        ("IXN1", ct.c_int),
         ("IXFE1", ct.c_int),
-        ("IXO1",ct.c_int),
+        ("IXO1", ct.c_int),
         ("IXCH", ct.c_int),
         ("IXNH", ct.c_int),
         ("IXOH", ct.c_int),
@@ -96,7 +98,7 @@ class GlobalState(ct.Structure):
         ("RHO_eos", ct.c_double * MOSIZE),
         ("AHYD", ct.c_double * MOSIZE),
         ("AH2P", ct.c_double * MOSIZE),
-        ("AHMIN", ct.c_double* MOSIZE),
+        ("AHMIN", ct.c_double * MOSIZE),
         ("SIGH", ct.c_double * MOSIZE),
         ("AHE1", ct.c_double * MOSIZE),
         ("AHE2", ct.c_double * MOSIZE),
@@ -104,7 +106,7 @@ class GlobalState(ct.Structure):
         ("SIGHE", ct.c_double * MOSIZE),
         ("ACOOL", ct.c_double * MOSIZE),
         ("ALUKE", ct.c_double * MOSIZE),
-        ("AHOT", ct.c_double * MOSIZE), 
+        ("AHOT", ct.c_double * MOSIZE),
         ("SIGEL", ct.c_double * MOSIZE),
         ("SIGH2", ct.c_double * MOSIZE),
         ("TKEV", ct.c_double * MOSIZE),
@@ -161,6 +163,7 @@ class GlobalState(ct.Structure):
         ("flagNLTE", ct.POINTER(ct.c_short)),
         ("result", ct.c_char * (MAX_OUT_LEN + 1)),
     ]
+
 
 def get_lib_name():
     """ Get the name of the sme C library """
@@ -430,7 +433,9 @@ class IDL_DLL:
         """
         error = ""
         try:
-            error = idl_call_external(self.get_name(name), *args, lib=self.lib, **kwargs)
+            error = idl_call_external(
+                self.get_name(name), *args, lib=self.lib, **kwargs
+            )
         except AttributeError as ex:
             error = "Using obsolete SME Library; {ex}".format(ex=ex)
             raise_error = False
@@ -461,16 +466,61 @@ class IDL_DLL:
             raise ValueError
 
     def new_state(self):
-        try:
-            return idl_call_external(self.get_name("NewState"), lib=self.lib, restype="state")
-        except AttributeError:
-            return None
+        # try:
+        #     return idl_call_external(
+        #         self.get_name("NewState"), lib=self.lib, restype="state"
+        #     )
+        # except AttributeError:
+        #     return None
+        state = GlobalState()
+        return ct.pointer(state)
 
-    def free_state(self, state):
-        return idl_call_external(self.get_name("FreeState"), state=state, lib=self.lib)
+    def free_state(self, state, clean_pointers=0):
+        # return idl_call_external(
+        #     self.get_name("FreeState"),
+        #     clean_pointers,
+        #     type="short",
+        #     state=state,
+        #     lib=self.lib,
+        # )
+        if clean_pointers and state.contents.lineOPACITIES:
+            for i in range(state.contents.NRHOX):
+                del state.contents.LINEOP[i]
+                del state.contents.AVOIGT[i]
+                del state.contents.VVOIGT[i]
+            del state.contents.FRACT
+            del state.contents.PARTITION_FUNCTIONS
+            del state.contents.POTION
+            del state.contents.MOLWEIGHT
 
-    def copy_state(self, state):
-        return idl_call_external(self.get_name("CopyState"), restype="state", state=state, lib=self.lib)
+        del state
+
+    def copy_state(self, state, clean_pointers=0):
+        # return idl_call_external(
+        #     self.get_name("CopyState"),
+        #     clean_pointers,
+        #     type="short",
+        #     restype="state",
+        #     state=state,
+        #     lib=self.lib,
+        # )
+        new = GlobalState()
+        for fname, ftype in new._fields_:
+            setattr(new, fname, getattr(state.contents, fname))
+
+        if clean_pointers:
+            new.lineOPACITIES = 0
+            for i in range(new.NRHOX):
+                new.LINEOP[i] = None
+                new.AVOIGT[i] = None
+                new.VVOIGT[i] = None
+            new.FRACT = None
+            new.PARTITION_FUNCTIONS = None
+            new.POTION = None
+            new.MOLWEIGHT = None
+            new.SPLIST = None
+
+        return ct.pointer(new)
 
     def get_interfaces(self):
         try:

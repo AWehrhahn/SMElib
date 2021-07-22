@@ -23,6 +23,7 @@ extern "C" const char *Parallel_FreeState(short clean_pointers, GlobalState *sta
 }
 extern "C" GlobalState *Parallel_CopyState(short clean_pointers, GlobalState *state)
 {
+  printf("LINELIST Flag: %i\n", state->flagLINELIST);
   return _CopyState(clean_pointers, state);
 }
 
@@ -115,18 +116,18 @@ extern "C" char const *SME_DLL Parallel_InputLineList(int n, void *arg[], Global
   int nlines = *(int *)arg[0];
   IDL_STRING *a0 = (IDL_STRING *)arg[1];
   double *linelist = (double *)arg[2];
-  char *species = (char *)calloc(slen * nlines, sizeof(char));
+  char species[slen * nlines]; // = (char *)calloc(slen * nlines, sizeof(char));
 
   for (int i = 0; i < nlines; i++)
   {
-    memcpy(species + slen * i, a0[i].s, a0[i].slen);
+    strncpy(&(species[slen * i]), a0[i].s, min(a0[i].slen, 8));
     if (a0[i].slen < slen)
       for (int l = a0[i].slen; l < slen; l++)
         species[slen * i + l] = ' ';
   }
   const char *response = _InputLineList(nlines, slen, species, linelist, state);
 
-  free(species);
+  // free(species);
 
   return response;
 }
@@ -178,11 +179,11 @@ extern "C" char const *SME_DLL Parallel_UpdateLineList(int n, void *arg[], Globa
   short *index = (short *)arg[3];
 
   int slen = 8;
-  char *species = (char *)calloc(slen * nupdate, sizeof(char));
+  char species[slen * nupdate]; // = (char *)calloc(slen * nupdate, sizeof(char));
 
   for (int i = 0; i < nupdate; i++)
   {
-    memcpy(species + slen * i, a0[i].s, a0[i].slen);
+    strncpy(&(species[slen * i]), a0[i].s, a0[i].slen);
     if (a0[i].slen < slen)
       for (int l = a0[i].slen; l < slen; l++)
         species[slen * i + l] = ' ';
@@ -190,7 +191,7 @@ extern "C" char const *SME_DLL Parallel_UpdateLineList(int n, void *arg[], Globa
 
   const char *response = _UpdateLineList(nupdate, slen, index, species, a1, state);
 
-  free(species);
+  // free(species);
 
   return response;
 }

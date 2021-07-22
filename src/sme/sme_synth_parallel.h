@@ -24,6 +24,8 @@
 #define MUSIZE 77    // Maximum Number of mu angles
 #define MAX_PATHLEN 512
 #define MAX_OUT_LEN 511
+#define SP_LEN 8
+
 extern "C" typedef struct
 {
   /* IMPORTANT NOTE

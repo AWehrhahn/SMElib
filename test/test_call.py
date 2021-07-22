@@ -6,7 +6,6 @@ import logging
 
 from sme_synth import SME_DLL
 from cwrapper import get_lib_name
-from tqdm import tqdm
 import matplotlib.pyplot as plt
 
 from concurrent.futures import ProcessPoolExecutor, as_completed

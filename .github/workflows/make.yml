@@ -45,11 +45,11 @@ jobs:
           - name: gfortran
             container: manylinux2014_x86_64
             compiler: gfortran
-            makefile: Makefile_sequential.am
+            makefile: Makefile.am
           - name: gfortran-parallel
             container: manylinux2014_x86_64
             compiler: gfortran
-            makefile: Makefile.am
+            makefile: Makefile_parallel.am
           # F2C fails the test on manylinux for some reason , f2c]
 
     container:
@@ -128,10 +128,12 @@ jobs:
             runs_on: ubuntu-latest
             packages: gfortran python3-dev
             outputs: lib share
+            makefile: Makefile.am
           - name: ubuntu-f2c
             runs_on: ubuntu-latest
             packages: f2c
             outputs: lib share python3-dev
+            makefile: Makefile_f2c.am
           - name: windows-gfortran
             runs_on: ubuntu-latest
             packages: gfortran mingw-w64 mingw-w64-tools mingw-w64-common gfortran-mingw-w64 gfortran-mingw-w64-x86-64 gcc-mingw-w64 gcc-mingw-w64-x86-64 g++-mingw-w64 g++-mingw-w64-x86-64 python3-dev
@@ -139,6 +141,7 @@ jobs:
             f77: x86_64-w64-mingw32-gfortran
             config_flags: --build=x86_64-pc-linux-gnu --host=x86_64-w64-mingw32
             outputs: bin share
+            makefile: Makefile.am
           #          F2C doesn't work for Windows, use gfortran instead
           #          will figure this out when possible
           #          - name: windows-f2c
@@ -153,6 +156,7 @@ jobs:
             cxx: gcc-9
             f77: gfortran-9
             outputs: lib share
+            makefile: Makefile_mac.am
           # F2C also fails on MacOSX, because the F2C library is difficult to install
           #- name: macos-f2c
           #  runs_on: macos-latest
@@ -187,13 +191,11 @@ jobs:
         run: f2c -w -a -C++ -Nn1604 -Nq1200 -dsrc/eos/ src/eos/*.f & f2c -w -a -C++ -dsrc/sme/ src/sme/*.f
 
       - name: Replace Makefile.am
-        if: matrix.name == 'ubuntu-f2c' || matrix.name == 'windows-f2c'
+        if: matrix.makefile != 'Makefile.am'
         run: |
           rm Makefile.am
-          mv Makefile_f2c.am Makefile.am
-          rm cython/setup.py
-          mv cython/setup-f2c.py cython/setup.py
-
+          mv ${{ matrix.makefile }} Makefile.am
+      
       - name: Replace Makefile.am
         if: matrix.name == 'macos-f2c'
         run: rm Makefile.am && mv Makefile_mac.am Makefile.am

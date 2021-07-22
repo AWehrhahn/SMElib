@@ -345,7 +345,7 @@ const char *_FreeState(short clean_pointers, GlobalState *state)
   }
 
   FREE(state);
-  return OK_response;
+  return &OK_response;
 }
 
 GlobalState *_CopyState(short clean_pointers, GlobalState *state)

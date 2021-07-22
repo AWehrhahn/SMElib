@@ -7,12 +7,12 @@ libsme_la_SOURCES = \
 	src/sme/platform.h \
 	src/sme/sme_synth_faster.h \
 	src/sme/sme_synth_faster.cpp \
-	src/eos/eos.f \
-	src/eos/eos_eqns.f \
-	src/eos/eos_math_special.f \
-	src/eos/kp_q_spln.f \
-	src/sme/hlinop.f \
-	src/sme/hlinprof.f
+	src/eos/eos.c \
+	src/eos/eos_eqns.c \
+	src/eos/eos_math_special.c \
+	src/eos/kp_q_spln.c \
+	src/sme/hlinop.c \
+	src/sme/hlinprof.c
 libsme_la_LDFLAGS = -fPIC -version-info 5:22:0 -shared -no-undefined
 libsme_la_CPPFLAGS = -fPIC -shared
 # Here we assume that f2c has been installed using homebrew, since the automatic detection seems to fail...

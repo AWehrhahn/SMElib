@@ -156,7 +156,7 @@ jobs:
             cxx: gcc-9
             f77: gfortran-9
             outputs: lib share
-            makefile: Makefile_mac.am
+            makefile: Makefile.am
           # F2C also fails on MacOSX, because the F2C library is difficult to install
           #- name: macos-f2c
           #  runs_on: macos-latest

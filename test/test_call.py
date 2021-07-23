@@ -626,10 +626,9 @@ def test_radiative_transfer(dll, libfile, datadir):
     dll.SetH2broad(True)
     dll.Ionization(0)
     # Per Segment
-    dll2 = dll.copy()
-    dll2.InputWaveRange(6436, 6442)
-    dll2.Opacity()
-    _, wint, sint, cint = dll2.Transf([1], 0.01, 0.03)
+    dll.InputWaveRange(6436, 6442)
+    dll.Opacity()
+    _, wint, sint, cint = dll.Transf([1], 0.01, 0.03)
 
     assert wint is not None
     assert wint.ndim == 1

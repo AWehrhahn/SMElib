@@ -626,9 +626,24 @@ def test_radiative_transfer(dll, libfile, datadir):
     dll.SetH2broad(True)
     dll.Ionization(0)
     # Per Segment
-    dll.InputWaveRange(6436, 6442)
-    dll.Opacity()
-    _, wint, sint, cint = dll.Transf([1], 0.01, 0.03)
+    dll2 = dll.copy()
+    dll2.InputWaveRange(6436, 6442)
+    dll2.Opacity()
+    _, wint, sint, cint = dll2.Transf([1], 0.01, 0.03)
+
+    assert wint is not None
+    assert wint.ndim == 1
+    assert wint.shape[0] != 0
+
+    assert sint is not None
+    assert sint.ndim == 2
+    assert sint.shape[0] == 1
+    assert sint.shape[1] == wint.shape[0]
+
+    assert cint is not None
+    assert cint.ndim == 2
+    assert cint.shape[0] == 1
+    assert cint.shape[1] == wint.shape[0]
 
     # For comparison
     np.savez("debug_radiative_transfer.npz", wave=wint, spec=sint, cont=cint)

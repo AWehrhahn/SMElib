@@ -237,6 +237,32 @@ def load_library(libfile=None):
         libfile = localdir / ".." / "lib" / libfile
     return ct.CDLL(str(libfile))
 
+def is_nullptr(ptr):
+    try:
+        # If we can access it without an exception its not a null ptr
+        tmp = ptr[0]
+        return False
+    except ValueError:
+        return True
+
+def get_c_dtype(ptr):
+    while hasattr(ptr, "contents"):
+        ptr = ptr._type_
+    return ptr
+    
+def get_c_shape(field, ptr, state):
+    if isinstance(ptr, ct._Pointer):
+        if isinstance(ptr[0], ct._Pointer):            
+            size1 = state.contents.NRHOX
+            size2 = state.contents.N_SPLIST
+            return (size1, size2)
+        else:
+            size = state.contents.NLINES
+            return (size,)
+    return None
+
+
+
 
 def idl_call_external(funcname, *args, restype="str", type=None, lib=None, state=None):
     r"""
@@ -466,59 +492,35 @@ class IDL_DLL:
             raise ValueError
 
     def new_state(self):
-        # try:
-        #     return idl_call_external(
-        #         self.get_name("NewState"), lib=self.lib, restype="state"
-        #     )
-        # except AttributeError:
-        #     return None
+        # ctypes initializes the fields to 0/NULL by default
         state = GlobalState()
         return ct.pointer(state)
 
-    def free_state(self, state, clean_pointers=0):
-        # return idl_call_external(
-        #     self.get_name("FreeState"),
-        #     clean_pointers,
-        #     type="short",
-        #     state=state,
-        #     lib=self.lib,
-        # )
-        if clean_pointers and state.contents.lineOPACITIES:
-            for i in range(state.contents.NRHOX):
-                del state.contents.LINEOP[i]
-                del state.contents.AVOIGT[i]
-                del state.contents.VVOIGT[i]
-            del state.contents.FRACT
-            del state.contents.PARTITION_FUNCTIONS
-            del state.contents.POTION
-            del state.contents.MOLWEIGHT
-
+    def free_state(self, state):
         del state
 
-    def copy_state(self, state, clean_pointers=0):
-        # return idl_call_external(
-        #     self.get_name("CopyState"),
-        #     clean_pointers,
-        #     type="short",
-        #     restype="state",
-        #     state=state,
-        #     lib=self.lib,
-        # )
+    def copy_state(self, state):
         new = GlobalState()
         for fname, ftype in new._fields_:
-            setattr(new, fname, getattr(state.contents, fname))
-
-        if clean_pointers:
-            new.lineOPACITIES = 0
-            for i in range(new.NRHOX):
-                new.LINEOP[i] = None
-                new.AVOIGT[i] = None
-                new.VVOIGT[i] = None
-            new.FRACT = None
-            new.PARTITION_FUNCTIONS = None
-            new.POTION = None
-            new.MOLWEIGHT = None
-            new.SPLIST = None
+            value = getattr(state.contents, fname)
+            # If its a pointer we create new memory and copy the contents
+            if isinstance(value, ct._Pointer) and not is_nullptr(value):
+                dtype = get_c_dtype(value)
+                shape = get_c_shape(fname, value, state)
+                if isinstance(value[0], ct._Pointer) and not is_nullptr(value[0]):
+                    # Double pointer
+                    copy = (ct.POINTER(dtype) * shape[0])()
+                    for i in range(shape[0]):
+                        copy[i] = (dtype * shape[1])()
+                        ct.memmove(copy[i], value[i], shape[1])
+                    setattr(new, fname, copy)
+                else:
+                    # All the pointers are the same size as the linelist
+                    copy = (dtype * shape[0])()
+                    ct.memmove(copy, value, shape[0])
+                    setattr(new, fname, copy)
+            else:
+                setattr(new, fname, value)
 
         return ct.pointer(new)
 

@@ -76,7 +76,6 @@ class SME_DLL:
         """str: Expected directory of the data files"""
         return self.GetLibraryPath()
 
-
     @property
     def ndepth(self):
         """int: Number of depth layers in the atmosphere model"""
@@ -116,7 +115,6 @@ class SME_DLL:
                     )
                 )
 
-
     def NewState(self, delete_old=True):
         if delete_old and hasattr(self, "state") and self.state is not None:
             self.FreeState()
@@ -128,28 +126,23 @@ class SME_DLL:
 
         return self.state
 
-    def FreeState(self, clean_pointers=False):
+    def FreeState(self):
         if self.state is not None:
-            clean_pointers = 1 if clean_pointers else 0
-            self.lib.free_state(self.state, clean_pointers=clean_pointers)
+            self.lib.free_state(self.state)
             self.state = None
 
-    def CopyState(self, clean_pointers=False):
+    def CopyState(self):
         if self.state is None:
             return None
-
-        # The opacities are just pointers, which we usually copy
-        # but this leads to a segfault, if we free their memory in a copy
-        clean_pointers = 1 if clean_pointers else 0
-        state = self.lib.copy_state(self.state, clean_pointers=clean_pointers)
+        state = self.lib.copy_state(self.state)
         return state
 
-    def copy(self, clean_pointers=False):
-        return self.__copy__(clean_pointers=clean_pointers)
+    def copy(self):
+        return self.__copy__()
 
-    def __copy__(self, clean_pointers=False):
+    def __copy__(self):
         cls = self.__class__
-        state = self.CopyState(clean_pointers=clean_pointers)
+        state = self.CopyState()
         obj = cls(libfile=self.lib.libfile, datadir=self.datadir, state=state)
         obj.parallel = self.parallel
         obj.linelist = self.linelist

@@ -24,7 +24,7 @@ const char ok_response[2] = "\0";
 #define ERR_LEN 64
 
 static char errmsg[ERR_LEN];
-#define RAISE(args...) sprintf(errmsg, args); return errmsg
+#define RAISE(args...) snprintf(errmsg, ERR_LEN, args); return errmsg
 #define ASSERT(cond, msg...) if (!(cond)) { RAISE(msg); }
 
 /*
@@ -264,9 +264,6 @@ GlobalState *_NewState()
       state->flagIONIZ = state->flagCONTIN = state->lineOPACITIES = state->flagH2broad =
           state->initNLTE = 0;
 
-  printf("WHAT? %i\n", state->flagLINELIST);
-
-
   /* Global pointers for dynamically allocated arrays */
 
   // statically sized arrays
@@ -357,9 +354,6 @@ const char *_FreeState(short clean_pointers, GlobalState *state)
 GlobalState *_CopyState(short clean_pointers, GlobalState *state)
 {
   // NOTE: This is a shallow copy
-  printf("Hello ");
-  printf("There %i\n", state->flagLINELIST);
-  
   GlobalState *new_state = _NewState();
   new_state->FREQ = state->FREQ;
   new_state->FREQLG = state->FREQLG;
@@ -412,9 +406,6 @@ GlobalState *_CopyState(short clean_pointers, GlobalState *state)
   new_state->lineOPACITIES = state->lineOPACITIES;
   new_state->flagH2broad = state->flagH2broad;
   new_state->initNLTE = state->initNLTE;
-
-
-  printf("General %i\n", new_state->flagLINELIST);
 
   if (clean_pointers)
   {
@@ -521,7 +512,6 @@ GlobalState *_CopyState(short clean_pointers, GlobalState *state)
     new_state->MOLWEIGHT = state->MOLWEIGHT;
     new_state->SPLIST = state->SPLIST;
   }
-  printf("Kenobi");
 
   return new_state;
 }
@@ -547,10 +537,7 @@ char const *_GetLibraryPath(GlobalState *state)
 */
 const char *_SetLibraryPath(const char *path, int pathlen, GlobalState *state)
 {
-  if (pathlen > MAX_PATHLEN)
-  {
-    return "ERROR: Not enough space to store the path";
-  }
+  ASSERT(pathlen <= MAX_PATHLEN, "ERROR: Not enough space to store the path");
   /* Copy path to the Hydrogen line data files */
   state->PATHLEN = pathlen;
   strncpy(state->PATH, path, pathlen);
@@ -577,7 +564,7 @@ const char *_InputWaveRange(double wfirst, double wlast, GlobalState *state) /* 
   if (state->WFIRST >= state->WLAST || state->WFIRST <= 0.0 || state->WLAST <= 0.)
   {
     state->flagWLRANGE = 0;
-    return "Wrong wavelength range";
+    RAISE("Wrong wavelength range");
   }
   else
   {
@@ -674,7 +661,7 @@ char const *_InputLineList(int nlines, int slen, const char *species, double *li
   if (state->NLINES < 1)
   {
     state->flagLINELIST = 0;
-    return "No line list";
+    RAISE("No line list");
   }
 
   a3 = linelist; /* Setup pointers to line parameters */
@@ -684,7 +671,7 @@ char const *_InputLineList(int nlines, int slen, const char *species, double *li
     if (a3[LINE] > a3[LINE + 1]) /* Check that central wavelength are monotoneously increasing */
     {
       state->flagLINELIST = 0;
-      return "Line list is not sorted in wavelength ascending order";
+      RAISE("Line list is not sorted in wavelength ascending order");
     }
   }
 
@@ -840,15 +827,12 @@ char const *_OutputLineList(int nlines, double *linelist, GlobalState *state)
    state->GAMVW  - VAN DER WAALS DUMPING (C6);
 */
 
-  if (!state->flagLINELIST)
-  {
-    return "No line list";
-  }
+  ASSERT(state->flagLINELIST, "No line list");
   Nlines = nlines;
   if (state->NLINES < 1)
   {
     state->flagLINELIST = 0;
-    return "No line list";
+    RAISE("No line list");
   }
   a1 = linelist;
 
@@ -919,7 +903,7 @@ char const *_UpdateLineList(short nlines, int slen, short *index, const char *sp
     i = INDEX[LINE];
     if (i < 0 || i >= state->NLINES)
     {
-      return "Replacement index is out of range";
+      RAISE("Replacement index is out of range");
     }
 
     /* state->spname will be passed to FORTRAN, so no trailing
@@ -1030,10 +1014,7 @@ char const *_InputModel(
   state->GRAV = grav;
   state->WLSTD = wlstd;
 
-  if (motype_slen < 0)
-  {
-    return "ERROR: MOTYPE length must be positive";
-  }
+  ASSERT(motype_slen > 0, "ERROR: MOTYPE length must be positive");
 
   s = motype_str;
   l = min(7, motype_slen);
@@ -1131,14 +1112,8 @@ char const *_InputDepartureCoefficients(double *bmat, int lineindex, GlobalState
   int im, line;
   double *b;
 
-  if (!state->flagMODEL)
-  {
-    return "Model atmosphere must be set before departure coefficients";
-  }
-  if (!state->flagLINELIST)
-  {
-    return "Line list must be set before departure coefficients";
-  }
+  ASSERT(state->flagMODEL, "Model atmosphere must be set before departure coefficients");
+  ASSERT(state->flagLINELIST, "Line list must be set before departure coefficients");
 
   if (!state->initNLTE) // Initialize the departure arrays for the first time
   {
@@ -1163,7 +1138,7 @@ char const *_InputDepartureCoefficients(double *bmat, int lineindex, GlobalState
 
   if (line < 0 || line >= state->allocated_NLTE_lines)
   {
-    return "Attempt to set departure coefficients for non-existing transition";
+    RAISE("Attempt to set departure coefficients for non-existing transition");
   }
 
   if (state->flagNLTE[line])
@@ -1191,14 +1166,10 @@ char const *_GetDepartureCoefficients(double *bmat, int nrhox, int line, GlobalS
   int im;
   double *b;
 
-  if (!state->initNLTE)
-  {
-    return "NLTE mode was not initialized. No departure coefficients available";
-  }
-
+  ASSERT(state->initNLTE, "NLTE mode was not initialized. No departure coefficients available");
   if (line < 0 || line >= state->NLINES)
   {
-    return "Attempt to set departure coefficients for non-existing transition";
+    RAISE("Attempt to set departure coefficients for non-existing transition");
   }
 
   b = bmat;
@@ -1277,10 +1248,7 @@ char const *_InputAbund(double *abund, int nelements, GlobalState *state) /* Rea
   int i;
   double *a;
 
-  if (nelements != 99)
-  {
-    return "Abundance array needs to have 99 elements";
-  }
+  ASSERT(nelements == 99, "Abundance array needs to have 99 elements");
 
   a = abund;
   state->ABUND[0] = 0;
@@ -5263,7 +5231,7 @@ char const *_GetOpacity(short ifop, short length, double *result, const char *sp
       a1[i] = state->SIGH2[i];
     return ok_response;
   default:
-    return "Wrong opacity switch number";
+    RAISE("Wrong opacity switch number");
   }
 }
 
@@ -5674,15 +5642,8 @@ char const *_GetDensity(short length, double *result, GlobalState *state)
   int j;
   double *a;
 
-  if (!state->flagMODEL)
-  {
-    return "No model atmosphere has been set";
-  }
-
-  if (!state->flagIONIZ)
-  {
-    return "Molecular-ionization equilibrium was not computed";
-  }
+  ASSERT(state->flagMODEL, "No model atmosphere has been set");
+  ASSERT(state->flagIONIZ, "Molecular-ionization equilibrium was not computed");
 
   l = length; /* Array length */
   a = result; /* Array */
@@ -5697,15 +5658,8 @@ char const *_GetNatom(short length, double *result, GlobalState *state)
   int j;
   double *a;
 
-  if (!state->flagMODEL)
-  {
-    return "No model atmosphere has been set";
-  }
-
-  if (!state->flagIONIZ)
-  {
-    return "Molecular-ionization equilibrium was not computed";
-  }
+  ASSERT(state->flagMODEL, "No model atmosphere has been set");
+  ASSERT(state->flagIONIZ, "Molecular-ionization equilibrium was not computed");
 
   l = length; /* Array length */
   a = result; /* Array */
@@ -5720,15 +5674,8 @@ char const *_GetNelec(short length, double *result, GlobalState *state)
   int j;
   double *a;
 
-  if (!state->flagMODEL)
-  {
-    return "No model atmosphere has been set";
-  }
-
-  if (!state->flagIONIZ)
-  {
-    return "Molecular-ionization equilibrium was not computed";
-  }
+  ASSERT(state->flagMODEL, "No model atmosphere has been set");
+  ASSERT(state->flagIONIZ, "Molecular-ionization equilibrium was not computed");
 
   l = length; /* Array length */
   a = result; /* Array */
@@ -5767,34 +5714,13 @@ char const *_Transf(short nmu, double *mu, double *cint_seg, double *cintr_seg, 
 
   /* Check if everything is set and pre-calculated */
 
-  if (!state->flagMODEL)
-  {
-    return "No model atmosphere has been set";
-  }
-  if (!state->flagWLRANGE)
-  {
-    return "No wavelength range has been set";
-  }
-  if (!state->flagABUND)
-  {
-    return "No list of abundances has been set";
-  }
-  if (!state->flagLINELIST)
-  {
-    return "No line list has been set";
-  }
-  if (!state->flagIONIZ)
-  {
-    return "Molecular-ionization equilibrium was not computed";
-  }
-  if (!state->flagCONTIN)
-  {
-    return "No arrays have been allocated for continous opacity calculations";
-  }
-  if (!state->lineOPACITIES)
-  {
-    return "No memory has been allocated for storing line opacities";
-  }
+  ASSERT(state->flagMODEL, "No model atmosphere has been set");
+  ASSERT(state->flagWLRANGE, "No wavelength range has been set");
+  ASSERT(state->flagABUND, "No list of abundances has been set");
+  ASSERT(state->flagLINELIST, "No line list has been set");
+  ASSERT(state->flagIONIZ, "Molecular-ionization equilibrium was not computed");
+  ASSERT(state->flagCONTIN, "No arrays have been allocated for continous opacity calculations");
+  ASSERT(state->lineOPACITIES, "No memory has been allocated for storing line opacities");
 
   /* Get the arguments */
 
@@ -5827,10 +5753,8 @@ char const *_Transf(short nmu, double *mu, double *cint_seg, double *cintr_seg, 
     CALLOC(state->EXCUP, state->NLINES, double);
     CALLOC(state->ENU4, state->NLINES, double);
     CALLOC(state->ENL4, state->NLINES, double);
-    if (state->ENL4 == NULL)
-    {
-      return "Not enough memory";
-    }
+
+    ASSERT(state->ENL4 != NULL, "Not enough memory");
 
     /* Check autoionization lines */
 
@@ -5959,34 +5883,13 @@ char const *_GetLineRange(double *linerange, int nlines, GlobalState *state) /* 
   int line;
   double *b;
 
-  if (!state->flagMODEL)
-  {
-    return "No model atmosphere has been set";
-  }
-  if (!state->flagWLRANGE)
-  {
-    return "No wavelength range has been set";
-  }
-  if (!state->flagABUND)
-  {
-    return "No list of abundances has been set";
-  }
-  if (!state->flagLINELIST)
-  {
-    return "No line list has been set";
-  }
-  if (!state->flagIONIZ)
-  {
-    return "Molecular-ionization equilibrium was not computed";
-  }
-  if (!state->flagCONTIN)
-  {
-    return "No arrays have been allocated for continous opacity calculations";
-  }
-  if (!state->lineOPACITIES)
-  {
-    return "No memory has been allocated for storing line opacities";
-  }
+  ASSERT(state->flagMODEL, "No model atmosphere has been set");
+  ASSERT(state->flagWLRANGE, "No wavelength range has been set");
+  ASSERT(state->flagABUND, "No list of abundances has been set");
+  ASSERT(state->flagLINELIST, "No line list has been set");
+  ASSERT(state->flagIONIZ, "Molecular-ionization equilibrium was not computed");
+  ASSERT(state->flagCONTIN, "No arrays have been allocated for continous opacity calculations");
+  ASSERT(state->lineOPACITIES, "No memory has been allocated for storing line opacities");
 
   b = linerange;
 
@@ -6025,42 +5928,19 @@ char const *_CentralDepth(int nmu, double *mu, int nwsize, float *table, double 
 
   /* Check if everything is set and pre-calculated */
 
-  if (!state->flagMODEL)
-  {
-    return "No model atmosphere has been set";
-  }
-  if (!state->flagWLRANGE)
-  {
-    return "No wavelength range has been set";
-  }
-  if (!state->flagABUND)
-  {
-    return "No list of abundances has been set";
-  }
-  if (!state->flagLINELIST)
-  {
-    return "No line list has been set";
-  }
-  if (!state->flagIONIZ)
-  {
-    return "Molecular-ionization equilibrium was not computed";
-  }
-  if (!state->flagCONTIN)
-  {
-    return "No arrays have been allocated for continous opacity calculations";
-  }
-  if (!state->lineOPACITIES)
-  {
-    return "No memory has been allocated for storing line opacities";
-  }
+  ASSERT(state->flagMODEL, "No model atmosphere has been set");
+  ASSERT(state->flagWLRANGE, "No wavelength range has been set");
+  ASSERT(state->flagABUND, "No list of abundances has been set");
+  ASSERT(state->flagLINELIST, "No line list has been set");
+  ASSERT(state->flagIONIZ, "Molecular-ionization equilibrium was not computed");
+  ASSERT(state->flagCONTIN, "No arrays have been allocated for continous opacity calculations");
+  ASSERT(state->lineOPACITIES, "No memory has been allocated for storing line opacities");
 
   /* Get the arguments */
 
   NMU = nmu; /* Number of limb points */
-  if (NMU > 81)
-  {
-    return "SME library is limited to maximum 81 mu angles";
-  }
+  ASSERT(NMU <= MUSIZE, "SME library is limited to maximum %i mu angles", MUSIZE)
+
   MU = mu;         /* Array of limb points */
   NWSIZE = nwsize; /* Length of the arrays for synthesis */
   TABLE = table;   /* Array for synthetic spectrum */

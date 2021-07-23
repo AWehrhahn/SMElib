@@ -265,6 +265,10 @@ class SME_DLL:
             nlines=nlines, atomic=atomic.shape
         )
 
+        if self.state is not None:
+            self.state.contents.free_linelist()
+            self.state.contents.free_opacities()
+
         self.lib.InputLineList(
             nlines, species, atomic, type=("int", "string", "double"), state=self.state
         )
@@ -382,6 +386,9 @@ class SME_DLL:
                 type = type[:5] + "d" + type[5:] + "d"
         except AttributeError as ae:
             raise TypeError("atmo has to be an Atmo type, {ae}".format(ae=ae))
+
+        if self.state is not None:
+            self.state.contents.free_opacities()
 
         self.lib.InputModel(*args, type=type, state=self.state)
 
@@ -517,6 +524,9 @@ class SME_DLL:
         ion : int
             flag that determines the behaviour of the C function
         """
+        if self.state is not None:
+            self.state.contents.free_ionization()
+
         self.lib.Ionization(
             ion, type="short", raise_error=False, raise_warning=True, state=self.state
         )

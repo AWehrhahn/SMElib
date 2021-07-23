@@ -164,6 +164,47 @@ class GlobalState(ct.Structure):
         ("result", ct.c_char * (MAX_OUT_LEN + 1)),
     ]
 
+    
+    def free_linelist(self):
+        if self.flagLINELIST:
+            self.spname = None
+            self.SPINDEX = None
+            self.ION = None
+            self.MARK = None
+            self.AUTOION = None
+            self.WLCENT = None
+            self.EXCIT = None
+            self.GF = None
+            self.GAMRAD = None
+            self.GAMQST = None
+            self.GAMVW = None
+            self.ANSTEE = None
+            self.IDLHEL = None
+            self.ALMAX = None
+            self.Wlim_left = None
+            self.Wlim_right = None
+            self.flagLINELIST = 0
+
+    def free_ionization(self):
+        if self.flagIONIZ:
+            self.SPLIST = None
+            for i in range(self.NRHOX_allocated):
+                self.FRACT[i] = None
+                self.PARTITION_FUNCTIONS[i] = None
+            self.FRACT = None
+            self.PARTITION_FUNCTIONS = None
+            self.POTION = None
+            self.MOLWEIGHT = None
+            self.flagIONIZ = 0
+
+    def free_opacities(self):
+        if self.lineOPACITIES:
+            for i in range(self.NRHOX):
+                self.LINEOP[i] = None
+                self.AVOIGT[i] = None
+                self.VVOIGT[i] = None
+            self.lineOPACITIES = 0
+
 
 def get_lib_name():
     """ Get the name of the sme C library """
@@ -246,11 +287,15 @@ def is_nullptr(ptr):
         return True
 
 def get_c_dtype(ptr):
+    if isinstance(ptr, bytes):
+        return ct.c_char
     while hasattr(ptr, "contents"):
         ptr = ptr._type_
     return ptr
     
 def get_c_shape(field, ptr, state):
+    if isinstance(ptr, bytes):
+        return (len(ptr),)
     if isinstance(ptr, ct._Pointer):
         if isinstance(ptr[0], ct._Pointer):            
             size1 = state.contents.NRHOX
@@ -411,8 +456,6 @@ def idl_call_external(funcname, *args, restype="str", type=None, lib=None, state
                     )
 
     return res
-
-
 class IDL_DLL:
     _instance = None
 
@@ -504,6 +547,7 @@ class IDL_DLL:
         for fname, ftype in new._fields_:
             value = getattr(state.contents, fname)
             # If its a pointer we create new memory and copy the contents
+            # bytes is just char *
             if isinstance(value, ct._Pointer) and not is_nullptr(value):
                 dtype = get_c_dtype(value)
                 shape = get_c_shape(fname, value, state)
@@ -512,13 +556,17 @@ class IDL_DLL:
                     copy = (ct.POINTER(dtype) * shape[0])()
                     for i in range(shape[0]):
                         copy[i] = (dtype * shape[1])()
-                        ct.memmove(copy[i], value[i], shape[1])
+                        ct.memmove(copy[i], value[i], shape[1] * ct.sizeof(dtype))
                     setattr(new, fname, copy)
                 else:
                     # All the pointers are the same size as the linelist
                     copy = (dtype * shape[0])()
-                    ct.memmove(copy, value, shape[0])
+                    ct.memmove(copy, value, shape[0] * ct.sizeof(dtype))
                     setattr(new, fname, copy)
+            elif isinstance(value, bytes):
+                copy = b" " * len(value)
+                ct.memmove(copy, value, len(value) * ct.sizeof(ct.c_char))
+                setattr(new, fname, copy)
             else:
                 setattr(new, fname, value)
 

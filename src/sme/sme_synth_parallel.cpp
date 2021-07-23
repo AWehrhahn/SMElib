@@ -1096,7 +1096,7 @@ char const *_InputDepartureCoefficients(double *bmat, int lineindex, GlobalState
    requires a pointer to a double array of the size 2*state->NRHOX and an integer
    with the transition number. The logic of handling NLTE is the following:
 
-   1) The first call is detected using a global static flag initNBLTE.
+   1) The first call is detected using a global static flag initNLTE.
       At this moment we set the "default" departure coefficients state->LTE_b to 1,
       allocate the the vector of pointer the size of the line list and set them
       all to default and allocate the vector of flags state->flagNLTE all set to 0 (false)
@@ -5645,10 +5645,8 @@ char const *_GetDensity(short length, double *result, GlobalState *state)
   ASSERT(state->flagMODEL, "No model atmosphere has been set");
   ASSERT(state->flagIONIZ, "Molecular-ionization equilibrium was not computed");
 
-  l = length; /* Array length */
-  a = result; /* Array */
-  for (j = 0; j < min(state->NRHOX, l); j++)
-    a[j] = state->RHO_eos[j];
+  for (j = 0; j < min(state->NRHOX, length); j++)
+    result[j] = state->RHO_eos[j];
   return ok_response;
 }
 

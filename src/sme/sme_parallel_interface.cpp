@@ -287,6 +287,63 @@ extern "C" char const *SME_DLL Parallel_GetDepartureCoefficients(int n, void *ar
   return _GetDepartureCoefficients(b, nrhox, line, state);
 }
 
+
+
+extern "C" const char *SME_DLL Parallel_GetDensity(int n, void *arg[], GlobalState *state)
+{
+  short l = *(short *)arg[0];
+  double * a = (double*)arg[1];
+  return _GetDensity(l, a, state);
+}
+
+extern "C" const char *SME_DLL Parallel_GetNatom(int n, void *arg[], GlobalState *state)
+{
+  short l = *(short *)arg[0];
+  double * a = (double*)arg[1];
+  return _GetNatom(l, a, state);
+}
+
+extern "C" const char *SME_DLL Parallel_GetNelec(int n, void *arg[], GlobalState *state)
+{
+  short l = *(short *)arg[0];
+  double * a = (double*)arg[1];
+  return _GetNelec(l, a, state);
+}
+
+extern "C" const char *SME_DLL Parallel_GetOpacity(int n, void *arg[], GlobalState *state)
+{
+  short i, nrhox;
+  double *a1 = NULL;
+  double *a2 = NULL;
+  double *a3 = NULL;
+  short request_output = 0;
+
+  if (n > 0)
+  {
+    if ((state->MOTYPE != 0 && n < 3) ||
+        (state->MOTYPE == 0 && n < 4))
+    {
+      return "Opacity: Not enough arguments";
+    }
+  }
+
+  if (n >= 3)
+  {
+    request_output = 1;
+    i = *(short *)arg[0]; /* Length of IDL arrays */
+    nrhox = min(state->NRHOX, i);
+    a1 = (double *)arg[1];
+    a2 = (double *)arg[2];
+    if (state->MOTYPE == 0)
+      a3 = (double *)arg[3];
+  }
+
+  // short request_output, short nout, double * out1, double * out2, double * out3
+  const char *response = _Opacity(request_output, nrhox, a1, a2, a3, state);
+  return response;
+}
+
+
 extern "C" char const *SME_DLL Parallel_GetNLTEflags(int n, void *arg[], GlobalState *state) /* Get NLTE flag for every line */
 {
   if (n < 2) // Check if arguments are present

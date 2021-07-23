@@ -18,6 +18,15 @@
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 #define round(x) (x >= 0) ? (int)(x + 0.5) : (int)(x - 0.5)
 
+/* Default OK response */
+const char ok_response[2] = "\0";
+// #define ok_response '\0'
+#define ERR_LEN 64
+
+static char errmsg[ERR_LEN];
+#define RAISE(args...) sprintf(errmsg, args); return errmsg
+#define ASSERT(cond, msg...) if (!(cond)) { RAISE(msg); }
+
 /*
 FREE macro to avoid freeing empty pointers
 The second version below can be used to trace any attempts to
@@ -84,9 +93,6 @@ char ELEMEN[MAX_ELEM][3] = {" ",
                             "Lu", "Hf", "Ta", "W ", "Re", "Os", "Ir", "Pt", "Au", "Hg",
                             "Tl", "Pb", "Bi", "Po", "At", "Rn", "Fr", "Ra", "Ac", "Th",
                             "Pa", "U ", "Np", "Pu", "Am", "Cm", "Bk", "Cs", "Es"};
-
-/* Default OK response */
-const char OK_response = '\0';
 
 /* Modules */
 
@@ -345,7 +351,7 @@ const char *_FreeState(short clean_pointers, GlobalState *state)
   }
 
   FREE(state);
-  return &OK_response;
+  return ok_response;
 }
 
 GlobalState *_CopyState(short clean_pointers, GlobalState *state)
@@ -553,7 +559,7 @@ const char *_SetLibraryPath(const char *path, int pathlen, GlobalState *state)
   /* Check if big-endian than need to change byte order */
   state->change_byte_order = 1;
   state->change_byte_order = (*((char *)(&state->change_byte_order))) ? 0 : 1;
-  return &OK_response;
+  return ok_response;
 }
 
 const char *_InputWaveRange(double wfirst, double wlast, GlobalState *state) /* Read in Wavelength range */
@@ -564,7 +570,7 @@ const char *_InputWaveRange(double wfirst, double wlast, GlobalState *state) /* 
   {
     if (fabs(state->WFIRST - wfirst) < 1.e-3 &&
         fabs(state->WLAST - wlast) < 1.e-3)
-      return &OK_response;
+      return ok_response;
   }
   state->WFIRST = wfirst;
   state->WLAST = wlast;
@@ -577,21 +583,21 @@ const char *_InputWaveRange(double wfirst, double wlast, GlobalState *state) /* 
   {
     state->flagWLRANGE = 1;
     state->flagCONTIN = 0;
-    return &OK_response;
+    return ok_response;
   }
 }
 
 char const *_SetVWscale(double vw_scale, GlobalState *state) /* Set van der Waals scaling factor */
 {
   state->VW_scale = fabs(vw_scale);
-  return &OK_response;
+  return ok_response;
 }
 
 /* Set flag for H2 molecule */
 char const *_SetH2broad(short flag, GlobalState *state)
 {
   state->flagH2broad = flag ? 1 : 0;
-  return &OK_response;
+  return ok_response;
 }
 
 /* Read in line list */
@@ -736,8 +742,8 @@ char const *_InputLineList(int nlines, int slen, const char *species, double *li
     if (state->Wlim_right != NULL)
       FREE(state->Wlim_right);
     state->flagLINELIST = 0;
-    strcpy(state->result, "Not enough memory");
-    return state->result;
+    
+    RAISE("Not enough memory");
   }
 
   a0 = species;  /* Pointer to the list of species    */
@@ -818,7 +824,7 @@ char const *_InputLineList(int nlines, int slen, const char *species, double *li
     state->GF[LINE] = pow10(GFLOG);
   }
   state->flagLINELIST = 1;
-  return &OK_response;
+  return ok_response;
 }
 
 /* Return line list */
@@ -866,13 +872,12 @@ char const *_OutputLineList(int nlines, double *linelist, GlobalState *state)
       a1[6 * LINE + 5] = state->GAMVW[LINE];  /* Van der Waals damping */
     }
   }
-  return &OK_response;
+  return ok_response;
 }
 
 /* Change line list parameters */
 char const *_UpdateLineList(short nlines, int slen, short *index, const char *species, double *linelist, GlobalState *state)
 {
-  static char ERRMES[60];
   char tmpname[SP_LEN];
   short LINE, NUPDTE, *INDEX;
   double GFLOG, GRLG10, GSLG10, GWLG10,
@@ -891,14 +896,10 @@ char const *_UpdateLineList(short nlines, int slen, short *index, const char *sp
    state->GAMVW  - VAN DER WAALS DUMPING (C6).
 */
 
-  if (!state->flagLINELIST)
-  {
-    strcpy(state->result, "Line list was not set. Cannot update.");
-    return state->result;
-  }
+  ASSERT(state->flagLINELIST, "Line list was not set, cannot update");
   NUPDTE = nlines;
   if (NUPDTE < 1)
-    return &OK_response;
+    return ok_response;
 
   a0 = species;  /* Setup pointers for species        */
   a1 = linelist; /* Setup pointers to line parameters */
@@ -938,11 +939,10 @@ char const *_UpdateLineList(short nlines, int slen, short *index, const char *sp
 
     if (strncmp(&(state->spname[SP_LEN * i]), tmpname, SP_LEN) || fabs(EXC - state->EXCIT[i]) > 0.005)
     {
-      sprintf(ERRMES, "Attempt to replace line %d with another line", i);
       printf("Subst: %10.4f, '%s', %f, %f\n", WW, tmpname, EXC, a5[LINE]);
       printf("Orig:  %10.4f, '%4s', %f, %f\n", state->WLCENT[i], &(state->spname[SP_LEN * i]), state->EXCIT[i],
              log10(state->GF[i]));
-      return ERRMES;
+      RAISE("Attempt to replace line %d with another line", i);
     }
 
     state->WLCENT[i] = WW;
@@ -978,7 +978,7 @@ char const *_UpdateLineList(short nlines, int slen, short *index, const char *sp
     state->Wlim_left[i] = max(state->WLCENT[i] - 1000., 0.); /* Initialize line contribution limits */
     state->Wlim_right[i] = min(state->WLCENT[i] + 1000., 20000000.);
   }
-  return &OK_response;
+  return ok_response;
 }
 
 /* Read in model atmosphere */
@@ -1024,12 +1024,7 @@ char const *_InputModel(
   state->lineOPACITIES = 0;
 
   state->NRHOX = ndepth;
-  if (state->NRHOX > MOSIZE)
-  {
-    static char errmsg[64];
-    sprintf(errmsg, "SME library supports atmospheric model with maximum %d depth layers", MOSIZE);
-    return errmsg;
-  }
+  ASSERT(state->NRHOX <= MOSIZE, "SME library supports atmospheric model with maximum %d depth layers", MOSIZE);
 
   state->TEFF = teff;
   state->GRAV = grav;
@@ -1111,7 +1106,7 @@ char const *_InputModel(
     state->TLOG[IM] = log(state->T[IM]);
   }
   state->flagMODEL = 1;
-  return &OK_response;
+  return ok_response;
 }
 
 char const *_InputDepartureCoefficients(double *bmat, int lineindex, GlobalState *state)
@@ -1187,7 +1182,7 @@ char const *_InputDepartureCoefficients(double *bmat, int lineindex, GlobalState
   }
   state->flagNLTE[line] = 1;
 
-  return &OK_response;
+  return ok_response;
 }
 
 /* Get NLTE b's for specific line */
@@ -1224,7 +1219,7 @@ char const *_GetDepartureCoefficients(double *bmat, int nrhox, int line, GlobalS
     }
   }
 
-  return &OK_response;
+  return ok_response;
 }
 
 char const *_GetNLTEflags(short *nlte_flags, int nlines, GlobalState *state) /* Get NLTE flag for every line */
@@ -1240,7 +1235,7 @@ char const *_GetNLTEflags(short *nlte_flags, int nlines, GlobalState *state) /* 
     {
       b[line] = 0;
     }
-    return &OK_response;
+    return ok_response;
     ;
   }
 
@@ -1249,7 +1244,7 @@ char const *_GetNLTEflags(short *nlte_flags, int nlines, GlobalState *state) /* 
     b[line] = state->flagNLTE[line];
   }
 
-  return &OK_response;
+  return ok_response;
 }
 
 /* Reset LTE */
@@ -1258,7 +1253,7 @@ char const *_ResetDepartureCoefficients(GlobalState *state)
   int line;
 
   if (!state->initNLTE)
-    return &OK_response;
+    return ok_response;
 
   for (line = 0; line < state->allocated_NLTE_lines; line++)
   {
@@ -1274,7 +1269,7 @@ char const *_ResetDepartureCoefficients(GlobalState *state)
   state->allocated_NLTE_lines = 0;
   state->initNLTE = 0;
 
-  return &OK_response;
+  return ok_response;
 }
 
 char const *_InputAbund(double *abund, int nelements, GlobalState *state) /* Read in abundances */
@@ -1295,7 +1290,7 @@ char const *_InputAbund(double *abund, int nelements, GlobalState *state) /* Rea
   }
   state->flagABUND = 1;
   state->flagCONTIN = 0;
-  return &OK_response;
+  return ok_response;
 }
 
 /* Calculate opacities */
@@ -1304,26 +1299,11 @@ char const *_Opacity(short request_output, short nout, double *out1, double *out
   short i, nrhox;
   double *a1, *a2, *a3;
 
-  if (!state->flagMODEL)
-  {
-    strcpy(state->result, "Model atmosphere not set");
-    return state->result;
-  }
-  if (!state->flagWLRANGE)
-  {
-    strcpy(state->result, "Wavelength interval was not specified");
-    return state->result;
-  }
-  if (!state->flagABUND)
-  {
-    strcpy(state->result, "Abundances were not set");
-    return state->result;
-  }
-  if (!state->flagIONIZ)
-  {
-    strcpy(state->result, "Molecular-ionization equilibrium was not computed");
-    return state->result;
-  }
+  ASSERT(state->flagMODEL, "Model atmosphere not set");
+  ASSERT(state->flagWLRANGE, "Wavelength interval was not specified");
+  ASSERT(state->flagABUND, "Abundances were not set");
+  ASSERT(state->flagIONIZ, "Molecular-ionization equilibrium was not computed");
+
   state->flagCONTIN = 0;
 
   // Continuous opacity at the red edge
@@ -1355,7 +1335,7 @@ char const *_Opacity(short request_output, short nout, double *out1, double *out
   }
 
   state->flagCONTIN = 1;
-  return &OK_response;
+  return ok_response;
 }
 
 void CONTOP(double WLCONT, double *opacity, GlobalState *state)
@@ -4973,11 +4953,8 @@ char const *_GetOpacity(short ifop, short length, double *result, const char *sp
   double *a1;
   const char *a4;
 
-  if (!state->flagCONTIN)
-  {
-    strcpy(state->result, "Opacity has not been calculated");
-    return state->result;
-  }
+  ASSERT(state->flagCONTIN, "Opacity has not been calculated");
+  
   j = ifop;   /* state->IFOP number */
   i = length; /* Length of IDL arrays */
   nrhox = min(state->NRHOX, i);
@@ -4987,47 +4964,47 @@ char const *_GetOpacity(short ifop, short length, double *result, const char *sp
   case -3:
     for (i = 0; i < nrhox; i++)
       a1[i] = state->COPSTD[i];
-    return &OK_response;
+    return ok_response;
   case -2:
     for (i = 0; i < nrhox; i++)
       a1[i] = state->COPRED[i];
-    return &OK_response;
+    return ok_response;
   case -1:
     for (i = 0; i < nrhox; i++)
       a1[i] = state->COPBLU[i];
-    return &OK_response;
+    return ok_response;
   case 0:
     for (i = 0; i < nrhox; i++)
       a1[i] = state->AHYD[i];
-    return &OK_response;
+    return ok_response;
   case 1:
     for (i = 0; i < nrhox; i++)
       a1[i] = state->AH2P[i];
-    return &OK_response;
+    return ok_response;
   case 2:
     for (i = 0; i < nrhox; i++)
       a1[i] = state->AHMIN[i];
-    return &OK_response;
+    return ok_response;
   case 3:
     for (i = 0; i < nrhox; i++)
       a1[i] = state->SIGH[i];
-    return &OK_response;
+    return ok_response;
   case 4:
     for (i = 0; i < nrhox; i++)
       a1[i] = state->AHE1[i];
-    return &OK_response;
+    return ok_response;
   case 5:
     for (i = 0; i < nrhox; i++)
       a1[i] = state->AHE2[i];
-    return &OK_response;
+    return ok_response;
   case 6:
     for (i = 0; i < nrhox; i++)
       a1[i] = state->AHEMIN[i];
-    return &OK_response;
+    return ok_response;
   case 7:
     for (i = 0; i < nrhox; i++)
       a1[i] = state->SIGHE[i];
-    return &OK_response;
+    return ok_response;
   case 8:
     if (1)
     {
@@ -5049,19 +5026,19 @@ char const *_GetOpacity(short ifop, short length, double *result, const char *sp
         case 0:
           for (i = 0; i < nrhox; i++)
             a1[i] = C1OP_new(i, state) * state->FRACT[i][state->IXC1] * state->STIM[i] / state->RHO[i];
-          return &OK_response;
+          return ok_response;
         case 1:
           for (i = 0; i < nrhox; i++)
             a1[i] = C1OP_new(i, state);
-          return &OK_response;
+          return ok_response;
         case 2:
           for (i = 0; i < nrhox; i++)
             a1[i] = C1OP(i, state);
-          return &OK_response;
+          return ok_response;
         case 3:
           for (i = 0; i < nrhox; i++)
             a1[i] = state->FRACT[i][state->IXC1] * state->STIM[i] / state->RHO[i];
-          return &OK_response;
+          return ok_response;
         }
       }
       else if (!strcmp(species, "Mg1"))
@@ -5071,19 +5048,19 @@ char const *_GetOpacity(short ifop, short length, double *result, const char *sp
         case 0:
           for (i = 0; i < nrhox; i++)
             a1[i] = MG1OP_new(i, state) * state->FRACT[i][state->IXMG1] * state->STIM[i] / state->RHO[i];
-          return &OK_response;
+          return ok_response;
         case 1:
           for (i = 0; i < nrhox; i++)
             a1[i] = MG1OP_new(i, state);
-          return &OK_response;
+          return ok_response;
         case 2:
           for (i = 0; i < nrhox; i++)
             a1[i] = MG1OP(i, state);
-          return &OK_response;
+          return ok_response;
         case 3:
           for (i = 0; i < nrhox; i++)
             a1[i] = state->FRACT[i][state->IXMG1] * state->STIM[i] / state->RHO[i];
-          return &OK_response;
+          return ok_response;
         }
       }
       else if (!strcmp(species, "Al1"))
@@ -5093,19 +5070,19 @@ char const *_GetOpacity(short ifop, short length, double *result, const char *sp
         case 0:
           for (i = 0; i < nrhox; i++)
             a1[i] = AL1OP_new(i, state) * state->FRACT[i][state->IXAL1] * state->STIM[i] / state->RHO[i];
-          return &OK_response;
+          return ok_response;
         case 1:
           for (i = 0; i < nrhox; i++)
             a1[i] = AL1OP_new(i, state);
-          return &OK_response;
+          return ok_response;
         case 2:
           for (i = 0; i < nrhox; i++)
             a1[i] = AL1OP(i, state);
-          return &OK_response;
+          return ok_response;
         case 3:
           for (i = 0; i < nrhox; i++)
             a1[i] = state->FRACT[i][state->IXAL1] * state->STIM[i] / state->RHO[i];
-          return &OK_response;
+          return ok_response;
         }
       }
       else if (!strcmp(species, "Si1"))
@@ -5115,19 +5092,19 @@ char const *_GetOpacity(short ifop, short length, double *result, const char *sp
         case 0:
           for (i = 0; i < nrhox; i++)
             a1[i] = SI1OP_new(i, state) * state->FRACT[i][state->IXSI1] * state->STIM[i] / state->RHO[i];
-          return &OK_response;
+          return ok_response;
         case 1:
           for (i = 0; i < nrhox; i++)
             a1[i] = SI1OP_new(i, state);
-          return &OK_response;
+          return ok_response;
         case 2:
           for (i = 0; i < nrhox; i++)
             a1[i] = SI1OP(i, state);
-          return &OK_response;
+          return ok_response;
         case 3:
           for (i = 0; i < nrhox; i++)
             a1[i] = state->FRACT[i][state->IXSI1] * state->STIM[i] / state->RHO[i];
-          return &OK_response;
+          return ok_response;
         }
       }
       else if (!strcmp(species, "Fe1"))
@@ -5137,19 +5114,19 @@ char const *_GetOpacity(short ifop, short length, double *result, const char *sp
         case 0:
           for (i = 0; i < nrhox; i++)
             a1[i] = FE1OP_new(i, state) * state->FRACT[i][state->IXFE1] * state->STIM[i] / state->RHO[i];
-          return &OK_response;
+          return ok_response;
         case 1:
           for (i = 0; i < nrhox; i++)
             a1[i] = FE1OP_new(i, state);
-          return &OK_response;
+          return ok_response;
         case 2:
           for (i = 0; i < nrhox; i++)
             a1[i] = FE1OP(i, state);
-          return &OK_response;
+          return ok_response;
         case 3:
           for (i = 0; i < nrhox; i++)
             a1[i] = state->FRACT[i][state->IXFE1] * state->STIM[i] / state->RHO[i];
-          return &OK_response;
+          return ok_response;
         }
       }
       else if (!strcmp(species, "CH"))
@@ -5159,19 +5136,19 @@ char const *_GetOpacity(short ifop, short length, double *result, const char *sp
         case 0:
           for (i = 0; i < nrhox; i++)
             a1[i] = CHOP(i, state) * state->FRACT[i][state->IXCH] * state->STIM[i] / state->RHO[i];
-          return &OK_response;
+          return ok_response;
         case 1:
           for (i = 0; i < nrhox; i++)
             a1[i] = CHOP(i, state);
-          return &OK_response;
+          return ok_response;
         case 2:
           for (i = 0; i < nrhox; i++)
             a1[i] = CHOP(i, state);
-          return &OK_response;
+          return ok_response;
         case 3:
           for (i = 0; i < nrhox; i++)
             a1[i] = state->FRACT[i][state->IXCH] * state->STIM[i] / state->RHO[i];
-          return &OK_response;
+          return ok_response;
         }
       }
       else if (!strcmp(species, "NH"))
@@ -5181,19 +5158,19 @@ char const *_GetOpacity(short ifop, short length, double *result, const char *sp
         case 0:
           for (i = 0; i < nrhox; i++)
             a1[i] = NHOP(i, state) * state->FRACT[i][state->IXNH] * state->STIM[i] / state->RHO[i];
-          return &OK_response;
+          return ok_response;
         case 1:
           for (i = 0; i < nrhox; i++)
             a1[i] = NHOP(i, state);
-          return &OK_response;
+          return ok_response;
         case 2:
           for (i = 0; i < nrhox; i++)
             a1[i] = NHOP(i, state);
-          return &OK_response;
+          return ok_response;
         case 3:
           for (i = 0; i < nrhox; i++)
             a1[i] = state->FRACT[i][state->IXNH] * state->STIM[i] / state->RHO[i];
-          return &OK_response;
+          return ok_response;
         }
       }
       else if (!strcmp(species, "OH"))
@@ -5203,33 +5180,31 @@ char const *_GetOpacity(short ifop, short length, double *result, const char *sp
         case 0:
           for (i = 0; i < nrhox; i++)
             a1[i] = OHOP(i, state) * state->FRACT[i][state->IXOH] * state->STIM[i] / state->RHO[i];
-          return &OK_response;
+          return ok_response;
         case 1:
           for (i = 0; i < nrhox; i++)
             a1[i] = OHOP(i, state);
-          return &OK_response;
+          return ok_response;
         case 2:
           for (i = 0; i < nrhox; i++)
             a1[i] = OHOP(i, state);
-          return &OK_response;
+          return ok_response;
         case 3:
           for (i = 0; i < nrhox; i++)
             a1[i] = state->FRACT[i][state->IXOH] * state->STIM[i] / state->RHO[i];
-          return &OK_response;
+          return ok_response;
         }
       }
       else
       {
-        static char errmsg[64];
-        sprintf(errmsg, "SME cannot compute continuous opacity for %s", species);
-        return errmsg;
+        RAISE("SME cannot compute continuous opacity for %s", species);
       }
     }
     else
     {
       for (i = 0; i < nrhox; i++)
         a1[i] = state->ACOOL[i];
-      return &OK_response;
+      return ok_response;
     }
   case 9:
     if (1)
@@ -5238,57 +5213,55 @@ char const *_GetOpacity(short ifop, short length, double *result, const char *sp
       {
         for (i = 0; i < nrhox; i++)
           a1[i] = N1OP(i, state) * state->FRACT[i][state->IXN1] * state->STIM[i] / state->RHO[i];
-        return &OK_response;
+        return ok_response;
       }
       else if (!strcmp(species, "O1"))
       {
         for (i = 0; i < nrhox; i++)
           a1[i] = O1OP(i, state) * state->FRACT[i][state->IXO1] * state->STIM[i] / state->RHO[i];
-        return &OK_response;
+        return ok_response;
       }
       else if (!strcmp(species, "Mg2"))
       {
         for (i = 0; i < nrhox; i++)
           a1[i] = MG2OP(i, state) * state->FRACT[i][state->IXMG2] * state->STIM[i] / state->RHO[i];
-        return &OK_response;
+        return ok_response;
       }
       else if (!strcmp(species, "Si2"))
       {
         for (i = 0; i < nrhox; i++)
           a1[i] = SI2OP(i, state) * state->FRACT[i][state->IXSI2] * state->STIM[i] / state->RHO[i];
-        return &OK_response;
+        return ok_response;
       }
       else if (!strcmp(species, "Ca2"))
       {
         for (i = 0; i < nrhox; i++)
           a1[i] = CA2OP(i, state) * state->FRACT[i][state->IXCA2] * state->STIM[i] / state->RHO[i];
-        return &OK_response;
+        return ok_response;
       }
       else
       {
-        static char errmsg[64];
-        sprintf(errmsg, "SME cannot compute continuous opacity for %s", species);
-        return errmsg;
+        RAISE(errmsg, "SME cannot compute continuous opacity for %s", species);
       }
     }
     else
     {
       for (i = 0; i < nrhox; i++)
         a1[i] = state->ALUKE[i];
-      return &OK_response;
+      return ok_response;
     }
   case 10:
     for (i = 0; i < nrhox; i++)
       a1[i] = state->AHOT[i];
-    return &OK_response;
+    return ok_response;
   case 11:
     for (i = 0; i < nrhox; i++)
       a1[i] = state->SIGEL[i];
-    return &OK_response;
+    return ok_response;
   case 12:
     for (i = 0; i < nrhox; i++)
       a1[i] = state->SIGH2[i];
-    return &OK_response;
+    return ok_response;
   default:
     return "Wrong opacity switch number";
   }
@@ -5363,31 +5336,16 @@ char const *_Ionization(short ion, GlobalState *state)
       Pgas, Pelec, max_Ne_err;
   int dump01, dump02, return_pfs, return1, return2, return3, i_max_Ne_err;
 
-  if (!state->flagMODEL)
-  {
-    strcpy(state->result, "Model atmosphere not set");
-    return state->result;
-  }
-  if (!state->flagABUND)
-  {
-    strcpy(state->result, "Abundances not set");
-    return state->result;
-  }
-  if (!state->flagLINELIST)
-  {
-    strcpy(state->result, "No line list set yet");
-    return state->result;
-  }
+  ASSERT(state->flagMODEL, "Model atmosphere not set");
+  ASSERT(state->flagABUND, "Abundances not set");
+  ASSERT(state->flagLINELIST, "No line list set yet");
+
   if (state->SPLIST != NULL)
     FREE(state->SPLIST);
 
   species_list = NULL;
   CALLOC(species_list, state->NLINES * SP_LEN, char);
-  if (species_list == NULL)
-  {
-    strcpy(state->result, "No enough space in EOS_count_species");
-    return state->result;
-  }
+  ASSERT(species_list != NULL, "No enough space in EOS_count_species");
 
   /* The only allowed argument in call to Ionization contains switches
    indicating that electron and/or particle density
@@ -5425,22 +5383,16 @@ char const *_Ionization(short ion, GlobalState *state)
     break;
   case 1:
     FREE(species_list);
-    strcpy(state->result, "EOS_count_species found illegal species name");
-    return state->result;
+    RAISE("EOS_count_species found illegal species name");
   default:
     FREE(species_list);
-    sprintf(state->result, "EOS_count_species - SPLSIZ must be larger than %d", i);
-    return state->result;
+    RAISE("EOS_count_species - SPLSIZ must be larger than %d", i);
   }
 
   /* Now allocate space for the complete list of species and the index */
 
   CALLOC(state->SPLIST, state->N_SPLIST * SP_LEN, char);
-  if (state->SPLIST == NULL)
-  {
-    strcpy(state->result, "Not enough space in EOS_count_species");
-    return state->result;
-  }
+  ASSERT(state->SPLIST != NULL, "Not enough space in EOS_count_species");
 
   /* Construct a complete list of species */
 
@@ -5453,33 +5405,27 @@ char const *_Ionization(short ion, GlobalState *state)
   case 1:
     FREE(species_list);
     FREE(state->SPLIST);
-    strcpy(state->result, "EOS_list_species found illegal species name");
-    return state->result;
+    RAISE("EOS_list_species found illegal species name");
   case 2:
     FREE(species_list);
     FREE(state->SPLIST);
-    strcpy(state->result, "EOS_list_species received too small state->N_SPLIST");
-    return state->result;
+    RAISE("EOS_list_species received too small state->N_SPLIST");
   case 3:
     FREE(species_list);
     FREE(state->SPLIST);
-    strcpy(state->result, "EOS_list_species could not match ionization state");
-    return state->result;
+    RAISE("EOS_list_species could not match ionization state");
   case 4:
     FREE(species_list);
     FREE(state->SPLIST);
-    strcpy(state->result, "EOS_list_species found e- in the middle of the list");
-    return state->result;
+    RAISE("EOS_list_species found e- in the middle of the list");
   case 5:
     FREE(species_list);
     FREE(state->SPLIST);
-    strcpy(state->result, "EOS_list_species - Unreasonable abundances");
-    return state->result;
+    RAISE("EOS_list_species - Unreasonable abundances");
   default:
     FREE(species_list);
     FREE(state->SPLIST);
-    strcpy(state->result, "EOS_list_species - this error should never happen");
-    return state->result;
+    RAISE("EOS_list_species - this error should never happen");
   }
   FREE(species_list);
   state->N_SPLIST = i;
@@ -5528,37 +5474,21 @@ char const *_Ionization(short ion, GlobalState *state)
   for (i = 0; i < state->NRHOX; i++)
   {
     CALLOC(state->FRACT[i], state->N_SPLIST, float);
-    if (state->FRACT[i] == NULL)
-    {
-      strcpy(state->result, "Ionization: Not enough memory");
-      return state->result;
-    }
+    ASSERT(state->FRACT[i] != NULL, "Ionization: Not enough memory");
   }
   CALLOC(state->PARTITION_FUNCTIONS, state->NRHOX, float *);
   for (i = 0; i < state->NRHOX; i++)
   {
     CALLOC(state->PARTITION_FUNCTIONS[i], state->N_SPLIST, float);
-    if (state->PARTITION_FUNCTIONS[i] == NULL)
-    {
-      strcpy(state->result, "Ionization: Not enough memory");
-      return state->result;
-    }
+    ASSERT(state->PARTITION_FUNCTIONS[i] != NULL, "Ionization: Not enough memory");
   }
   state->NRHOX_allocated = state->NRHOX;
 
   CALLOC(state->POTION, state->N_SPLIST, float);
-  if (state->POTION == NULL)
-  {
-    strcpy(state->result, "Ionization: Not enough memory");
-    return state->result;
-  }
+  ASSERT(state->POTION != NULL, "Ionization: Not enough memory");
 
   CALLOC(state->MOLWEIGHT, state->N_SPLIST, float);
-  if (state->MOLWEIGHT == NULL)
-  {
-    strcpy(state->result, "Ionization: Not enough memory");
-    return state->result;
-  }
+  ASSERT(state->MOLWEIGHT != NULL, "Ionization: Not enough memory");
 
   /* Find out the location of continuous absorbers */
 
@@ -5624,7 +5554,7 @@ char const *_Ionization(short ion, GlobalState *state)
             nelem, state->SPLIST, state->N_SPLIST, state->PARTITION_FUNCTIONS[i],
             3, SP_LEN);
     }
-    return &OK_response;
+    return ok_response;
   }
 
   i_max_Ne_err = -1;
@@ -5685,14 +5615,9 @@ char const *_Ionization(short ion, GlobalState *state)
     state->SPINDEX[i]--; /* Index in FORTRAN is 1-based */
 
   state->flagIONIZ = 1;
-  if (max_Ne_err > 0.5)
-  {
-    sprintf(state->result, "WARNING: EOS-computed electron density differs from the model by %d%% in layer %d",
-            round(max_Ne_err * 100), i_max_Ne_err + 1);
-    return state->result;
-  }
+  ASSERT(max_Ne_err <= 0.5, "WARNING: EOS-computed electron density differs from the model by %d%% in layer %d", round(max_Ne_err * 100), i_max_Ne_err + 1);
 
-  return &OK_response;
+  return ok_response;
 }
 
 /* Return mode=0 - number densities
@@ -5706,17 +5631,8 @@ char const *_GetFraction(short mode, const char *species, int slen, short length
   int j;
   double *a;
 
-  if (!state->flagMODEL)
-  {
-    strcpy(state->result, "No model atmosphere has been set");
-    return state->result;
-  }
-
-  if (!state->flagIONIZ && mode != 1)
-  {
-    strcpy(state->result, "Molecular-ionization equilibrium was not computed");
-    return state->result;
-  }
+  ASSERT(state->flagMODEL, "No model atmosphere has been set");
+  ASSERT(!(!state->flagIONIZ && mode != 1), "Molecular-ionization equilibrium was not computed");
 
   a0 = species; /* Pointer to the name of species */
 
@@ -5736,21 +5652,19 @@ char const *_GetFraction(short mode, const char *species, int slen, short length
         for (j = 0; j < min(state->NRHOX, l); j++)
           a[j] = state->FRACT[j][i] *
                  state->PARTITION_FUNCTIONS[j][i];
-        return &OK_response;
+        return ok_response;
       case 1:
         for (j = 0; j < min(state->NRHOX, l); j++)
           a[j] = state->PARTITION_FUNCTIONS[j][i];
-        return &OK_response;
+        return ok_response;
       default:
         for (j = 0; j < min(state->NRHOX, l); j++)
           a[j] = state->FRACT[j][i];
-        return &OK_response;
+        return ok_response;
       }
     }
   }
-  static char errmsg[64];
-  sprintf(errmsg, "Requested species %s not found", Terminator(a0, slen));
-  return errmsg;
+  RAISE("Requested species %s not found", Terminator(a0, slen));
 }
 
 char const *_GetDensity(short length, double *result, GlobalState *state)
@@ -5774,7 +5688,7 @@ char const *_GetDensity(short length, double *result, GlobalState *state)
   a = result; /* Array */
   for (j = 0; j < min(state->NRHOX, l); j++)
     a[j] = state->RHO_eos[j];
-  return &OK_response;
+  return ok_response;
 }
 
 char const *_GetNatom(short length, double *result, GlobalState *state)
@@ -5797,7 +5711,7 @@ char const *_GetNatom(short length, double *result, GlobalState *state)
   a = result; /* Array */
   for (j = 0; j < min(state->NRHOX, l); j++)
     a[j] = state->XNA_eos[j];
-  return &OK_response;
+  return ok_response;
 }
 
 char const *_GetNelec(short length, double *result, GlobalState *state)
@@ -5820,7 +5734,7 @@ char const *_GetNelec(short length, double *result, GlobalState *state)
   a = result; /* Array */
   for (j = 0; j < min(state->NRHOX, l); j++)
     a[j] = state->XNE_eos[j];
-  return &OK_response;
+  return ok_response;
 }
 
 char const *_Transf(short nmu, double *mu, double *cint_seg, double *cintr_seg, int nwmax, int nw, double *wint_seg, double *sint_seg, double accrt, double accwi, short keep_lineop, short long_continuum, GlobalState *state)
@@ -5899,12 +5813,7 @@ char const *_Transf(short nmu, double *mu, double *cint_seg, double *cintr_seg, 
                                     point recomputing line opacities. This flag
                                     tells when recalculations are needed */
 
-  if (NMU > MUSIZE)
-  {
-    static char errmsg[64];
-    sprintf(errmsg, "Specified number of limb angles (%d) exceeds MUSIZE (%d)", NMU, MUSIZE);
-    return errmsg;
-  }
+  ASSERT(NMU < MUSIZE, "Specified number of limb angles (%d) exceeds MUSIZE (%d)", NMU, MUSIZE);
 
   /* Check of continuum is needed at every wavelength */
   /* If this flag is true FCBLUE must be an arrays of */
@@ -6094,7 +6003,7 @@ char const *_GetLineRange(double *linerange, int nlines, GlobalState *state) /* 
     }
   }
 
-  return &OK_response;
+  return ok_response;
 }
 
 char const *_CentralDepth(int nmu, double *mu, int nwsize, float *table, double accrt, GlobalState *state)
@@ -6156,12 +6065,7 @@ char const *_CentralDepth(int nmu, double *mu, int nwsize, float *table, double 
   NWSIZE = nwsize; /* Length of the arrays for synthesis */
   TABLE = table;   /* Array for synthetic spectrum */
   EPS1 = accrt;    /* Accuracy of the radiative transfer integration */
-  if (NWSIZE < state->NLINES)
-  {
-    strcpy(state->result, "Array size is smaller than the number of sp.lines");
-    return state->result;
-  }
-
+  ASSERT(NWSIZE >= state->NLINES, "Array size is smaller than the number of sp.lines");
   /* Check autoionization lines */
 
   AutoIonization(state);
@@ -6208,7 +6112,7 @@ char const *_CentralDepth(int nmu, double *mu, int nwsize, float *table, double 
     TABLE[line] = (TABLE[line] < FC) ? 1.0 - TABLE[line] / FC : 0.0;
   }
 
-  return &OK_response;
+  return ok_response;
 }
 
 #define EPS3 6.
@@ -7403,7 +7307,7 @@ char const *_GetLineOpacity(double wave, short nrhox, double *lop, double *cop, 
   FREE(SRC_CONT);
 
   state->MOTYPE = MOTYPE_orig;
-  return &OK_response;
+  return ok_response;
 }
 
 #define Z 4.9946686e-21

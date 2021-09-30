@@ -6342,7 +6342,7 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
     if (!long_continuum)
     {
       OPMTRX(state->WFIRST, opacity_tot, opacity_cont, source, source_cont, 0, state->NLINES - 1, state);
-      TBINTG(NMU, rhox, opacity_cont, source_cont, FCBLUE, state);
+      TBINTG(NMU, rhox, opacity_cont, source_cont, FCBLUE, state->NRHOX);
     }
 
     line_first = 0;
@@ -6356,14 +6356,14 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
     for (IWL = 0; IWL < NNWL; IWL++)
     {
       OPMTRX(WL[IWL], opacity_tot, opacity_cont, source, source_cont, line_first, line_last, state);
-      TBINTG(NMU, rhox, opacity_tot, source, TABLE + IWL * NMU, state);
+      TBINTG(NMU, rhox, opacity_tot, source, TABLE + IWL * NMU, state->NRHOX);
       if (long_continuum)
       {
-        TBINTG(NMU, rhox, opacity_cont, source_cont, FCBLUE + IWL * NMU, state);
+        TBINTG(NMU, rhox, opacity_cont, source_cont, FCBLUE + IWL * NMU, state->NRHOX);
       }
     }
     OPMTRX(state->WLAST, opacity_tot, opacity_cont, source, source_cont, 0, state->NLINES - 1, state);
-    TBINTG(NMU, rhox, opacity_cont, source_cont, FCRED, state);
+    TBINTG(NMU, rhox, opacity_cont, source_cont, FCRED, state->NRHOX);
     return 0;
   }
 
@@ -6373,8 +6373,8 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
   WL[0] = state->WFIRST;
   OPMTRX(state->WFIRST, opacity_tot, opacity_cont, source, source_cont, 0, state->NLINES - 1, state);
 
-  TBINTG(NMU, rhox, opacity_tot, source, TABLE, state);
-  TBINTG(NMU, rhox, opacity_cont, source_cont, FCBLUE, state);
+  TBINTG(NMU, rhox, opacity_tot, source, TABLE, state->NRHOX);
+  TBINTG(NMU, rhox, opacity_cont, source_cont, FCBLUE, state->NRHOX);
   FNORM = FCBLUE[0];
 
   /*  Add one point at each line center and one in between */
@@ -6398,10 +6398,10 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
       if (state->Wlim_left[line] < WL[IWL] && state->WLCENT[line] > WL[IWL] &&
           state->ALMAX[line] < EPS1)
         state->Wlim_left[line] = WL[IWL];
-      TBINTG(NMU, rhox, opacity_tot, source, TABLE + IWL * NMU, state);
+      TBINTG(NMU, rhox, opacity_tot, source, TABLE + IWL * NMU, state->NRHOX);
       if (long_continuum)
       {
-        TBINTG(NMU, rhox, opacity_cont, source_cont, FCBLUE + IWL * NMU, state);
+        TBINTG(NMU, rhox, opacity_cont, source_cont, FCBLUE + IWL * NMU, state->NRHOX);
         FNORM = FCBLUE[IWL * NMU];
       }
 
@@ -6417,11 +6417,11 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
       if (state->Wlim_left[line] < WL[IWL] && state->WLCENT[line] > WL[IWL] &&
           state->ALMAX[line] < EPS1)
         state->Wlim_left[line] = WL[IWL];
-      TBINTG(NMU, rhox, opacity_tot, source, TABLE + IWL * NMU, state);
+      TBINTG(NMU, rhox, opacity_tot, source, TABLE + IWL * NMU, state->NRHOX);
       if (long_continuum)
       {
         state->debug_print = 0;
-        TBINTG(NMU, rhox, opacity_cont, source_cont, FCBLUE + IWL * NMU, state);
+        TBINTG(NMU, rhox, opacity_cont, source_cont, FCBLUE + IWL * NMU, state->NRHOX);
         FNORM = FCBLUE[IWL * NMU];
       }
 
@@ -6439,9 +6439,9 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
     return 1;
   WL[IWL] = state->WLAST;
   OPMTRX(WL[IWL], opacity_tot, opacity_cont, source, source_cont, 0, state->NLINES - 1, state);
-  TBINTG(NMU, rhox, opacity_tot, source, TABLE + IWL * NMU, state);
+  TBINTG(NMU, rhox, opacity_tot, source, TABLE + IWL * NMU, state->NRHOX);
   state->debug_print = 1;
-  TBINTG(NMU, rhox, opacity_cont, source_cont, FCRED, state);
+  TBINTG(NMU, rhox, opacity_cont, source_cont, FCRED, state->NRHOX);
   state->debug_print = 0;
   if (long_continuum)
   {
@@ -6483,10 +6483,10 @@ int RKINTS(double *rhox, int NMU, double EPS1, double EPS2,
     OPMTRX(WL[IWL], opacity_tot, opacity_cont, source, source_cont,
            line_first, line_last, state);
 
-    TBINTG(NMU, rhox, opacity_tot, source, TABLE + IWL * NMU, state);
+    TBINTG(NMU, rhox, opacity_tot, source, TABLE + IWL * NMU, state->NRHOX);
     if (long_continuum)
     {
-      TBINTG(NMU, rhox, opacity_cont, source_cont, FCBLUE + IWL * NMU, state);
+      TBINTG(NMU, rhox, opacity_cont, source_cont, FCBLUE + IWL * NMU, state->NRHOX);
       FNORM = FCBLUE[IWL * NMU];
     }
 
@@ -6925,7 +6925,7 @@ void TBINTG1(double rhox[], double opacity[], double source[], double *RESULT, G
 }
 
 void TBINTG(int Nmu, double rhox[], double opacity[], double source[],
-            double RESULT[], GlobalState *state)
+            double RESULT[], int nrhox)
 {
   /*
   RT solver for plane parallel geometry
@@ -6945,18 +6945,18 @@ void TBINTG(int Nmu, double rhox[], double opacity[], double source[],
 
   /* Useful things for the Planck function */
 
-  SRC_B = source[state->NRHOX - 1]; // Source function
-  SRC_C = source[state->NRHOX - 2];
-  OPC_B = opacity[state->NRHOX - 1]; // Opacities
-  OPC_C = opacity[state->NRHOX - 2];
+  SRC_B = source[nrhox - 1]; // Source function
+  SRC_C = source[nrhox - 2];
+  OPC_B = opacity[nrhox - 1]; // Opacities
+  OPC_C = opacity[nrhox - 2];
   for (imu = 0; imu < Nmu; imu++)
   {
-    DBNU = 2.0 * (SRC_B - SRC_C) / ((rhox[imu * state->NRHOX + state->NRHOX - 1] - rhox[imu * state->NRHOX + state->NRHOX - 2]) * (OPC_B + OPC_C));
+    DBNU = 2.0 * (SRC_B - SRC_C) / ((rhox[imu * nrhox + nrhox - 1] - rhox[imu * nrhox + nrhox - 2]) * (OPC_B + OPC_C));
     INTENSITY[imu] = 0.5 * (SRC_B + SRC_C) + DBNU; // Line intensity at the bottom
     SPRIME_SAVE[imu] = 0.0;                        // Initialize S'
   }
 
-  for (IM = state->NRHOX - 2; IM > 0; IM--) // Work your way from the deepest
+  for (IM = nrhox - 2; IM > 0; IM--) // Work your way from the deepest
   {                                         // layer to the surface
     SRC_A = SRC_B;                          // Shift source functions and opacities
     OPC_A = OPC_B;
@@ -6969,8 +6969,8 @@ void TBINTG(int Nmu, double rhox[], double opacity[], double source[],
     */
     for (imu = 0; imu < Nmu; imu++)
     {
-      STEP_AB = (rhox[imu * state->NRHOX + IM + 1] - rhox[imu * state->NRHOX + IM]);
-      STEP_BC = (rhox[imu * state->NRHOX + IM] - rhox[imu * state->NRHOX + IM - 1]);
+      STEP_AB = (rhox[imu * nrhox + IM + 1] - rhox[imu * nrhox + IM]);
+      STEP_BC = (rhox[imu * nrhox + IM] - rhox[imu * nrhox + IM - 1]);
       DER = (OPC_B - OPC_A) / STEP_AB;
       DER1 = (OPC_C - OPC_B) / STEP_BC;
       LAMBDA = (1.0 + STEP_BC / (STEP_AB + STEP_BC)) / 3.0;
@@ -7011,7 +7011,7 @@ void TBINTG(int Nmu, double rhox[], double opacity[], double source[],
       SPRIME_A = SPRIME_SAVE[imu];
       SPRIME_B = (DER * DER1 > 0.0) ? DER / (LAMBDA * DER1 + (1.0 - LAMBDA) * DER) * DER1 : 0.0;
       SPRIME_SAVE[imu] = SPRIME_B;
-      if (IM == state->NRHOX - 2)
+      if (IM == nrhox - 2)
       {
         CNTR_AB = SRC_B - DELTA / 2.0 * SPRIME_B;
       }

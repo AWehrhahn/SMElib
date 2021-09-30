@@ -21,7 +21,7 @@
 /* Default OK response */
 const char ok_response[2] = "\0";
 // #define ok_response '\0'
-#define ERR_LEN 64
+#define ERR_LEN 128
 
 static char errmsg[ERR_LEN];
 #define RAISE(args...) snprintf(errmsg, ERR_LEN, args); return errmsg
@@ -132,7 +132,7 @@ int RKINTS_sph(double rhox[][2 * MOSIZE], int, int NRHOXs[], double, double,
                double *, double *, double *, int, int &,
                double *, short, int grazing[], GlobalState *state);
 double FCINTG(double, double, double *, GlobalState *state);
-void TBINTG(int, double *, double *, double *, double *, GlobalState *state);
+void TBINTG(int, double *, double *, double *, double *, int nrhox);
 void TBINTG_sph(int, double *, double *, double *, double *, int, GlobalState *state);
 void CENTERINTG(double *, int, int, double *, double *, GlobalState *state);
 void LINEOPAC(int, GlobalState *state);

@@ -15,11 +15,8 @@ There are two versions for each OS. The gfortran version uses gfortran to compil
 Note that depending on your system you might have to install libgfortran as well.
 
 ## Notes
- - SMElib requires libgfortran on most OSs to be installed. The exact version, depends on the version of SMELib that you are installing. If PySME fails to load the library try adding that libgfortran file in the same directory.
-     - linux: libgfortran.so.3 (e.g. sudo apt install libgfortran3)
-     - manylinux2010: libgfortran.so.5 (e.g. sudo apt install libgfortran5)
-     - windows: libgfortran-4.dll
-     - osx: ?? (I'm not sure, but its the version that comes with brew cask gfortran)
+ - SMElib requires libgfortran to be installed. The exact version, depends on the version of SMELib that you are installing and on your OS. Releases of the SMElib include the required libgfortran, that was used to compile it. If you have problems loading the library try adding that libgfortran to your library path or install that version using your package manager. You can determine the version required by your library using the ldd command line utility on linux/macos, or https://github.com/lucasg/Dependencies on Windows.
+ - If this does not solve the libgfortran issues, try compiling the library on your machine using the instructions on section Build below.
  - SMELib needs the datafiles to be present, or it will fail silently. It is therefore recommended to use the included `setLibraryPath(path-to-the-datafiles)` function. While SMElib comes with a default location when it is compiled, the location is dependant on the machine it is run on. You can check the currently set path with `getLibraryPath()` and the names of the required datafiles with `GetDataFiles()`.
 
 ## Build

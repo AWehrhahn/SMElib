@@ -20,7 +20,7 @@ case $target_os in
     ;;
     win32|mingw32)
     target=win32
-    extension=-3.dll
+    extension=-5.dll
     outdir=bindir
     ;;
     *) 

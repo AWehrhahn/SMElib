@@ -235,8 +235,8 @@ jobs:
         if: matrix.name == 'windows-gfortran'
         run: |
           ls $(x86_64-w64-mingw32-gfortran --print-file-name=)libgfortran-?.dll
-          make -s flib_target
-          cp -v $(readlink -f $(ls $(x86_64-w64-mingw32-gfortran --print-file-name=)libgfortran-?.dll)) $(make -s flib_target)
+          dirname $(make -s flib_target) 
+          cp -v $(readlink -f $(ls $(x86_64-w64-mingw32-gfortran --print-file-name=)libgfortran-?.dll)) $(dirname $(make -s flib_target))
 
       - name: Zip data # This would actually build your project, using zip for an example artifact
         run: zip -r ${{ matrix.name }} ${{ matrix.outputs }}

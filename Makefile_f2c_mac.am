@@ -5,7 +5,7 @@ ACLOCAL_AMFLAGS = -I m4
 lib_LTLIBRARIES = libsme.la
 libsme_la_SOURCES = \
 	src/sme/platform.h \
-	src/sme/sme_synth_faster.h\
+	src/sme/sme_synth_faster.h \
 	src/sme/sme_synth_faster.cpp \
 	src/eos/eos.c \
 	src/eos/eos_eqns.c \
@@ -15,7 +15,8 @@ libsme_la_SOURCES = \
 	src/sme/hlinprof.c
 libsme_la_LDFLAGS = -fPIC -version-info 5:22:0 -shared -no-undefined
 libsme_la_CPPFLAGS = -fPIC -shared
-libsme_la_LIBADD = -lc -l:libf2c.a -lm -lstdc++
+# Here we assume that f2c has been installed using homebrew, since the automatic detection seems to fail...
+libsme_la_LIBADD = -lc /usr/local/Cellar/f2c/HEAD/lib/libf2c.a -lm -lstdc++
 
 dist_pkgdata_DATA = src/data/bpo_self.grid.INTEL \
 	src/data/Fe1_Bautista2017.dat.INTEL \

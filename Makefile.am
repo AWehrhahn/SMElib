@@ -7,8 +7,14 @@ CXXLD = $(F77)
 lib_LTLIBRARIES = libsme.la
 libsme_la_SOURCES = \
 	src/sme/platform.h \
-	src/sme/sme_synth_faster.h \
-	src/sme/sme_synth_faster.cpp \
+	src/sme/sme_synth_parallel.h \
+	src/sme/sme_synth_parallel.cpp \
+	src/sme/sme_idl_interface.h \
+	src/sme/sme_idl_interface.cpp \
+	src/sme/sme_cython_interface.h \
+	src/sme/sme_cython_interface.cpp \
+	src/sme/sme_parallel_interface.h \
+	src/sme/sme_parallel_interface.cpp \
 	src/eos/eos.f \
 	src/eos/eos_eqns.f \
 	src/eos/eos_math_special.f \

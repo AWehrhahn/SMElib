@@ -46,10 +46,10 @@ jobs:
             container: manylinux2014_x86_64
             compiler: gfortran
             makefile: Makefile.am
-          - name: gfortran-parallel
-            container: manylinux2014_x86_64
-            compiler: gfortran
-            makefile: Makefile_parallel.am
+          # - name: gfortran-parallel
+          #   container: manylinux2014_x86_64
+          #   compiler: gfortran
+          #   makefile: Makefile_parallel.am
           # F2C fails the test on manylinux for some reason , f2c]
 
     container:
@@ -129,11 +129,11 @@ jobs:
             packages: gfortran python3-dev
             outputs: lib share
             makefile: Makefile.am
-          - name: ubuntu-f2c
-            runs_on: ubuntu-latest
-            packages: f2c
-            outputs: lib share python3-dev
-            makefile: Makefile_f2c.am
+          # - name: ubuntu-f2c
+          #   runs_on: ubuntu-latest
+          #   packages: f2c
+          #   outputs: lib share python3-dev
+          #   makefile: Makefile_f2c.am
           - name: windows-gfortran
             runs_on: ubuntu-latest
             packages: gfortran mingw-w64 mingw-w64-tools mingw-w64-common gfortran-mingw-w64 gfortran-mingw-w64-x86-64 gcc-mingw-w64 gcc-mingw-w64-x86-64 g++-mingw-w64 g++-mingw-w64-x86-64 python3-dev

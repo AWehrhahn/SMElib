@@ -91,14 +91,14 @@ jobs:
       - run: zip -r ${{ matrix.container }}-${{ matrix.name }} lib share
 
       - run: pip3 install -r test/requirements.txt
-      - run: pip3 install -r cython/requirements.txt
-      - run: |
-         cd cython/
-         cp -r ../lib lib
-         cp -r ../share share
-         python3 setup.py build_ext --inplace
-         pip3 install .
-         cd ..
+      # - run: pip3 install -r cython/requirements.txt
+      # - run: |
+      #    cd cython/
+      #    cp -r ../lib lib
+      #    cp -r ../share share
+      #    python3 setup.py build_ext --inplace
+      #    pip3 install .
+      #    cd ..
       - run: python3 -m pytest
 
       - name: Upload Debug Spectrum
@@ -249,15 +249,14 @@ jobs:
 
       - name: Prepare Test Environment
         if: matrix.name != 'windows-gfortran' && matrix.name != 'windows-f2c'
-        run: |
-          pip3 install -r test/requirements.txt
-          pip3 install -r cython/requirements.txt
-          cd cython/
-          cp -r ../lib lib
-          cp -r ../share share
-          python3 setup.py build_ext --inplace
-          pip3 install .
-          cd ..
+        run: pip3 install -r test/requirements.txt
+          # pip3 install -r cython/requirements.txt
+          # cd cython/
+          # cp -r ../lib lib
+          # cp -r ../share share
+          # python3 setup.py build_ext --inplace
+          # pip3 install .
+          # cd ..
 
       - name: Test Library
         if: matrix.name != 'windows-gfortran' && matrix.name != 'windows-f2c'

@@ -674,22 +674,553 @@ static PyObject * smelib_GetDepartureCoefficients(PyObject * self, PyObject *arg
     return (PyObject*) bmatrix_arr;
 }
 
+static char smelib_ResetDepartureCoefficients_docstring[] = "Reset to LTE";
+static PyObject * smelib_ResetDepartureCoefficients(PyObject * self, PyObject *args)
+{
+    const int n = 0;
+    void * args_c[n];
+    const char * result = NULL;
+
+    result = ResetDepartureCoefficients(n, args_c);
+
+    if (result != NULL && result[0] != OK_response)
+    {
+        PyErr_SetString(PyExc_RuntimeError, result);
+        return NULL;
+    }
+    Py_RETURN_NONE;
+}
+
+static char smelib_InputAbund_docstring[] = "Read in abundances";
+static PyObject * smelib_InputAbund(PyObject * self, PyObject *args)
+{
+    const int n = 1;
+    void * args_c[n];
+    const char * result = NULL;
+
+    PyObject * abund_obj = NULL;
+    PyArrayObject * abund_arr = NULL;
+
+    if (!PyArg_ParseTuple(args, "O", &abund_obj))
+        return NULL;
+
+    abund_arr = (PyArrayObject*) PyArray_FROM_OTF(abund_obj, NPY_DOUBLE, NPY_ARRAY_IN_ARRAY);
+
+    if (abund_arr == NULL){
+        return NULL;
+    }
+
+    if (PyArray_NDIM(abund_arr) != 1){
+        PyErr_SetString(PyExc_ValueError, "Expected abundance array with ndim == 1");
+        Py_XDECREF(abund_arr);
+        return NULL;
+    }
+
+    if (PyArray_DIM(abund_arr, 0) != 99){
+        PyErr_SetString(PyExc_ValueError, "Expected abundance array with size 99");
+        Py_XDECREF(abund_arr);
+        return NULL;
+    }
+
+    args_c[0] = PyArray_DATA(abund_arr);
+    result = InputAbund(n, args_c);
+
+    Py_XDECREF(abund_arr);
+
+    if (result != NULL && result[0] != OK_response)
+    {
+        PyErr_SetString(PyExc_RuntimeError, result);
+        return NULL;
+    }
+    Py_RETURN_NONE;
+}
+
+
+static char smelib_Opacity_docstring[] = "Calculate opacities";
+static PyObject * smelib_Opacity(PyObject * self, PyObject *args)
+{
+    const int n = 0;
+    void * args_c[n];
+    const char * result = NULL;
+
+    result = Opacity(n, args_c);
+
+    if (result != NULL && result[0] != OK_response)
+    {
+        PyErr_SetString(PyExc_RuntimeError, result);
+        return NULL;
+    }
+    Py_RETURN_NONE;
+}
+
+static char smelib_GetOpacity_docstring[] = "Returns specific cont. opacity";
+static PyObject * smelib_GetOpacity(PyObject * self, PyObject *args, PyObject * kwds)
+{
+    int n = 5;
+    void * args_c[n];
+    const char * result = NULL;
+    char * choice = NULL, * species=NULL, * key=NULL;
+    short number = -100;
+    short length;
+
+    PyArrayObject * arr;
+
+    static const char * keywords[] = {"flag", "species", "key", NULL};
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "s|ss", const_cast<char **>(keywords), &choice))
+        return NULL;
+
+    if (strcmp(choice, "COPSTD") == 0) number = -3;
+    if (strcmp(choice, "COPRED") == 0) number = -2;
+    if (strcmp(choice, "COPBLU") == 0) number = -1;
+    if (strcmp(choice, "AHYD") == 0) number = 0;
+    if (strcmp(choice, "AH2P") == 0) number = 1;
+    if (strcmp(choice, "AHMIN") == 0) number = 2;
+    if (strcmp(choice, "SIGH") == 0) number = 3;
+    if (strcmp(choice, "AHE1") == 0) number = 4;
+    if (strcmp(choice, "AHE2") == 0) number = 5;
+    if (strcmp(choice, "AHEMIN") == 0) number = 6;
+    if (strcmp(choice, "SIGHE") == 0) number = 7;
+    if (strcmp(choice, "ACOOL") == 0) number = 8;
+    if (strcmp(choice, "ALUKE") == 0) number = 9;
+    if (strcmp(choice, "AHOT") == 0) number = 10;
+    if (strcmp(choice, "SIGEL") == 0) number = 11;
+    if (strcmp(choice, "SIGH2") == 0) number = 12;
+    if (number == -100){
+        PyErr_SetString(PyExc_ValueError, "Unrecognized Opacity option");
+        return NULL;
+    }
+    
+    if (number == 8){
+        if (species == NULL || key == NULL){
+            PyErr_SetString(PyExc_ValueError, "Both species and key keywords need to be set for flag 'ACOOL'");
+            return NULL;
+        }
+        n=5;
+        args_c[3] = species;
+        args_c[4] = key;
+    } else if (number == 9){
+        if (species == NULL){
+            PyErr_SetString(PyExc_ValueError, "Species needs to be set for flag 'ALUKE'");
+            return NULL;
+        }
+        n=4;
+        args_c[3] = species;
+    } else {
+        n = 3;
+    }
+
+    length = GetNRHOX();
+    npy_intp dims[] = {length};
+    arr = (PyArrayObject*) PyArray_SimpleNew(1, dims, NPY_DOUBLE);
+
+    args_c[0] = &number;
+    args_c[1] = &length;
+    args_c[2] = PyArray_DATA(arr);
+
+    result = GetOpacity(n, args_c);
+
+
+    if (result != NULL && result[0] != OK_response)
+    {
+        Py_DECREF(arr);
+        PyErr_SetString(PyExc_RuntimeError, result);
+        return NULL;
+    }
+    return (PyObject*) arr;
+}
+
+
+static char smelib_Ionization_docstring[] = "Perform EOS calculations";
+static PyObject * smelib_Ionization(PyObject * self, PyObject *args)
+{
+    int n = 1;
+    void * args_c[n];
+    const char * result = NULL;
+    short flag = 0;
+
+    if (!PyArg_ParseTuple(args, "h", &flag))
+        return NULL;
+
+    args_c[0] = &flag;
+    result = Ionization(n, args_c);
+
+    if (result != NULL && result[0] != OK_response)
+    {
+        PyErr_WarnEx(PyExc_RuntimeError, result, 2);
+        return NULL;
+    }
+    Py_RETURN_NONE;
+}
+
+static char smelib_GetDensity_docstring[] = "Returns density in g/cm^3";
+static PyObject * smelib_GetDensity(PyObject * self, PyObject *args)
+{
+    int n = 2;
+    void * args_c[n];
+    const char * result = NULL;
+
+    short length = 0;
+    PyArrayObject * arr = NULL;
+
+    length = GetNRHOX();
+    npy_intp dims[] = {length};
+    arr = (PyArrayObject*) PyArray_SimpleNew(1, dims, NPY_DOUBLE);
+
+    args_c[0] = &length;
+    args_c[1] = PyArray_DATA(arr);
+    result = GetDensity(n, args_c);
+
+    if (result != NULL && result[0] != OK_response)
+    {
+        Py_DECREF(arr);
+        PyErr_SetString(PyExc_RuntimeError, result);
+        return NULL;
+    }
+    return (PyObject*) arr;   
+}
+
+static char smelib_GetNatom_docstring[] = "Returns atomic number density";
+static PyObject * smelib_GetNatom(PyObject * self, PyObject *args)
+{
+    int n = 2;
+    void * args_c[n];
+    const char * result = NULL;
+
+    short length = 0;
+    PyArrayObject * arr = NULL;
+
+    length = GetNRHOX();
+    npy_intp dims[] = {length};
+    arr = (PyArrayObject*) PyArray_SimpleNew(1, dims, NPY_DOUBLE);
+
+    args_c[0] = &length;
+    args_c[1] = PyArray_DATA(arr);
+    result = GetNatom(n, args_c);
+
+    if (result != NULL && result[0] != OK_response)
+    {
+        Py_DECREF(arr);
+        PyErr_SetString(PyExc_RuntimeError, result);
+        return NULL;
+    }
+    return (PyObject*) arr;   
+}
+
+static char smelib_GetNelec_docstring[] = "Returns electron number density";
+static PyObject * smelib_GetNelec(PyObject * self, PyObject *args)
+{
+    int n = 2;
+    void * args_c[n];
+    const char * result = NULL;
+
+    short length = 0;
+    PyArrayObject * arr = NULL;
+
+    length = GetNRHOX();
+    npy_intp dims[] = {length};
+    arr = (PyArrayObject*) PyArray_SimpleNew(1, dims, NPY_DOUBLE);
+
+    args_c[0] = &length;
+    args_c[1] = PyArray_DATA(arr);
+    result = GetNelec(n, args_c);
+
+    if (result != NULL && result[0] != OK_response)
+    {
+        Py_DECREF(arr);
+        PyErr_SetString(PyExc_RuntimeError, result);
+        return NULL;
+    }
+    return (PyObject*) arr;   
+}
+
+static char smelib_Transf_docstring[] = "Computes spectral synthesis";
+static PyObject * smelib_Transf(PyObject * self, PyObject *args, PyObject * kwds)
+{
+    int n = 12;
+    void * args_c[n];
+    const char * result = NULL;
+   
+    // type = "sdddiiddddss"  # s: short, d:double, i:int, u:unicode (string)
+    short nmu, keep_lineop = 1, long_continuum = 1;
+    int nwmax = 40000, nw = 0;
+    double accrt = 1e-4, accwi = 3e-3;
+    npy_intp dims[1];
+    npy_intp dims2[2];
+
+
+    PyObject * mu_obj = NULL, * wave_obj = NULL;
+    PyObject * return_tuple = NULL;
+
+    PyArrayObject * mu_arr = NULL, * cint_arr = NULL, * cintr_arr = NULL;
+    PyArrayObject * wave_arr = NULL, * sint_arr = NULL;
+
+    static const char * keywords[] = {"mu", "wave", "nwmax", "accrt", "accwi", NULL};
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "O|Oidd", const_cast<char **>(keywords), 
+            &mu_obj, &wave_obj, &nwmax, &accrt, &accwi))
+        return NULL;
+
+    mu_arr = (PyArrayObject*) PyArray_FROM_OTF(mu_obj, NPY_DOUBLE, NPY_ARRAY_IN_ARRAY);
+    if (mu_arr == NULL) goto fail;
+
+    if (PyArray_NDIM(mu_arr) != 1){
+        PyErr_SetString(PyExc_ValueError, "Expected mu array of ndim == 1");
+        goto fail;
+    }
+
+    if (wave_obj != NULL){
+        // Reuse wavelength grid
+        wave_arr = (PyArrayObject*) PyArray_FROM_OTF(wave_obj, NPY_DOUBLE, NPY_ARRAY_IN_ARRAY);
+        if (wave_arr == NULL) goto fail;
+
+        if (PyArray_NDIM(wave_arr) != 1){
+            PyErr_SetString(PyExc_ValueError, "Expected wavelength array of ndim == 1");
+            goto fail;
+        }
+
+        nw = PyArray_DIM(wave_arr, 0);
+        nwmax = nw;
+    } else {
+        // Create a new wavelength grid
+        nw = 0;
+        dims[0] = nwmax;
+        wave_arr = (PyArrayObject*) PyArray_SimpleNew(1, dims, NPY_DOUBLE);
+    }
+
+    nmu = PyArray_DIM(mu_arr, 0);
+
+    dims[0] = nmu;
+    cintr_arr = (PyArrayObject*) PyArray_SimpleNew(1, dims, NPY_DOUBLE);
+
+    dims2[0] = nwmax;
+    dims2[1] = nmu;
+    cint_arr = (PyArrayObject*) PyArray_SimpleNew(2, dims2, NPY_DOUBLE);
+    sint_arr = (PyArrayObject*) PyArray_SimpleNew(2, dims2, NPY_DOUBLE);
+
+    args_c[0] = &nmu;
+    args_c[1] = PyArray_DATA(mu_arr);
+    args_c[2] = PyArray_DATA(cint_arr);
+    args_c[3] = PyArray_DATA(cintr_arr);
+    args_c[4] = &nwmax;
+    args_c[5] = &nw;
+    args_c[6] = PyArray_DATA(wave_arr);
+    args_c[7] = PyArray_DATA(sint_arr);
+    args_c[8] = &accrt;
+    args_c[9] = &accwi;
+    args_c[10] = &keep_lineop;
+    args_c[11] = &long_continuum;
+    result = Transf(n, args_c);
+
+    if (result != NULL && result[0] != OK_response)
+    {
+        PyErr_SetString(PyExc_RuntimeError, result);
+        goto fail;
+    }
+
+    // we don't need this one
+    Py_DECREF(cintr_arr);
+
+    // return nw, wave, sint_arr, cint_arr
+    return_tuple = PyTuple_Pack(4, nw, (PyObject*) wave_arr, 
+                    (PyObject*) sint_arr, (PyObject *) cint_arr);
+    return return_tuple;
+
+fail:
+    Py_XDECREF(mu_arr);
+    Py_XDECREF(wave_arr);
+    Py_XDECREF(cint_arr);
+    Py_XDECREF(cintr_arr);
+    Py_XDECREF(sint_arr);
+    return NULL;
+}
+
+static char smelib_CentralDepth_docstring[] = "Computes line central depths";
+static PyObject * smelib_CentralDepth(PyObject * self, PyObject *args, PyObject * kwds)
+{
+    int n = 5;
+    void * args_c[n];
+    const char * result = NULL;
+    npy_intp dims[1];
+
+    int nmu, nwsize;
+    double accrt = 1e-4;
+    PyObject * mu_obj = NULL;
+    PyArrayObject * mu_arr = NULL, * table_arr = NULL;
+
+    static const char * keywords[] = {"mu", "accrt", NULL};
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "O|d", const_cast<char **>(keywords),
+                                        &mu_obj, &accrt))
+        return NULL;
+
+    mu_arr = (PyArrayObject *) PyArray_FROM_OTF(mu_obj, NPY_DOUBLE, NPY_ARRAY_IN_ARRAY);
+    if (mu_arr == NULL) goto fail;
+
+    if (PyArray_NDIM(mu_arr) != 0){
+        PyErr_SetString(PyExc_ValueError, "Expected mu array with ndim == 1");
+        goto fail;
+    }
+
+    nmu = PyArray_DIM(mu_arr, 0);
+    nwsize = GetNLINES();
+
+    dims[0] = nwsize;
+    table_arr = (PyArrayObject *) PyArray_SimpleNew(1, dims, NPY_FLOAT);
+    
+    args_c[0] = &nmu;
+    args_c[1] = PyArray_DATA(mu_arr);
+    args_c[2] = &nwsize;
+    args_c[3] = PyArray_DATA(table_arr);
+    args_c[4] = &accrt;
+    result = CentralDepth(n, args_c);
+    
+    if (result != NULL && result[0] != OK_response)
+    {
+        PyErr_SetString(PyExc_RuntimeError, result);
+        goto fail;
+    }
+    return (PyObject *) table_arr;
+
+fail:
+    Py_XDECREF(mu_arr);
+    Py_XDECREF(table_arr);
+    return NULL;
+}
+
+static char smelib_GetLineOpacity_docstring[] = "Returns specific line opacity";
+static PyObject * smelib_GetLineOpacity(PyObject * self, PyObject *args)
+{
+    int n = 7;
+    void * args_c[n];
+    const char * result = NULL;
+    npy_intp dims[1];
+    short depth;
+    double wave;
+    PyObject * return_tuple;
+    PyArrayObject * lop=NULL, *cop=NULL, *scr=NULL, *tsf=NULL,*csf=NULL;
+
+    if (!PyArg_ParseTuple(args, "d", &wave))
+        return NULL;
+
+    depth = GetNRHOX();
+    dims[0] = depth;
+    lop = (PyArrayObject*) PyArray_SimpleNew(1, dims, NPY_DOUBLE);
+    cop = (PyArrayObject*) PyArray_SimpleNew(1, dims, NPY_DOUBLE);
+    scr = (PyArrayObject*) PyArray_SimpleNew(1, dims, NPY_DOUBLE);
+    tsf = (PyArrayObject*) PyArray_SimpleNew(1, dims, NPY_DOUBLE);
+    csf = (PyArrayObject*) PyArray_SimpleNew(1, dims, NPY_DOUBLE);
+
+    // wave, nmu, lop, cop, scr, tsf, csf,
+    args_c[0] = &wave;
+    args_c[1] = &depth;
+    args_c[2] = PyArray_DATA(lop);
+    args_c[3] = PyArray_DATA(cop);
+    args_c[4] = PyArray_DATA(scr);
+    args_c[5] = PyArray_DATA(tsf);
+    args_c[6] = PyArray_DATA(csf);
+    result = GetLineOpacity(n, args_c);
+    
+    if (result != NULL && result[0] != OK_response)
+    {
+        Py_DECREF(lop);
+        Py_DECREF(cop);
+        Py_DECREF(scr);
+        Py_DECREF(tsf);
+        Py_DECREF(csf);
+        PyErr_SetString(PyExc_RuntimeError, result);
+        return NULL;
+    }
+
+    return_tuple = PyTuple_Pack(5, (PyObject*) lop, (PyObject*) cop, 
+                        (PyObject*) scr, (PyObject*) tsf, (PyObject*) csf);
+    return return_tuple;
+}
+
+static char smelib_GetLineRange_docstring[] = "Get validity range for every line";
+static PyObject * smelib_GetLineRange(PyObject * self, PyObject *args)
+{
+    int n = 2;
+    void * args_c[n];
+    const char * result = NULL;
+    npy_intp dims[2];
+    int n_lines;
+
+    PyArrayObject * arr = NULL;
+
+    n_lines = GetNLINES();
+    dims[0] = n_lines;
+    dims[1] = 2;
+    arr = (PyArrayObject*) PyArray_SimpleNew(2, dims, NPY_DOUBLE);
+
+    args_c[0] = PyArray_DATA(arr);
+    args_c[1] = &n_lines;
+    result = GetLineRange(n, args_c);
+
+    if (result != NULL && result[0] != OK_response)
+    {
+        Py_DECREF(arr);
+        PyErr_SetString(PyExc_RuntimeError, result);
+        return NULL;
+    }
+
+    return (PyObject*) arr;
+}
+
+static char smelib_GetNLTEflags_docstring[] = "Get line list NLTE flags";
+static PyObject * smelib_GetNLTEflags(PyObject * self, PyObject *args)
+{
+    int n = 2;
+    void * args_c[n];
+    const char * result = NULL;
+    npy_intp dims[2];
+    int n_lines;
+
+    PyArrayObject * arr = NULL;
+
+    n_lines = GetNLINES();
+    dims[0] = n_lines;
+    arr = (PyArrayObject*) PyArray_SimpleNew(1, dims, NPY_SHORT);
+
+    args_c[0] = PyArray_DATA(arr);
+    args_c[1] = &n_lines;
+    result = GetNLTEflags(n, args_c);
+
+    if (result != NULL && result[0] != OK_response)
+    {
+        Py_DECREF(arr);
+        PyErr_SetString(PyExc_RuntimeError, result);
+        return NULL;
+    }
+
+    return (PyObject*) arr;
+}
 
 static PyMethodDef module_methods[] = {
-    {"LibraryVersion", smelib_LibraryVersion, METH_VARARGS, smelib_LibraryVersion_docstring},
-    {"GetDataFiles", smelib_GetDataFiles, METH_VARARGS, smelib_GetDataFiles_docstring},
-    {"GetLibraryPath", smelib_GetLibraryPath, METH_VARARGS, smelib_GetLibraryPath_docstring},
+    {"LibraryVersion", smelib_LibraryVersion, METH_NOARGS, smelib_LibraryVersion_docstring},
+    {"GetDataFiles", smelib_GetDataFiles, METH_NOARGS, smelib_GetDataFiles_docstring},
+    {"GetLibraryPath", smelib_GetLibraryPath, METH_NOARGS, smelib_GetLibraryPath_docstring},
     {"SetLibraryPath", smelib_SetLibraryPath, METH_VARARGS, smelib_SetLibraryPath_docstring},
     {"InputWaveRange", smelib_InputWaveRange, METH_VARARGS, smelib_InputWaveRange_docstring},
     {"SetVWscale", smelib_SetVWscale, METH_VARARGS, smelib_SetVWscale_docstring},
-    {"SetH2broad", smelib_SetH2broad, METH_VARARGS, smelib_SetH2broad_docstring},
-    {"ClearH2broad", smelib_ClearH2broad, METH_VARARGS, smelib_ClearH2broad_docstring},
+    {"SetH2broad", smelib_SetH2broad, METH_NOARGS, smelib_SetH2broad_docstring},
+    {"ClearH2broad", smelib_ClearH2broad, METH_NOARGS, smelib_ClearH2broad_docstring},
     {"InputLineList", smelib_InputLineList, METH_VARARGS, smelib_InputLineList_docstring},
-    {"OutputLineList", smelib_OutputLineList, METH_VARARGS, smelib_OutputLineList_docstring},
+    {"OutputLineList", smelib_OutputLineList, METH_NOARGS, smelib_OutputLineList_docstring},
     {"UpdateLineList", smelib_UpdateLineList, METH_VARARGS, smelib_UpdateLineList_docstring},
     {"InputModel", (PyCFunction)(void(*)(void))smelib_InputModel, METH_VARARGS|METH_KEYWORDS, smelib_InputModel_docstring},
     {"InputDepartureCoefficients", smelib_InputDepartureCoefficients, METH_VARARGS, smelib_InputDepartureCoefficients_docstring},
     {"GetDepartureCoefficients", smelib_GetDepartureCoefficients, METH_VARARGS, smelib_GetDepartureCoefficients_docstring},
+    {"ResetDepartureCoefficients", smelib_ResetDepartureCoefficients, METH_NOARGS, smelib_ResetDepartureCoefficients_docstring},
+    {"InputAbund", smelib_InputAbund, METH_VARARGS, smelib_InputAbund_docstring},
+    {"Opacity", smelib_Opacity, METH_NOARGS, smelib_Opacity_docstring},
+    {"GetOpacity", (PyCFunction)(void(*)(void))smelib_GetOpacity, METH_VARARGS|METH_KEYWORDS, smelib_GetOpacity_docstring},
+    {"Ionization", smelib_Ionization, METH_VARARGS, smelib_Ionization_docstring},
+    {"GetDensity", smelib_GetDensity, METH_NOARGS, smelib_GetDensity_docstring},
+    {"GetNatom", smelib_GetNatom, METH_NOARGS, smelib_GetNatom_docstring},
+    {"GetNelec", smelib_GetNelec, METH_NOARGS, smelib_GetNelec_docstring},
+    {"Transf", (PyCFunction)(void(*)(void))smelib_Transf, METH_VARARGS|METH_KEYWORDS, smelib_Transf_docstring},
+    {"CentralDepth", (PyCFunction)(void(*)(void))smelib_CentralDepth, METH_VARARGS|METH_KEYWORDS, smelib_CentralDepth_docstring},
+    {"GetLineOpacity", smelib_GetLineOpacity, METH_VARARGS, smelib_GetLineOpacity_docstring},
+    {"GetLineRange", smelib_GetLineRange, METH_NOARGS, smelib_GetLineRange_docstring},
+    {"GetNLTEflags", smelib_GetNLTEflags, METH_NOARGS, smelib_GetNLTEflags_docstring},
     {NULL, NULL, 0, NULL}
 };
 

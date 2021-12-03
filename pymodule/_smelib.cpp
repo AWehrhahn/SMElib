@@ -52,7 +52,7 @@ static PyObject * smelib_GetLibraryPath(PyObject* self, PyObject *args)
 static char smelib_SetLibraryPath_docstring[] = "Set the data file directory";
 static PyObject * smelib_SetLibraryPath(PyObject * self, PyObject *args)
 {
-    const char * path;
+    char * path;
     IDL_STRING idl_path;
     const char * result = NULL;
     void * args_c[1];
@@ -63,19 +63,12 @@ static PyObject * smelib_SetLibraryPath(PyObject * self, PyObject *args)
 
     // Create IDL String
     idl_path.slen = strlen(path);
-    idl_path.s = (char *) malloc(sizeof(char) * idl_path.slen);
-    if (idl_path.s == NULL) {
-        PyErr_SetString(PyExc_MemoryError, "Could not assign memory");
-        return NULL;
-    }
-    strcpy(idl_path.s, path);
+    idl_path.s = path;
+    idl_path.stype = 0;
 
     // Pass to SMELIB
     args_c[0] = &idl_path;
     result = SetLibraryPath(1, args_c);
-
-    // Clean pointers
-    free(idl_path.s);
 
     // Check for errors
     if (result != NULL && result[0] != OK_response)
@@ -401,7 +394,7 @@ static PyObject * smelib_InputModel(PyObject * self, PyObject *args, PyObject *k
     double teff, grav, wlstd, radius = NAN;
     char * motype;
     IDL_STRING motype_idl;
-    int nrhox;
+    short nrhox;
     PyObject * opflag_obj = NULL, *depth_obj = NULL, *temp_obj = NULL;
     PyObject * xne_obj = NULL, *xna_obj = NULL, *rho_obj = NULL, *vt_obj = NULL;
     PyObject * height_obj = NULL;
@@ -412,9 +405,11 @@ static PyObject * smelib_InputModel(PyObject * self, PyObject *args, PyObject *k
 
     // Need to make this constant because C++ needs it
     // but we cast to non constant and trust Python
-    static const char * keywords[] = {"teff", "grav", "wlstd", "motype", "opflag", "depth", "temp", "xna", "xne", "rho", "vt", "radius", "height", NULL};
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "dddsOOOOOOO|dO", const_cast<char **>(keywords), &teff, &grav, &wlstd, &motype, 
-            &opflag_obj, &depth_obj, &temp_obj, &xna_obj, &xne_obj, &rho_obj, &vt_obj, &radius, &height_obj))
+    static const char * keywords[] = {"teff", "grav", "wlstd", "motype", "opflag", 
+            "depth", "temp", "xne", "xna", "rho", "vt", "radius", "height", NULL};
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "dddsOOOOOOO|dO", const_cast<char **>(keywords), 
+        &teff, &grav, &wlstd, &motype, &opflag_obj, &depth_obj, &temp_obj, 
+        &xne_obj, &xna_obj, &rho_obj, &vt_obj, &radius, &height_obj))
         return NULL;
 
     // Convert to Numpy arrays
@@ -857,7 +852,7 @@ static PyObject * smelib_Ionization(PyObject * self, PyObject *args)
 
     if (result != NULL && result[0] != OK_response)
     {
-        PyErr_WarnEx(PyExc_RuntimeError, result, 2);
+        PyErr_WarnEx(PyExc_Warning, result, 2);
     }
     Py_RETURN_NONE;
 }
@@ -1016,6 +1011,7 @@ static PyObject * smelib_Transf(PyObject * self, PyObject *args, PyObject * kwds
     args_c[9] = &accwi;
     args_c[10] = &keep_lineop;
     args_c[11] = &long_continuum;
+    
     result = Transf(n, args_c);
 
     if (result != NULL && result[0] != OK_response)

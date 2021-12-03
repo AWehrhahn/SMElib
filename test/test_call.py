@@ -654,7 +654,10 @@ if __name__ == "__main__":
     datadir = join(dirname(__file__), "../share/libsme/")
     dll = SME_DLL(libfile, datadir)
 
+    start = time.time()
     test_radiative_transfer(dll, libfile, datadir)
+    runtime = time.time() - start
+    print(f"Time: {runtime}s")
 
     dll.FreeState()
     pass

@@ -237,7 +237,6 @@ static PyObject * smelib_InputLineList(PyObject * self, PyObject *args)
         species[i].stype = 0;
     }
   
-    // printf("0: %s\n", species[0].s);
     args_c[0] = &nlines;
     args_c[1] = species;
     args_c[2] = linelist;
@@ -433,7 +432,7 @@ static PyObject * smelib_InputModel(PyObject * self, PyObject *args, PyObject *k
         }
 
     // Only if given
-    if (height_obj != NULL){
+    if (height_obj != NULL && height_obj != Py_None){
         height_arr = (PyArrayObject *) PyArray_FROM_OTF(height_obj, NPY_DOUBLE, NPY_ARRAY_IN_ARRAY);
         if (height_arr == NULL){
             goto fail;
@@ -762,6 +761,7 @@ static PyObject * smelib_GetOpacity(PyObject * self, PyObject *args, PyObject * 
     char * choice = NULL, * species=NULL, * key=NULL;
     short number = -100;
     short length;
+    IDL_STRING species_idl, key_idl;
 
     PyArrayObject * arr;
 
@@ -789,6 +789,17 @@ static PyObject * smelib_GetOpacity(PyObject * self, PyObject *args, PyObject * 
         PyErr_SetString(PyExc_ValueError, "Unrecognized Opacity option");
         return NULL;
     }
+
+    if (species != NULL){
+        species_idl.slen = strlen(species);
+        species_idl.s = species;
+        species_idl.stype = 0;
+    }
+    if (key != NULL){
+        key_idl.slen = strlen(key);
+        key_idl.s = key;
+        key_idl.stype = 0;
+    }
     
     if (number == 8){
         if (species == NULL || key == NULL){
@@ -796,15 +807,15 @@ static PyObject * smelib_GetOpacity(PyObject * self, PyObject *args, PyObject * 
             return NULL;
         }
         n=5;
-        args_c[3] = species;
-        args_c[4] = key;
+        args_c[3] = &species_idl;
+        args_c[4] = &key_idl;
     } else if (number == 9){
         if (species == NULL){
             PyErr_SetString(PyExc_ValueError, "Species needs to be set for flag 'ALUKE'");
             return NULL;
         }
         n=4;
-        args_c[3] = species;
+        args_c[3] = &species_idl;
     } else {
         n = 3;
     }
@@ -847,7 +858,6 @@ static PyObject * smelib_Ionization(PyObject * self, PyObject *args)
     if (result != NULL && result[0] != OK_response)
     {
         PyErr_WarnEx(PyExc_RuntimeError, result, 2);
-        return NULL;
     }
     Py_RETURN_NONE;
 }
@@ -940,13 +950,11 @@ static PyObject * smelib_Transf(PyObject * self, PyObject *args, PyObject * kwds
     void * args_c[n];
     const char * result = NULL;
    
-    // type = "sdddiiddddss"  # s: short, d:double, i:int, u:unicode (string)
     short nmu, keep_lineop = 1, long_continuum = 1;
     int nwmax = 40000, nw = 0;
     double accrt = 1e-4, accwi = 3e-3;
     npy_intp dims[1];
     npy_intp dims2[2];
-
 
     PyObject * mu_obj = NULL, * wave_obj = NULL;
     PyObject * return_tuple = NULL;
@@ -954,9 +962,9 @@ static PyObject * smelib_Transf(PyObject * self, PyObject *args, PyObject * kwds
     PyArrayObject * mu_arr = NULL, * cint_arr = NULL, * cintr_arr = NULL;
     PyArrayObject * wave_arr = NULL, * sint_arr = NULL;
 
-    static const char * keywords[] = {"mu", "wave", "nwmax", "accrt", "accwi", NULL};
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "O|Oidd", const_cast<char **>(keywords), 
-            &mu_obj, &wave_obj, &nwmax, &accrt, &accwi))
+    static const char * keywords[] = {"mu", "wave", "nwmax", "accrt", "accwi", "keep_lineop", "long_continuum", NULL};
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "O|Oiddhh", const_cast<char **>(keywords), 
+            &mu_obj, &wave_obj, &nwmax, &accrt, &accwi, &keep_lineop, &long_continuum))
         return NULL;
 
     mu_arr = (PyArrayObject*) PyArray_FROM_OTF(mu_obj, NPY_DOUBLE, NPY_ARRAY_IN_ARRAY);
@@ -967,7 +975,7 @@ static PyObject * smelib_Transf(PyObject * self, PyObject *args, PyObject * kwds
         goto fail;
     }
 
-    if (wave_obj != NULL){
+    if (wave_obj != NULL && wave_obj != Py_None){
         // Reuse wavelength grid
         wave_arr = (PyArrayObject*) PyArray_FROM_OTF(wave_obj, NPY_DOUBLE, NPY_ARRAY_IN_ARRAY);
         if (wave_arr == NULL) goto fail;
@@ -1020,7 +1028,7 @@ static PyObject * smelib_Transf(PyObject * self, PyObject *args, PyObject * kwds
     Py_DECREF(cintr_arr);
 
     // return nw, wave, sint_arr, cint_arr
-    return_tuple = PyTuple_Pack(4, nw, (PyObject*) wave_arr, 
+    return_tuple = Py_BuildValue("iOOO", nw, (PyObject*) wave_arr, 
                     (PyObject*) sint_arr, (PyObject *) cint_arr);
     return return_tuple;
 
@@ -1129,7 +1137,7 @@ static PyObject * smelib_GetLineOpacity(PyObject * self, PyObject *args)
         return NULL;
     }
 
-    return_tuple = PyTuple_Pack(5, (PyObject*) lop, (PyObject*) cop, 
+    return_tuple = Py_BuildValue("OOOOO", (PyObject*) lop, (PyObject*) cop, 
                         (PyObject*) scr, (PyObject*) tsf, (PyObject*) csf);
     return return_tuple;
 }

@@ -4,19 +4,14 @@ from os.path import dirname, abspath, join
 import numpy as np
 from ctypes import cdll
 
-libdir = abspath(dirname(__file__))
-libfile = join(libdir, "libsme.so.5")
+# Load the library
+libdir = abspath(join(dirname(__file__), "../lib"))
+libfile = join(libdir, "libsme.so")
 
 try:
     os.add_dll_directory(libdir)
 except AttributeError:
     cdll.LoadLibrary(libfile)
-    # os.chdir(libdir)
-    # if "LD_LIBRARY_PATH" in os.environ:
-    #     newpath = libdir + os.pathsep + os.environ["LD_LIBRARY_PATH"]
-    # else:
-    #     newpath = libdir
-    # os.environ["LD_LIBRARY_PATH"] = newpath
 
 import _smelib
 

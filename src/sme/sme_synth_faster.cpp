@@ -866,6 +866,9 @@ extern "C" char const *SME_DLL InputModel(int n, void *arg[]) /* Read in model a
     arg_offset = 1;
     RADIUS = *(double *)arg[5];
   }
+  else {
+    printf("ERROR: MOTYPE not recognized, got: %s", motype);
+  }
 
   ifop = (short *)arg[5 + arg_offset];
   for (i = 0; i < 20; i++)

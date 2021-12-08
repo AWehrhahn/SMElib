@@ -249,14 +249,10 @@ jobs:
 
       - name: Prepare Test Environment
         if: matrix.name != 'windows-gfortran' && matrix.name != 'windows-f2c'
-        run: pip3 install -r test/requirements.txt
-          # pip3 install -r cython/requirements.txt
-          # cd cython/
-          # cp -r ../lib lib
-          # cp -r ../share share
-          # python3 setup.py build_ext --inplace
-          # pip3 install .
-          # cd ..
+        run: |
+          pip3 install -r test/requirements.txt
+          cd pymodule
+          python3 setup.py build_ext --inplace
 
       - name: Test Library
         if: matrix.name != 'windows-gfortran' && matrix.name != 'windows-f2c'

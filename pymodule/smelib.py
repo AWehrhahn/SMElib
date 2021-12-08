@@ -6,15 +6,11 @@ import numpy as np
 import logging
 
 from ctypes import cdll
+from .libtools import get_full_libfile
 
 # Load the library
-libdir = abspath(join(dirname(__file__), "../lib"))
-libfile = join(libdir, "libsme.so")
-
-try:
-    os.add_dll_directory(libdir)
-except AttributeError:
-    cdll.LoadLibrary(libfile)
+libfile = get_full_libfile()
+cdll.LoadLibrary(libfile)
 
 from . import _smelib
 

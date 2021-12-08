@@ -90,15 +90,12 @@ jobs:
       - run: ls lib
       - run: zip -r ${{ matrix.container }}-${{ matrix.name }} lib share
 
-      - run: pip3 install -r test/requirements.txt
-      # - run: pip3 install -r cython/requirements.txt
-      # - run: |
-      #    cd cython/
-      #    cp -r ../lib lib
-      #    cp -r ../share share
-      #    python3 setup.py build_ext --inplace
-      #    pip3 install .
-      #    cd ..
+      - name: Install Requirements
+        run: |
+          pip3 install -r test/requirements.txt
+          cd pymodule
+          python3 setup.py build_ext --inplace
+
       - run: python3 -m pytest
 
       - name: Upload Debug Spectrum

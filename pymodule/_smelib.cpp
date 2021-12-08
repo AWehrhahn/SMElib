@@ -591,7 +591,7 @@ static PyObject * smelib_InputDepartureCoefficients(PyObject * self, PyObject *a
     PyObject * bmatrix_obj = NULL;
     PyArrayObject * bmatrix_arr = NULL;
 
-    if (!PyArg_ParseTuple(args, "iO", &linenumber, &bmatrix_obj))
+    if (!PyArg_ParseTuple(args, "Oi", &bmatrix_obj, &linenumber))
         return NULL;
 
     bmatrix_arr = (PyArrayObject *) PyArray_FROM_OTF(bmatrix_obj, NPY_DOUBLE, NPY_ARRAY_IN_ARRAY);

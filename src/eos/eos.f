@@ -3225,18 +3225,8 @@ c
         IF(IICO.GT.0) THEN
           BQUAD=KT(IICO)+(PTOTO-PTOTC)/WATCOR
           CQUAD=-KT(IICO)*PTOTC
-c          P(6)=(-BQUAD+SQRT(BQUAD**2-4.0*AQUAD*CQUAD))/(2.0*AQUAD)
-c          P(8)=(P(6)+PTOTO-PTOTC)/WATCOR
-        ELSE
-c          P(6)=PTOTC
-c          P(8)=PTOTO
         END IF
-      ELSE
-c        P(6)=PTOTC
-c        P(8)=PTOTO
       END IF
-c      IF(P(6).LE.0.0.OR.P(6).GT.0.1*P(1)) P(6)=PTOTC
-c      IF(P(8).LE.0.0.OR.P(8).GT.0.1*P(1)) P(8)=PTOTO
       PE0=PE
       NAMEMX=BLANK
       DELMAX=0.0D0
@@ -3365,49 +3355,6 @@ C
         GOTO 9
       END IF
 
-c      IF(B(1).GT.0.02D0*PG) THEN
-c        IF(IDIR.NE.1) THEN
-c          SCALE=SQRT(SCALE)
-c          IDIR=1
-c        END IF
-cC
-cC Neutral atomic pressures are too high. Scale them down until
-cC partical conservation equation will become negative
-cC
-c        DO ISPEC=1,NLIST-1
-c          J=0
-c          DO I=1,NEL(ISPEC)
-c            J=J+NAT(I,ISPEC)
-c          END DO
-c          write(*,*) ISPEC,SPLIST(ISPEC),J,NCH(ISPEC)
-c          KT(ISPEC)=KT(ISPEC)*SCALE**J
-c          IT(ISPEC)=IT(ISPEC)*SCALE**NCH(ISPEC)
-c        END DO
-c        GOTO 9
-c      ELSE IF(B(1).LT.-0.02D0*PG) THEN
-c        IF(IDIR.NE.-1) THEN
-c          SCALE=SQRT(SCALE)
-c          IDIR=-1
-c        END IF
-cC
-cC Neutral atomic pressures are too low. Scale them up until
-cC partical conservation equation will become negative
-cC
-c        DO ISPEC=1,NLIST-1
-c          J=0
-c          DO I=1,NEL(ISPEC)
-c            J=J+NAT(I,ISPEC)
-c          END DO
-c          KT(ISPEC)=KT(ISPEC)/SCALE**J
-c          IT(ISPEC)=IT(ISPEC)/SCALE**NCH(ISPEC)
-c        END DO
-c        GOTO 9
-c      END IF
-
-c      do j=1,NEQ
-c        write(*,*) J,P(J),PG
-c      enddo
-c      write(*,*) B(1),PG
       CALL lnEOSFCN(NEQ,P,B,A,2,PG,NCH,NLIST,
      *              IATOM,INDSP,NAT,ZAT,NTOT,
      *              NEL,IAT,INDZAT,ABUND,KT,IT)
@@ -3442,7 +3389,6 @@ C================================================================
         WRITE(*,FORMAT202) NAMET,(AL(J),J=1,KK+1)
         WRITE(*,'(/)')
       END IF
-c      stop
 C
 C  Save a copy of the RHS for future step refinement
 C
@@ -3466,11 +3412,7 @@ c      write(4) ((A(i,j),i=1,NEQ),j=1,NEQ),(B(i),i=1,NEQ)
       CALL myDGESVX('E','N',NEQ,1,A,ELEDIM+1,AA,ELEDIM+1,IPIV,EQUED,
      *            RSCL,CSCL,B,ELEDIM+1,BB,ELEDIM+1,RCOND,FERR,BERR,
      *            WORK,IWORK,INFO)
-c      stop
       CALL xDCOPY(NEQ,BB,1,B,1)
-c      DO I=1,NEQ
-c        B(I)=BB(I)
-c      ENDDO
 c      write(4) ((A(i,j),i=1,NEQ),j=1,NEQ),(B(i),i=1,NEQ)
 c
 c  The same thing using LINEQ2 or LINEQ and BLAS 2/3
@@ -3508,19 +3450,6 @@ c      CALL LINEQ(NEQ,1,A,ELEDIM+1,IPIV,B,ELEDIM+1,INFO)
           close(4)
           WRITE(*,*) '  Matrix and the RHS were dumped to file dump.bin'
           STOP
-c          CALL myDGESVX('E','N',NEQ-1,1,A,ELEDIM+1,AA,ELEDIM+1,IPIV,EQUED,
-c     *                RSCL,CSCL,B,ELEDIM+1,BB,ELEDIM+1,RCOND,FERR,BERR,
-c     *                WORK,IWORK,INFO)
-c          CALL xDCOPY(NEQ-1,BB,1,B,1)
-cc          DO I=1,NEQ
-cc            B(I)=BB(I)
-cc          END DO
-c          PTOT=0.D0
-c          DO J=1,NEQ-1
-c            PTOT=PTOT+exp(P(J)-B(J))
-c          END DO
-c          PE=MAX(PG-PTOT,1.D-20)
-c          Pe=log(Pe)
         END IF
       END IF
       REPEAT=0
@@ -3560,18 +3489,14 @@ C=================================================================
       DO K=1,JATOM
 c        write(*,*) K,P(K),B(K)
         ISPEC=INDSP(K)
-c        DP=ABS(P(K))
         DELP=ABS(B(K))
-c        IF(DP.GT.1.D-10) DELP=DELP/DP
         IF(DELP.GT.DELMAX) THEN
           NAMEMX=SPLIST(ISPEC)
           DELMAX=DELP
           KMAX=K
         END IF
       END DO
-c      DPE=ABS(P(NEQ))
       DELPE=ABS(B(NEQ))
-c      IF(DPE.GT.1.D-10) DELPE=DELPE/DPE
       IF(DELPE.GT.DELMAX) THEN
         NAMEMX=ENAME
         DELMAX=DELPE
@@ -3587,12 +3512,10 @@ C
 C  Apply corrections
 C
         DP=B(K)*FACTOR
-c        DP=10.D0*DP/MAX(10.D0,ABS(DP))
         PNEW=P(K)-DP
         P(K)=MAX(PNEW,-115.D0)
       END DO
       DP=B(NEQ)*FACTOR
-c      DP=10.D0*DP/MAX(10.D0,ABS(DP))
       PENEW=PE-DP
       PE=MAX(PENEW,-115.D0)
 C================================================================
@@ -3613,7 +3536,6 @@ C================================================================
         PQ=PQ+NQ*PP(ISPEC)
 c        write(*,*) ISPEC,SPLIST(ISPEC),PP(ISPEC),PTOT,PG,NQ,PQ,EXP(PE)
       END DO
-c      stop
       DPTOT=DABS(PTOT-PG)/PG
       DPQ=DABS(EXP(PE)-PQ)/PG
 c      write(*,*) DELMAX,DPTOT,DPQ
@@ -3703,7 +3625,6 @@ C
       DO 36 ISPEC=1,NLIST-1
       IF(PART(ISPEC).GT.0.) THEN
         IF(PP(ISPEC)/KBOL/TEMP.GE.1.D-20) THEN
-c          XNPF(ISPEC)=PP(ISPEC)/(KBOL*TEMP*PART(ISPEC))
           XNPF(ISPEC)=PP(ISPEC)/(KBOL*TEMP)
         ELSE
           XNPF(ISPEC)=0.0
@@ -3760,10 +3681,8 @@ C
       DOUBLE PRECISION RATIOM,QPRD,PION
       PARAMETER (KERG=1.38065D-16,KEV=KERG/1.60219D-12)
       PARAMETER (CONST=25947.256)
-C
       REAL T
       DOUBLE PRECISION TLIM,TH,LOGTH,EQK,PART,Qm_spln,Kp_spln
-c      DOUBLE PRECISION EQK_ST
       LOGICAL BARKLEM
 C
 C Combine equilibrium constant coefficients into one large array.
@@ -3927,7 +3846,6 @@ C
      *   5.3590, 12.3380, -0.4956, -0.2251, -0.1907, -0.2038,  0.2579,  SO
      *   6.8700, 11.9229, -1.4044,  0.7899, -0.7317, -0.0193, -0.4994,  TiO
      *   4.3693, 12.3190, -0.5050, -0.0290, -0.0266, -0.6002,  0.4572,  S2
-c    *   2.4100, 12.1214,  0.9438,  2.2756, -0.1086,  4.1281, -1.9952,  FeH
 c Dissociation energy from Dulick 2003
      *   1.5980, 12.1214,  0.9438,  2.2756, -0.1086,  4.1281, -1.9952,  FeH
      *  12.1388, 36.6661, -1.4062, -0.9258, -1.6969,  0.6005,  1.2302,  NH3
@@ -3936,7 +3854,6 @@ c Dissociation energy from Dulick 2003
      *   5.1156, 12.8758, -0.4856, -0.5054, -0.0776, -0.0713,  0.2369,  O2
      *   7.9400, 23.8609, -1.0762, -0.4928, -0.4092,  0.0031,  0.3761,  CH2
      *   5.8690, 12.2896, -0.9180, -0.6238,  0.1243, -0.3525,  0.4767,  HF
-c     *   0.0000, 18.8343, 12.4131, 11.9991,  6.8079,  8.4071,  2.6202,  H3+
      *   4.3730, 18.8343, 12.4131, 11.9991,  6.8079,  8.4071,  2.6202,  H3+
      *   1.7000, 10.1982, -0.9309,  1.8315, -5.6059,  6.9571, -3.5023,  CaH
      *  10.9653, 24.8807, -0.0033,  0.4796, -1.6979,  3.5631, -2.5414,  Al2O
@@ -3944,9 +3861,7 @@ c     *   0.0000, 18.8343, 12.4131, 11.9991,  6.8079,  8.4071,  2.6202,  H3+
      *  12.6885, 36.6540, -1.3373, -1.0064, -0.5880, -0.2362,  0.8764,  CH3
      *   0.0000, 17.8513,-15.5361,-17.6144,-13.1604, -6.4819, -5.6361,  SiH2
      *   3.5300, 10.7940,  0.0122,  1.1189, -1.8758,  2.9976, -2.7758,  MgO
-c     *   6.2100, 12.4672, -0.4452, -0.0100, -0.1868, -0.3860,  0.6230,  C2
      *   6.2970, 12.4672, -0.4452, -0.0100, -0.1868, -0.3860,  0.6230,  C2
-c     *   6.3710, 12.4672, -0.4452, -0.0100, -0.1868, -0.3860,  0.6230,  C2
      *  13.2915, 25.9340, -1.4243,  1.6519, -0.7240, -0.7271,  0.7518,  TiO2
      *  12.9619, 25.9238, -1.2927,  1.3710, -2.4073,  2.2875, -0.5486,  VO2
      *   1.8800, 10.7184, -0.3642,  0.7843, -6.5309, 13.2912, -9.9502,  NaH
@@ -3998,7 +3913,6 @@ c     *   6.3710, 12.4672, -0.4452, -0.0100, -0.1868, -0.3860,  0.6230,  C2
 C 30-dec-2008 NP: added the dissociation energy from NIST
 C
      *   0.0000,  4.5751,  3.4421,  0.7560, -1.7011,  1.4510, -1.3922,  TiO+
-C    *  13.6890,  4.5751,  3.4421,  0.7560, -1.7011,  1.4510, -1.3922,  TiO+
      *  21.1510, 31.0805, 10.7070, 12.8687, 10.5799,  6.4414,  3.6171,  LaO2
      *   3.2100, 12.1817, -0.7102, -0.2403,  1.1042, -1.3644,  0.3198,  Si2
      *  13.2716, 48.6914, -1.0602, -1.2802, -0.8603,  0.1159, -0.0701,  SiH4
@@ -4023,7 +3937,6 @@ C
 C 30-dec-2008 NP: added dissociation energy as dissociation energy of CH
 C                 (3.465eV) + electron affinity of CH (1.238eV from NIST)
      *   0.0000, 16.4621,-13.8562,-13.1896, -9.2577, -6.3354, -2.5704,  CH-
-C    *   4.7030, 16.4621,-13.8562,-13.1896, -9.2577, -6.3354, -2.5704,  CH-
      *  13.8610, 26.3081, -1.3134,  0.1185, -0.0461, -0.4056,  0.8088,  C3
      *   8.4800, 21.1413, -5.8697, -3.3745, -2.7491, -1.8902, -0.2441,  C2-
      *  17.1545, 48.1845, -0.5683,  0.1125, -3.0973,  4.3727, -2.1978,  MgO2H2
@@ -4392,7 +4305,6 @@ C                                                           Ioniz. pot.
 C The line with 5.7765 is from Alard and Hauschildt who artificially increased
 C TiO parition function by a factor of 3. Also change in ionization energy
 C according to the latest NIST data.
-C    *   5.7765, -2.3739,  0.8940, -0.3641,  0.0000,  5*0.0,  6.40000,  TiO
      *   5.3051, -2.3739,  0.8940, -0.3641,  0.0000,  5*0.0,  6.81900,  TiO
      *   5.0796, -2.1967,  0.4101,  0.0000,  0.0000,  5*0.0,  9.35600,  S2
      *   4.6265980,    -2.5625800,     0.38885943,    0.40219820,       FeH
@@ -4852,8 +4764,6 @@ C Construct equilibrium constant from polynomial coefficients and
 C dissociation constant. A "+1" term at the end would convert from
 C pascals (i.e. N/m/m as in Sauval) to dynes/cm/cm.
 C
-c      if (t.lt.1600) logth=log10(5040.0/1600.0)
-c      if (t.gt.7730) logth=log10(5040.0/7730.0)
       EQK=COEF(2,J)+LOGTH*(COEF(3,J)+LOGTH*(COEF(4,J)+
      &              LOGTH*(COEF(5,J)+LOGTH*(COEF(6,J)+
      &              LOGTH*(COEF(7,J))))))
@@ -4901,14 +4811,12 @@ c     &       1.5D0*RATIOM+QPRD-PART-COEF(1,J)*5039.7475D0/TLIM
 C
 C Convert equilibrium constant and partition function from logarithms.
 C
-c      EQK_ST=10.D0**EQK_ST
       PART=10.D0**PART
 C
 C Check if there is relevant data in Paul Barklem's tables
 C
       CALL KP_Q_SPLN(SPNAME,T,Qm_spln,Kp_spln,BARKLEM)
       IF(BARKLEM) THEN
-c        EQK =Kp_spln-COEF(1,J)*5039.7475D0/TLIM
         EQK =Kp_spln-COEF(1,J)*5040.D0/T
         EQK =10.D0**EQK
         PART=10.D0**Qm_spln
@@ -5521,23 +5429,18 @@ C      ( 1)( 2)  ( 3)( 4)  ( 5)( 6)  ( 7)( 8)  ( 9)(10)   ( IP )   G Ion REF
      4 328847052,586668342,771785912, 94710343,112112093, 5300000,25,03,AEL Mn 4
      5 422055132,636770792,779285062,921999322,106411363, 7600000,25,04/AEL Mn 5
       DATA NNN_Fe/
-C    1 197023222,274433302,416753952,723799822,139419053,  787038,26,00,D+F Fe 1
-     1 197023222,274433302,416753952,723799822,139419053,  790024,26,00,D+F Fe 1! Ion. potential from NIST J. Sugar and C. Corliss, J. Phys. Chem. Ref. Data 14, 1-664 (1985).
-     2 409453722,686687452,110213823,174322233,286437043, 1618792,26,01,D+F Fe 2! Kurucz
-c    2 409453722,686687452,110213823,174322233,286437043, 1617902,26,01,D+F Fe 2
-c    3 262136422,501167232, 87911303,138916483,190721673, 3064300,26,02,D+F Fe 3
+     1 197023222,274433302,416753952,723799822,139419053,  790024,26,00,D+F Fe 1 ! Ion. potential from NIST J. Sugar and C. Corliss, J. Phys. Chem. Ref. Data 14, 1-664 (1985).
+     2 409453722,686687452,110213823,174322233,286437043, 1618792,26,01,D+F Fe 2 ! Kurucz
      3 262136422,501167232, 87911303,138916483,190721673, 3065200,26,02,D+F Fe 3 ! Kurucz
      4  98723522,420363072, 87011423,145117913,215925463, 5700000,26,03,AEL Fe 4
      5 388854482,666275742,846693572,102511143,120312923, 7900000,26,04/D+F Fe 5
       DATA NNN_Co/
-c    1 199427202,335740022,474957182,708090462,118315403,  786000,27,00,D+F Co 1
      1 199427202,335740022,474957182,708090462,118315403,  788100,27,00,D+F Co 1
      2 279739202,490858232,684582472,104713233,159818733, 1704900,27,01,D+F Co 2
      3 279836622,461857562,720693022,124915873,192522633, 3349000,27,02,D+F Co 3
      4 262136422,501167232, 87911303,138916483,190821673, 5300000,27,03,FAK Co 4
      5  98723522,420363072, 87011423,145117913,215925463, 8300000,27,04/FAK Co 5
       DATA NNN_Ni/
-c    1 227027622,306233052,356839222,446052912,652382292,  763314,28,00,D+F Ni 1
      1 227027622,306233052,356839222,446052912,652382292,  763996,28,00,D+F Ni 1
      2 108416342,222428472,353944332,577378932,110314303, 1814900,28,01,D+F Ni 2
      3 198724282,293236452,468362702, 86511123,136016073, 3516000,28,02,D+F Ni 3
@@ -5584,7 +5487,6 @@ c    1 227027622,306233052,356839222,446052912,652382292,  763314,28,00,D+F Ni 1
      2 202621931,255331271,384347931,624085761,122417632, 1102600,38,01,D+F Sr 2
      3 100010001,100110321,129524961, 61014202,291753192, 4300000,38,02/FAK Sr 3
       DATA NNN_Y/
-c    1 791587851,100012192,155119942,254031782,389946932,  637900,39,00,AEL Y  1
      1 791587851,100012192,155119942,254031782,389946932,  621710,39,00,AEL Y  1 ! From Kurucz
      2 118217102,220827002,319036792,416646512,513256072, 1223000,39,01,AEL Y  2
      3  92510012,104710862,112311612,120212472,132814282, 2050000,39,02/AEL Y  3
@@ -5594,11 +5496,9 @@ c    1 791587851,100012192,155119942,254031782,389946932,  637900,39,00,AEL Y  1
      3 209727032,324537052,415446282,510255752,604965222, 2298000,40,02/D+F Zr 3
       DATA NNN_Nb/
      1 256636022,465759302,749693962,116514243,171520333,  687900,41,00,AEL Nb 1
-c     1 256636022,465759302,749693962,116514243,171520333,  675890,41,00,AEL Nb 1 ! From Kurucz
      2 335157222, 84511463,147718363,221826083,299933893, 1431900,41,01,AEL Nb 2
      3 223725352,280830972,340937362,406844002,473150632, 2503900,41,02/AEL Nb 3
       DATA NNN_Mo/
-c    1 703972941, 82610822,154822682,327244912,571469372,  709900,42,00,D+F Mo 1
      1 703972941, 82610822,154822682,327244912,571469372,  709250,42,00,D+F Mo 1 ! From Kurucz
      2  69113342,270146932, 71810043,131916543,200323603, 1614900,42,01,NPk Mo 2 ! PFs are calculated using energy levels from Nilsson & Pickering, 2003, Phys. Scr., 67, 223
      3 267645462,669890262,115514323,173620673,242528083, 2714900,42,02/AEL Mo 3
@@ -5721,7 +5621,6 @@ c    1 703972941, 82610822,154822682,327244912,571469372,  709900,42,00,D+F Mo 1
       DATA NNN_Lu/
      1 514664441,759086851, 99211442,133315612,182721252,  542589,71,00,AEL Lu 1
      2 125924831,438667801, 98714112,199727872,380850742, 1389900,71,01,AEL Lu 2
-C     2 112718911,335853801,742987841,895879721,626944081, 1389900,71,01,Sne Lu 2
      3 323948621,661297271,158626482,426865032, 93712843, 2095960,71,02/AEL Lu 3
       DATA NNN_Hf/
      1 659294081,128016962,222528952,372047062,585171462,  700000,72,00,AEL Hf 1
@@ -5902,7 +5801,6 @@ C      write(*,*) IP(IONN)-POTLO(IONN)
       G=NNNPFN(6,N)-NNN100*100
       IF(N.EQ.1) THEN
         PART(1)=2.
-c        IF(TT.LT.9000.) GO TO 2
         PART(1)=PART(1)+8.*EXP(-10.196/TV)+18.*EXP(-12.084/TV)+32.*
      *          EXP(-12.745/TV)+50.*EXP(-13.051/TV)+72.*EXP(-13.217/TV)
         D1=13.595/6.5/6.5/TV
@@ -5940,7 +5838,6 @@ c        write(*,*) (NNNPFN(I,N),I=1,6),PART(IONN),IP(IONN),G,IONN
      *           (1./3.+(1.-(.5+(1./18.+D2/120.)*D2)*D2)*D2)-
      -           SQRT(13.595*Z*Z/TV/D1)**3*
      *           (1./3.+(1.-(.5+(1./18.+D1/120.)*D1)*D1)*D1))
-c      TV=TTKEV
    2  CONTINUE
 C
       IF(MODE.NE.3) THEN
@@ -5951,12 +5848,7 @@ C
 C  IF is to avoid annoying floating point underflows
 C
         FEXARG=(IP(IONN-1)-POTLO(IONN-1))/TV
-c        write(*,*) IONN,NION2,PART(IONN)/PART(IONN-1),FEXARG
-c        IF(FEXARG.GT.80.) THEN
-c          FFF(IONN)=0.
-c        ELSE
-          FFF(IONN)=CF*PART(IONN)/PART(IONN-1)*EXP(-FEXARG)
-c        END IF
+        FFF(IONN)=CF*PART(IONN)/PART(IONN-1)*EXP(-FEXARG)
    3    CONTINUE
         DO 4 IONN=NION2,2,-1
         FFF(1)=1.+FFF(IONN)*FFF(1)

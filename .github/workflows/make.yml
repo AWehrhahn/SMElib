@@ -213,6 +213,14 @@ jobs:
           F77: ${{ matrix.f77 }}
         run: make install
 
+      - name: Fix dylib names
+        if: matrix.name == 'macos-gfortran'
+        run: |
+          cd lib
+          install_name_id -id libsme.dylib libsme.dylib
+          install_name_id -id libsme.5.dylib libsme.5.dylib
+          install_name_id -id sme_synth.so.darwin.x86_64.64 sme_synth.so.darwin.x86_64.64
+
       - name: Copy libgfortran
         if: matrix.name == 'ubuntu-gfortran'
         run: |

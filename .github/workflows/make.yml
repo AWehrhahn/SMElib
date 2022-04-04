@@ -167,9 +167,6 @@ jobs:
     # cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: ${{ matrix.runs_on }}
-
-    env:
-      DYLD_LIBRARY_PATH: /Users/runner/work/SMElib/SMElib/lib
       
     steps:
       - uses: actions/checkout@v2
@@ -220,9 +217,9 @@ jobs:
         if: matrix.name == 'macos-gfortran'
         run: |
           cd lib
-          install_name_tool -id libsme.dylib libsme.dylib
-          install_name_tool -id libsme.5.dylib libsme.5.dylib
-          install_name_tool -id sme_synth.so.darwin.x86_64.64 sme_synth.so.darwin.x86_64.64
+          install_name_tool -id $PWD/libsme.dylib libsme.dylib
+          install_name_tool -id $PWD/libsme.5.dylib libsme.5.dylib
+          install_name_tool -id $PWD/sme_synth.so.darwin.x86_64.64 sme_synth.so.darwin.x86_64.64
 
       - name: Copy libgfortran
         if: matrix.name == 'ubuntu-gfortran'

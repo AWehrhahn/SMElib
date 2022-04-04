@@ -168,6 +168,9 @@ jobs:
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: ${{ matrix.runs_on }}
 
+    env:
+      DYLD_LIBRARY_PATH: /home/runner/work/SMElib/SMElib/lib
+      
     steps:
       - uses: actions/checkout@v2
 

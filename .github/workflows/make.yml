@@ -169,7 +169,7 @@ jobs:
     runs-on: ${{ matrix.runs_on }}
 
     env:
-      DYLD_LIBRARY_PATH: /home/runner/work/SMElib/SMElib/lib
+      DYLD_LIBRARY_PATH: /Users/runner/work/SMElib/SMElib/lib
       
     steps:
       - uses: actions/checkout@v2

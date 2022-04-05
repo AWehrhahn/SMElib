@@ -25,8 +25,6 @@ C               >1: SPLSIZ is too small
 C
       integer function eqcount(elemen,spname,ion,nlines,nlist,
      *                         ELESIZ)
-c      integer function eqcount(elemen,spname,ion,nlines,nlist,
-c     *                         environment,ELESIZ)
       INCLUDE 'SIZES.EOS'
 
       integer nlines,nlist,ELESIZ
@@ -36,35 +34,12 @@ c     *                         environment,ELESIZ)
       character*(SPCHAR) tmplist(SPLSIZ),chname
       integer ion(nlines),ionmax,ionmaxx
       real a(IONSIZ)
-c      character*(*) environment
       double precision b(IONSIZ)
       INCLUDE 'DEFAULT.EOS'
 C
       eqcount=0
       ionmax=0
       ncount=NDEF
-c      if(environment.eq.'COLD'.or.environment.eq.'cold') then
-c        do ispec=1,NDEF_cold
-c          tmplist(ispec)=default_cold(ispec)
-c        end do
-c        ionmax=2
-c        ncount=NDEF_cold
-c      else if(environment.eq.'WARM'.or.environment.eq.'warm') then
-c        do ispec=1,NDEF_warm
-c          tmplist(ispec)=default_warm(ispec)
-c        end do
-c        ncount=NDEF_warm
-c      else if(environment.eq.'HOT'.or.environment.eq.'hot') then
-c        do ispec=1,NDEF_hot
-c          tmplist(ispec)=default_hot(ispec)
-c        end do
-c        ncount=NDEF_hot
-c      else
-c        do ispec=1,NDEF_cool
-c          tmplist(ispec)=default_cool(ispec)
-c        end do
-c        ncount=NDEF_cool
-c      end if
 C
 C Associate each species in SPNAME with an entry in SPLIST. If SPNAME
 C  contains a new species not in SPLIST, then add that new species at
@@ -73,12 +48,9 @@ C
       if(nlines.gt.0) then
         do 6 ilin=1,nlines
           call mbuild(spname(ilin),ion(ilin)-1,chname)
-c          write(*,*) ncount,ilin,ionmax,spname(ilin),chname
           do ispec=1,ncount
             if(tmplist(ispec).eq.chname) goto 6
           end do
-c          write(*,*) ncount,ilin,chname,ionmax,spname(ilin),ion(ilin)
-c       stop
 C
 C Look for atomic species. Negative ions (e.g. H-) are treated as molecules
 C
@@ -97,7 +69,6 @@ C
             end do
             if(iel.lt.1) then
               eqcount=1
-c              return
               write(*,*) 'eqcount: Wrong species: ',spname(ilin)
               stop
             end if
@@ -178,14 +149,11 @@ C
 C
       integer*4 function eqlist(abund,elemen,spname,ion,spindx,splist,
      &                  nlines,nlist,SPLDIM,ELESIZ)
-c      integer*4 function eqlist(abund,elemen,spname,ion,spindx,splist,
-c     &                  nlines,nlist,environment,SPLDIM,ELESIZ)
       INCLUDE 'SIZES.EOS'
 
       integer nlines,nlist,SPLDIM,ELESIZ
       character*(SPCHAR) spname(nlines),splist(SPLDIM)
       character*(3) elemen(ELESIZ)
-c      character*(*) environment
       character*2 tmp
       integer ion(nlines),spindx(nlines),ionmax,ionmaxx
       dimension abund(ELESIZ)
@@ -223,31 +191,9 @@ C
           splist(jdef)=default(jdef)
         end do
         nlist=NDEF
-cC
-cC  Copy the default list and check if we have enough space first
-cC
-c        if(environment.eq.'COLD'.or.environment.eq.'cold') then
-c          do jdef=1,NDEF_cold
-c            splist(jdef)=default_cold(jdef)
-c          end do
-c          ionmax=2
-c          nlist=NDEF_cold+idef
-c        else if(environment.eq.'WARM'.or.environment.eq.'warm') then
-c          do jdef=1,NDEF_warm
-c            splist(jdef)=default_warm(jdef)
-c          end do
-c          nlist=NDEF_warm+idef
-c        else if(environment.eq.'HOT'.or.environment.eq.'hot') then
-c          do jdef=1,NDEF_hot
-c            splist(jdef)=default_hot(jdef)
-c          end do
-c          nlist=NDEF_hot+idef
-c        else
-c          do jdef=1,NDEF_cool
-c            splist(jdef)=default_cool(jdef)
-c          end do
-c          nlist=NDEF_cool
-c        end if
+C
+C  Copy the default list and check if we have enough space first
+C
         idef=nlist
         if(nlist.ge.splmax) goto 900
 C
@@ -294,21 +240,11 @@ C
           write(*,40) ielem,abund(ielem)
   40      format('eqlist: bad abundance for element',i3,':',1pe13.4)
           write(*,*) (abund(ispec),ispec=1,99)
-c          stop
           eqlist=5
           return
         endif
         absum=absum+abund(ielem)
       end do
-c      do ielem=1,ELESIZ
-c        abund(ielem)=abund(ielem)/absum
-c      end do
-c      if(abs(absum-1.0).gt.1.0e-3) then
-c        write(*,70) absum
-c  70    format('eqlist: warning! abundances are not normalized:'
-c     &           ,1pe13.5)
-c      endif
-
 C
 C Associate each species in SPNAME with an entry in SPLIST. If SPNAME
 C  contains a new species not in SPLIST, then add that new species at
@@ -341,8 +277,6 @@ C
               if(tmp.eq.elemen(i)(1:2)) iel=i
             end do
             if(iel.lt.1) then
-c              write(*,*) 'eqlist: Wrong species: "'//spname(ilin)//'"'
-c              stop
               eqlist=1
               return
             end if
@@ -364,7 +298,6 @@ C
               inew=inew+1
             end do
           else
-c       write(*,*) 'Molecule: '//chname,inew
             if(inew.gt.splmax) goto 900
             splist(inew)=chname
             spindx(ilin)=inew
@@ -378,9 +311,6 @@ C Make sure free electrons are the last species in the list.
 C
       do ispec=1,nlist-1
         if(splist(ispec).eq.'e-') then
-c          write(*,*) 'eqlist: "e-" may only occur at the end of the'
-c     &            // ' species list (SPLIST).'
-c          stop
           eqlist=4
           return
         endif
@@ -396,42 +326,16 @@ C  species are needed for H1FRCT and HE1FRCT. Remember the locations
 C  of these species in SPLIST for later use. Code is optimized for
 C  the case where H and He both occur early in SPLIST list.
 C
-c      ih1=-1
-c      do 200 ispec=1,nlist
-c        if(splist(ispec).eq.'H') then
-c          ih1=ispec
-c          goto 210
-c        endif
-c 200  continue
-c      write(*,*) 'eqlist: "H" must be in species list (SPLIST)'
-c      stop
-c 210  ihe1=-1
-c      do 220 ispec=1,nlist
-c        if(splist(ispec).eq.'He') then
-c          ihe1=ispec
-c          goto 230
-c        endif
-c 220  continue
-c      write(*,*) 'eqlist: "He" must be in species list (SPLIST)'
-c      stop
-c 230  continue
 C
 C Sort the list
 C
       call sort2(nlist,splist,nlines,spindx,elemen,ELESIZ)
-c      do 250 ispec=1,nlist
-c 250  write(*,*) ispec,' "',splist(ispec),'"'
-c      stop
-C
       eqlist=0
       return
 C
 C Error handlers.
 C
  900  continue
-c      write(*,905) spldim,splsiz
-c 905  format('eqlist: species list (SPLIST) not long enough:',2i5)
-c      stop
       eqlist=2
 c
       return
@@ -534,10 +438,10 @@ C   POTI   [real array(SPLDIM)] ionization potential in eV for the
 C     corresponding species.
 C   ATWGHT [real array(SPLDIM-1)] molecular weights in AMU for the
 C     corresponding species.
-cC   H1FRCT [real] Number density (in cm^-3) of neutral atomic hydgrogen,
-cC     used in computing damping constants (and continuous opacities?).
-cC   HE1FRCT [real] Number density (in cm^-3) of neutral atomic helium,
-cC     used in computing damping constants (and continuous opacities?).
+C   H1FRCT [real] Number density (in cm^-3) of neutral atomic hydgrogen,
+C     used in computing damping constants (and continuous opacities?).
+C   HE1FRCT [real] Number density (in cm^-3) of neutral atomic helium,
+C     used in computing damping constants (and continuous opacities?).
 C   XNe    [real scalar] number density of free electrons per cm^3 as
 C     computed by the EQSTAT. For MODE>=10 XNe is simply the input Pelec/kT.
 C   XNa    [real scalar] number density of all particles except for free
@@ -574,10 +478,6 @@ C
 C
 C Call equation of state solver.
 C
-c      open(87,file='dumpb.dat',form='unformatted',status='old')
-c      read(87) temp,Pgas,Pelec,abund,elemen,amass,
-c     &         mmode,spindx(nlines),splist,nlines,nlist
-c      close(87)
       TOL=1.E-6
       TOL1=1.E-3
       Pgas=Pg
@@ -672,21 +572,6 @@ c        else if(Nchg.ge.0) then
 C
 C Ignore molecules
 C
-c          Ntotal=0
-c          ratiom=0.d0
-c          dummy1=1.d0
-c          dummy2=1.d0
-c          do iel=1,Nelm
-c            Ntotal=Ntotal+Natm(iel)
-c            awt(ispec)=awt(ispec)+Natm(iel)*amass(Anum(iel))
-c            ratiom=ratiom+Natm(iel)*log10(amass(Anum(iel)))
-c          enddo
-c          CALL MOLCON(splist(ispec),temp,Ntotal,ratiom,dummy1,
-c    &                dummy2,part,pion,BARKLEM)
-c          poti(ispec)=pion
-c          atwght(ispec)=awt(ispec)
-c          pfunc(ispec)=part
-c          xfract(ispec)=0.
           if(poti(ispec).lt.0.) then
             poti(ispec)=100.
             atwght(ispec)=10.
@@ -694,19 +579,6 @@ c          xfract(ispec)=0.
           pfunc(ispec)=1.
           xfract(ispec)=1.e-30
         endif
-c        if(Temp.gt.7950.) then
-c          write(*,*) ispec,temp,splist(ispec),
-c     *               xfract(ispec)*pfunc(ispec),pfunc(ispec),poti(ispec)
-c        endif
-c        xfract(1)=7.841741E17
-c        xfract(3)=6.737E11
-c        pfunc(3)=1.
-c        xfract(152)=2.66e14
-c        pfunc(152)=125.6
-c        xfract(153)=6.85d11
-c        pfunc(153)=949.2
-c        xfract(169)=1.67d8
-c        pfunc(169)=15817.
   2     continue
 C
 C Electrons
@@ -725,8 +597,6 @@ C
 C Cold gas
 C
         niter=0
-c        write(*,*) NLINES,NLIST,temp,Pgas,Pelec,mmode
-c        write(*,'(10f8.3)') log10(abund)
 C
 C Initioal guess for Pelec
 C
@@ -745,17 +615,6 @@ C
           Pe_old=Pelec
         endif
         Pg_old=Pg
-c        IF(mode.ge.10) then
-c          if(temp.gt.4000.) then
-c            xne_old=xnatom*0.1
-c          else if(temp.gt.2000.) then
-c            xne_old=xnatom*0.01
-c          else
-c            xne_old=xnatom*0.001
-c          endif
-c        else
-c          xne_old=xnelec
-c        endif
 C
 C Solve the molecular/ionization equilibrium using partial pressures (GAS)
 C when Pelec is not vanishingly small and log of partial pressures (lnGAS)
@@ -790,7 +649,6 @@ C to computes the partition functions based on the input value of Pelec.
 C The effect of screening is small but it is there and thus outer loop is
 C required to reach self-consistency.
 C
-c        IF(mode.lt.10.and.
         IF(
      *    (abs(Pgas -Pg_old)/max(1.E-20,Pgas ).gt.tol1.or.
      *     abs(Pelec-Pe_old)/max(1.E-20,Pelec).gt.tol1)) THEN
@@ -798,20 +656,6 @@ c        IF(mode.lt.10.and.
           Pg_old=Pg
           GOTO 3
         END IF
-c        write(*,*) Temp,splist(169),xnpf(169),pfunc(169),poti(169)
-c        if(Temp.gt.7950.) then
-c          do ispec=1,nlist-1
-c            write(*,*) ispec,temp,splist(ispec),xnpf(ispec),
-c     *                 pfunc(ispec),poti(ispec)
-c          enddo
-c        endif
-c      write(*,'(F10.1,13E11.4)') Temp,xnpf(1),
-c     &                                xnpf(2),
-c     &                                xnpf(3),
-c     &                                xnpf(4),
-c     &                                xnpf(5),
-c     &                                xnpf(6),
-c     & (Pgas-Pelec)/Tk,xna,Pelec/Tk,xne,rho
 C
 C Fill the return arrays.
 C
@@ -824,7 +668,6 @@ C
 C  MODE=1, Return number densities
 C
           do  ispec=1,nlist-1
-c          write(*,*) ispec,splist(ispec),xnpf(ispec),pfunc(ispec)
            xfract(ispec)=xnpf(ispec)
           end do
           xfract(nlist)=xne
@@ -851,7 +694,6 @@ C  Any other MODE: Return number densities / partition functions
 C
           do ispec=1,nlist-1
             xfract(ispec)=xnpf(ispec)/pfunc(ispec)
-c            write(*,*) ispec,SPLIST(ispec),xnpf(ispec),pfunc(ispec)
           end do
           xfract(nlist)=xne
         endif
@@ -972,7 +814,6 @@ C
       integer mode,ELESIZ,niter
       integer nlines,nlist
       real temp,Tk,Pg,Pe,Pgas,Pelec,xna,xne,rho,xntot
-c      real xnatom,xnelec,xne_old,xna_old
       real Pg_old,Pe_old,rho_new
       character*(SPCHAR) splist(nlist)
       character*(3) elemen(ELESIZ)
@@ -994,10 +835,6 @@ c      real xnatom,xnelec,xne_old,xna_old
 C
 C Call equation of state solver.
 C
-c      open(87,file='dumpb.dat',form='unformatted',status='old')
-c      read(87) temp,Pgas,Pelec,abund,elemen,amass,
-c     &         mmode,spindx(nlines),splist,nlines,nlist
-c      close(87)
       TOL=1.E-5
       TOL1=1.E-3
       Pelec=Pe
@@ -1053,37 +890,10 @@ C
 C     If the total number of particles derived from the density and the Nelect
 C     are significantly discrepant recompute Pgas and iterate
 C
-
         if(abs((xntot-xna) / xntot) .gt. TOL) then
            Pgas = Pgas + (xntot-xna)*tk
            goto 1
         endif
-
-c<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-c        niter=0
-c        xna=xntot*0.5
-c  1     niter=niter+1
-c        Pgas=xna*Tk
-c        Pg=Pgas
-cC
-cC Get number density of free electrons
-cC
-c        call Nelect(temp,Pgas,abund,amass,ELESIZ,
-c     *              xna,xne,wtmol)
-c        if(mode.ge.10) then
-c          Pelec=xne*Tk
-c        else
-c          xne=Pelec/Tk
-c        endif
-cC
-cC If the total number of particles derived from the density and the Nelect
-cC are significantly discrepant scale xna and iterate
-cC
-c        if(abs(xna+xne-xntot)/(xna+xne).gt.TOL) then
-c          xna=xna*xntot/(xna+xne)
-c          go to 1
-c        endif
-c<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 C
 C We found consistent values of Pgas and Pelec. Proceed with the EOS.
 C
@@ -1172,8 +982,6 @@ C
         Pg_old=rho/sum
         niter=0
   3     continue
-c        write(*,*) NLINES,NLIST,temp,Pgas,Pelec,mmode
-c        write(*,'(10f8.3)') log10(abund)
         if(temp.gt.4000.) then
           Pe_old=Pg_old*0.1
         else if(temp.gt.2000.) then
@@ -1196,8 +1004,6 @@ c        write(*,'(10f8.3)') log10(abund)
         niter=niter+iter
         IF(niter.ge.MAXITER) THEN
           Pelec=xne*Tk
-c          WRITE(*,*) 'T,Pgas,Pnew,Pelec,Pe_in,Pe_out,NITER=',
-c     *                Temp,Pgas,Pg,Pe,Pe_old,Pelec,niter,FAILED
           IF(niter.gt.MAXITER*20) STOP
         END IF
 C
@@ -1220,17 +1026,6 @@ C
         endif
         Pg=Pgas
         Pe=xne*Tk
-c        write(*,*) 'T, P', Temp, Pg
-c        do ispec=1,nlist-1
-c          write(*,*) ispec,splist(ispec),xnpf(ispec)
-c        enddo
-c      write(*,'(F10.1,13E11.4)') Temp,xnpf(1),
-c     &                                xnpf(2),
-c     &                                xnpf(3),
-c     &                                xnpf(4),
-c     &                                xnpf(5),
-c     &                                xnpf(6),
-c     & (Pgas-Pelec)/Tk,xna,Pelec/Tk,xne,rho
 C
 C Fill return arrays.
 C
@@ -1243,7 +1038,6 @@ C
 C  MODE=1, Return number densities
 C
           do ispec=1,nlist-1
-c            write(*,*) ispec,splist(ispec),xnpf(ispec),pfunc(ispec)
             xfract(ispec)=xnpf(ispec)
           end do
           xfract(nlist)=xne
@@ -1346,7 +1140,6 @@ C
 C
       INTEGER ELESIZ
       REAL T,P,XNE,XNA,WTMOLE
-c      REAL T,P,XNE,XNA,H1FRC,HE1FRC,WTMOLE
       REAL ABUND(ELESIZ),AMASS(ELESIZ)
 
       DOUBLE PRECISION kBol,amu
@@ -1375,8 +1168,6 @@ C
 C  Get the number of electrons contributed by all ions of atom IEL
 C
           CALL XSAHA(IEL,T,XNE,XNA,MAXION,POTI,FRACT,2)
-c          IF(IEL.EQ.1) H1FRC =FRACT(1)
-c          IF(IEL.EQ.2) HE1FRC=FRACT(1)
           DO 1 ION=1,MIN(MAXION,IEL+1)
             X=X+FRACT(ION)*(ION-1)
    1      CONTINUE
@@ -1386,14 +1177,12 @@ c          IF(IEL.EQ.2) HE1FRC=FRACT(1)
         ERROR=ABS((XE-XNENEW)/XNENEW)
         XE=XNENEW
         XA=XNTOT-XE
-c        write(*,'('' T,XNE,XNA,ERROR='',F8.1,3E14.6)') T,XNE,XNA,ERROR
         IF(ERROR.LT.1.D-5) THEN
           X=0.D0
           DO 3 IEL=1,99
             X=X+ABUND(IEL)*AMASS(IEL)
    3      CONTINUE
           WTMOLE=X*amu
-c          WTMOLE=(X-XE*5.4857990943D-4)*amu
           RETURN
         END IF
    4  CONTINUE
@@ -1442,8 +1231,6 @@ c
             imin=j
             name2=list1(imin)
             l2=llength(name2,elemen,ELESIZ)
-c            if(list1(list2(4)).eq.'e-') write(*,*) 'A',name1,name2,
-c     *      imin,list1(imin),(list2(k),k=1,nlines)
           else if(name1.eq.name2) then
 c
 c Found more than one candidate: kill the latter and update the index vector
@@ -1465,8 +1252,6 @@ c
 c Put entries in the correct order and update the index vector
 c
         name=list1(i)
-c        if(list1(list2(4)).eq.'e-') write(*,*) 'C',name,
-c     *    list1(imin),imin,list1(imin),(list2(k),k=1,nlines)
         list1(i)=list1(imin)
         list1(imin)=name
         if(nlines.gt.0) then
@@ -1561,8 +1346,6 @@ C
      *             spname,icharge
         stop
       endif
-C
-c      write(*,*) icharge,'"',chname,'"'
       return
       end
 
@@ -1600,7 +1383,6 @@ C
 C
 C  Set pointer I1 to beginning of first atom name.
 C
-c      write(*,*) LEN(ELEMEN(1))
       CHARGE=0
       I1=1
 C
@@ -1628,7 +1410,6 @@ C
 C
 C  Fall through to here if atom name was not in ELEMEN list.
 C
-c      WRITE(*,*) 'Unknown element: ',SPNAME,i1,i2,' ',SPNAME(i1:i2)
       WRITE(*,*) 'Unknown element: ',SPNAME(I1:I2),' "',SPNAME(1:I2),'"'
       STOP
 C
@@ -1743,13 +1524,7 @@ C
       DOUBLE PRECISION PE,PG,PF,PNEW,PENEW,DP,DPE,PION,PENQ,PARTN
       INTEGER NELM,NCHG,ANUM(4),NATM(4)
       INTEGER I,J,K,NP,ISPEC,IELM
-c      INTEGER IPIV(ELEDIM+1),IWORK(ELEDIM+1),
-c     *  INFO,REPEAT,NSP1,NELT,NQ,K,KK,IDIR,KMAX,I,J,NEQ,
-c     *  IIH2,IICO,IIH2O,NGIT
       DOUBLE PRECISION RATIOM,QPRD
-c      DOUBLE PRECISION RHSTOT,SCALE,FACTOR,PNOTE,PDTOT,PU,
-c     *  PD,GMU,PTOT,DELP,DELPE,PQ,RCOND,myDASUM,DELMAX,PE0,
-c     *  PTOTH,PHyd,PTOTC,PTOTO,WATCOR,AQUAD,BQUAD,CQUAD,DPQ,DPTOT
 
       LOGICAL BARKLEM
 
@@ -1769,8 +1544,6 @@ C
       ELSE
         XNELEC=XNATOM*0.01
       END IF
-c      PG=(XNATOM+XNELEC)*KBOL*TEMP
-c      PE=XNELEC*KBOL*TEMP
 C
 C  Calculate equilibrium constants for each species in list (except 'e-').
 C
@@ -1989,10 +1762,6 @@ C
      *               TOL,SPLIST,NLIST,XNE,XNA,RHO,Pgnew,
      *               XNPF,PFUNC,POTION,XTOTAL,AWT,NGIT,
      *               FAILED)
-c      SUBROUTINE GAS(TEMP,XNELEC,XNATOM,ABUND,ELEMEN,AMASS,ELESIZ,
-c     *               TOL,SPLIST,NLIST,
-c     *               XNE,XNA,RHO,XNPF,PFUNC,POTION,XTOTAL,AWT,NGIT,
-c     *               FAILED)
 
       IMPLICIT NONE
       INCLUDE 'SIZES.EOS'
@@ -2031,7 +1800,6 @@ C
       DOUBLE PRECISION RATIOM,QPRD,RHSTOT,SCALE,FACTOR,PNOTE,PDTOT,PU,
      *  PD,GMU,PTOT,DELP,DELPE,PQ,RCOND,myDASUM,DELMAX,PE0,
      *  PTOTH,PHyd,PTOTC,PTOTO,WATCOR,AQUAD,BQUAD,CQUAD,DPQ,DPTOT
-c      DOUBLE PRECISION PZS,COMPZ
 
       DOUBLE PRECISION RSCL(ELEDIM+1),CSCL(ELEDIM+1)
       DOUBLE PRECISION FERR(1),BERR(1),WORK(5*(ELEDIM+1))
@@ -2039,11 +1807,6 @@ c      DOUBLE PRECISION PZS,COMPZ
       LOGICAL BARKLEM
       INTEGER JDAMAX
       EXTERNAL JDAMAX,myDASUM,myDGESVX,xDCOPY
-
-cC!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-c      real ttt(101)
-c      real*8 Kttt(101)
-cC!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 C
 C Initialize the Reciprocal Neutral Fraction (RNF). The RNF is used to
@@ -2058,7 +1821,6 @@ C
 C
 C Total gas and electron pressure
 C
-c      T=MAX(1200.,TEMP)
       T=TEMP
       PG=Pgas
       PE=Pelec
@@ -2072,8 +1834,6 @@ C
       ELSE
         XNELEC=XNATOM*0.01
       END IF
-c      PG=(XNATOM+XNELEC)*KBOL*TEMP
-c      PE=XNELEC*KBOL*TEMP
 C
 C  Calculate equilibrium constants for each species in list (except 'e-').
 C
@@ -2085,12 +1845,6 @@ c      PRINT=.TRUE.
       IIH2O=0
       JATOM=0
       NP=0
-cC!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-c      open(13,file='KT_eos.dat',FORM='UNFORMATTED',STATUS='UNKNOWN')
-c      write(13) NLIST,LEN(SPLIST(1))
-c      write(*,*) 'NLIST=',NLIST,splist(17)
-cC!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-c      do 4 ISPEC=17,17
       DO 4 ISPEC=1,NLIST-1
       PP0(ISPEC)=0.D0
       CALL MPARSE(ELEMEN,SPLIST(ISPEC),NELM,NCHG,ANUM,NATM,ELESIZ)
@@ -2126,11 +1880,8 @@ C
           CALL XSAHA(ANUM(1),T,XNELEC,XNATOM,IONSIZ,POTI,FRACT,2)
           IT(ISPEC)=FRACT(NCHG+1)/FRACT(1)*PE**NCHG
           RNF(ANUM(1))=RNF(ANUM(1))+FRACT(NCHG+1)/FRACT(1)
-c          if(ANUM(1).eq.26) write(*,*) SPLIST(ISPEC),NCHG,
-c     *                      (FRACT(I),I=1,IONSIZ)
           CALL XSAHA(ANUM(1),T,XNELEC,XNATOM,IONSIZ,POTI,FRACT,3)
           PART(ISPEC)=FRACT(NCHG+1)
-c          if(ANUM(1).eq.62) write(*,*) 'pf: ',SPLIST(ISPEC),NCHG,FRACT
           POTION(ISPEC)=POTI(NCHG+1)
           KT(ISPEC)=1.0
         ELSE IF(NCHG.LT.0) THEN
@@ -2185,38 +1936,16 @@ C  Now get the molecular constants from MOLCON.
 C
         CALL MOLCON(SPLIST(ISPEC),TEMP,NTOT(ISPEC),RATIOM,QPRD,
      &              KT(ISPEC),PART(ISPEC),PION,BARKLEM)
-c       if(SPLIST(ISPEC).eq.'TiO')write(*,*) TEMP,KT(ISPEC),PART(ISPEC)
-cC!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-c        do ittt=0,100
-c          ttt(ittt+1)=20.*ittt+1000.
-c          CALL MOLCON(SPLIST(ISPEC),ttt(ittt+1),NTOT(ISPEC),
-c     &                RATIOM,QPRD,Kttt(ittt+1),PART(ISPEC),PION)
-c        enddo
-c        write(13) SPLIST(ispec),ttt,Kttt
-cC!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 C
 C  Finally, record the charge state of the molecule.
 C
         IT(ISPEC)=1.D0
-c        write(*,*) ISPEC,SPLIST(ISPEC)
         IF(NCHG.GT.0.AND.BARKLEM) THEN
 C
 C  The first option was used with Sauval & Tatum constants.
 C  JV fits to NextGen pressures needed IT(ISPEC)=1.0 for positive
 C  molecular ions.
 C
-c-----------------------------------------------------------------------
-c          IF(SPLIST(ISPEC).EQ.'H2+'.OR.SPLIST(ISPEC).EQ.'NO+') THEN
-c            K=1
-c            DO IELM=2,NELM
-c              IF(POTION(INDSP(ANUM(IELM))).LT.POTION(INDSP(ANUM(K))))
-c     *          K=IELM
-c            ENDDO
-c            IT(ISPEC)=IT(INDSP(ANUM(K))+1)
-c            KT(ISPEC)=KT(ISPEC)/IT(ISPEC)
-c          ENDIF
-c          IT(ISPEC)=1.0
-c-----------------------------------------------------------------------
 C
 C Positively charged molecules (single charge only!)
 C
@@ -2288,35 +2017,12 @@ C
 C
 C  Go back for next species.
 C
-c      write(*,'(f10.2,I4,A12,4E15.4)') T,ISPEC,SPLIST(ISPEC),
-c     *     PART(ISPEC),
-c     *     KT(ISPEC),IT(ISPEC),KT(ISPEC)/MAX(IT(ISPEC),1.D-30)
    4  CONTINUE
-c      write(*,*) 'GAS completed',TEMP,KBOL,Pgas,Pelec,NLIST
-c      stop
-c      return
-cC!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-c      close(13)
-c      stop
-cC!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       NEQ=JATOM+1
 C==================================
 C== End of species list parsing. ==
 C==================================
 C
-C Print diagnostic: neutral fractions.
-C
-c     write(*,*) 'Reciprocal Neutral Fractions'
-c     do 850 i=1,JATOM/7
-c       write(*,860) (jeff(iatom(j)),j=7*i-6,7*i)
-c850  continue
-c860  format(1p7e10.3,a)
-c     if(JATOM.gt.7*(JATOM/7)) write(*,860)
-c    *  (jeff(iatom(j)),j=7*(JATOM/7)+1,JATOM)
-c      do 52 i=1,nlist-1
-c  52  write(*,'(I4,1P2E12.4,3I3,A6,0Pf8.2,8I4)')
-c     *  i,IT(i),KT(i),NCH(i),NTOT(i),NEL(i),SPLIST(i),AWT(i),
-c     *  (ZAT(j,i),NAT(j,i),j=1,NEL(i))
 C================================================================
 C== UPDATE MAIN ARRAYS                                         ==
 C================================================================
@@ -2349,7 +2055,6 @@ c
       ELSE
         PHyd=(PG-PE)*ABUND(1)
       ENDIF
-c      IF(PHyd.GT.0.) P(1)=PHyd
 c
 c Make an initial guess at the balance between C, O, CO, and H2O.
 c Constraints:
@@ -2371,39 +2076,13 @@ c
         IF(IICO.GT.0) THEN
           BQUAD=KT(IICO)+(PTOTO-PTOTC)/WATCOR
           CQUAD=-KT(IICO)*PTOTC
-c          P(6)=(-BQUAD+SQRT(BQUAD**2-4.0*AQUAD*CQUAD))/(2.0*AQUAD)
-c          P(8)=(P(6)+PTOTO-PTOTC)/WATCOR
         ELSE
-c          P(6)=PTOTC
-c          P(8)=PTOTO
         ENDIF
       ELSE
-c        P(6)=PTOTC
-c        P(8)=PTOTO
       ENDIF
-c      IF(P(6).LE.0.) P(6)=PTOTC
-c      IF(P(8).LE.0.) P(8)=PTOTO
       PE0=PE
       NAMEMX=BLANK
       DELMAX=0.0D0
-c      COMPZ=0.0D0
-c      PZS=0.0D0
-c      write(*,*) SPLIST(1),P(1),SPLIST(IIH2),P(IIH2),
-c     *           SPLIST(IIH2+1),P(IIH2+1),
-c     *           SPLIST(IIH2+2),P(IIH2+2)
-c      DO 6 J=1,JATOM
-c      NN=INDSP(J)
-c      IF(IPR(NN).NE.2) GOTO 3
-c      NNP=INDX(3,ITAB(ZAT(1,NN)),1,1,1)
-c      COMPZ=COMPZ+ABUND(IATOM(J))
-c      IF(PE.EQ.0.0D0) PZS= PZS + P(J)
-c      IF(PE.GT.0.0D0) PZS= PZS + (1.0D0+IT(NNP)/PE)*P(J)
-c   6  CONTINUE
-c      do J=1,JATOM
-c        write(*,*) J,P(J),ABUND(IATOM(J)),SPLIST(INDSP(J))
-c      enddo
-c      write(*,*) JATOM+1,PE,'e-'
-c      stop
 C================================================================
 C== MAIN LOOP: FILL LINEARIZED COEFFICIENT MATRIX AND RHS VECTOR,
 C== AND SOLVE SYSTEM FOR PARTIAL PRESSURE CORRECTIONS.         ==
@@ -2447,9 +2126,6 @@ C
       IDIR=0
    9  CALL EOSFCN(NEQ,P,B,A,1,PG,NCH,NLIST,
      *  IATOM,INDSP,NAT,ZAT,NTOT,NEL,IAT,INDZAT,ABUND,KT,IT)
-
-c      write(*,*) 'Pe,SCALE,B(1),Pg=',PE,SCALE,B(1),PG,NGIT
-
       IF(B(1).GT.1.D2) THEN
         IF(IDIR.NE.-1) THEN
           SCALE=SQRT(SCALE)
@@ -2507,7 +2183,6 @@ C================================================================
         WRITE(*,202) NAMET,(AL(J),J=1,KK+1)
  202    FORMAT(A2,31F6.1)
         WRITE(*,'(/)')
-c        stop
       END IF
 C
 C  Save a copy of the RHS for future step refinement
@@ -2524,25 +2199,13 @@ C
 c
 c  Using LAPACK routine
 c
-c        open(unit=4,file='dump.bin',form='UNFORMATTED')
-c        write(4) NEQ
-c        write(4) ((A(i,j),i=1,NEQ),j=1,NEQ)
-c        write(4) (B(i),i=1,NEQ)
       CALL myDGESVX('E','N',NEQ,1,A,ELEDIM+1,AA,ELEDIM+1,IPIV,EQUED,
      *            RSCL,CSCL,B,ELEDIM+1,BB,ELEDIM+1,RCOND,FERR,BERR,
      *            WORK,IWORK,INFO)
-c       write(4) (BB(i),i=1,NEQ)
-c       stop
       CALL xDCOPY(NEQ,BB,1,B,1)
-c      DO I=1,NEQ
-c        B(I)=BB(I)
-c      END DO
 c
 c  The same thing using LINEQ2 or LINEQ and BLAS 2/3
-c          open(unit=4,file='dump.bin',form='UNFORMATTED')
-c          write(4) NEQ,((A(i,j),i=1,NEQ),j=1,NEQ),(B(i),i=1,NEQ)
-c          close(4)
-c      CALL LINEQ(NEQ,1,A,ELEDIM+1,IPIV,B,ELEDIM+1,INFO)
+c
       IF(INFO.NE.0) THEN
         IF(REPEAT.LT.2) THEN
           DO J=1,NEQ-1
@@ -2562,19 +2225,10 @@ c      CALL LINEQ(NEQ,1,A,ELEDIM+1,IPIV,B,ELEDIM+1,INFO)
           WRITE(*,*) '     Temp=',TEMP,', Natom=',XNATOM,', Nelec=',
      *                XNELEC
           WRITE(*,*) '     INFO=',INFO,' Iter=',NGIT,' EQUED=',EQUED
-cc          open(unit=4,file='dump.bin',form='UNFORMATTED')
-cc          write(4) NEQ,((A(i,j),i=1,NEQ),j=1,NEQ),(B(i),i=1,NEQ)
-cc          close(4)
-cc          write(1) 0
-cc          close(1)
-c          STOP
           CALL myDGESVX('E','N',NEQ-1,1,A,ELEDIM+1,AA,ELEDIM+1,IPIV,
      *                  EQUED,RSCL,CSCL,B,ELEDIM+1,BB,ELEDIM+1,RCOND,
      *                  FERR,BERR,WORK,IWORK,INFO)
           CALL xDCOPY(NEQ,BB,1,B,1)
-c          DO J=1,NEQ
-c            B(J)=BB(J)
-c          END DO
           PTOT=0.D0
           DO J=1,NEQ-1
             PTOT=PTOT+P(J)
@@ -2584,7 +2238,6 @@ c          END DO
       END IF
       REPEAT=0
 
-c
 C=================================================================
 C== FINALLY, UPDATE THE PARTIAL PRESSURES FOR THE MAJOR SPECIES ==
 C== BY ADDING THE PRESSURE CORRECTIONS OBTAINED FOR EACH ATOM   ==
@@ -2607,7 +2260,6 @@ C
 C  Under-relaxation factor
 C
       FACTOR=0.2D0/(DELMAX+0.2D0)
-c      FACTOR=1.D0
 C
 C Apply corrections
 C
@@ -2620,7 +2272,6 @@ C  Restrict the correction to avoid getting negative pressures
 C
       PNEW=P(K)-B(K)*FACTOR
       IF(PNEW.LT.0.D0) PNEW=MIN(MIN(P(K),ABS(PNEW)),PG)
-c      IF(PNEW.LT.0.D0) PNEW=ABS(PNEW)
       DP=PNEW-P(K)
       IF(ABS(DP).GT.1.D-15) DP=DP*MIN(1.D0,0.4D0*P(K)/ABS(DP))
       P(K)=PNEW
@@ -2632,11 +2283,8 @@ c      IF(PNEW.LT.0.D0) PNEW=ABS(PNEW)
       END IF
   32  CONTINUE
 
-c      PENEW=BBB(NEQ)
       PENEW=PE-B(NEQ)*FACTOR
-c      write(*,*) NEQ,PE,PENEW,B(NEQ),NGIT
       IF(PENEW.LT.0.D0) PENEW=MIN(PE,ABS(PENEW))
-c      IF(PENEW.LT.0.D0) PENEW=ABS(PENEW)
       DPE=PENEW-PE
       IF(ABS(DPE).GT.1.D-15) DPE=DPE*MIN(1.D0,0.4D0*PE/ABS(DPE))
       PE=PENEW
@@ -2650,7 +2298,6 @@ C== PRINT OUT SUMMARY LINE FOR EACH ITERATION                  ==
 C================================================================
       PTOT=PE
       PQ=0.0D0
-c      write(*,*) 0,'e-',PE,PTOT,PG,NGIT
       DO ISPEC=1,NLIST-1
         NELT=NEL(ISPEC)
         NQ=NCH(ISPEC)
@@ -2660,18 +2307,12 @@ c      write(*,*) 0,'e-',PE,PTOT,PG,NGIT
           J=INDZAT(ZAT(I,ISPEC))
           PF=PF+LOG(MAX(P(J),1.D-115))*NAT(I,ISPEC)
         ENDDO
-c        PENQ=1.0D0
-c        IF(PE.GT.0.0D0.AND.NQ.NE.0) PENQ=PE**NQ
-c        PP(ISPEC)=IT(ISPEC)/(KT(ISPEC)*PENQ)*PF
         PP(ISPEC)=EXP(PF)
         PTOT=PTOT+PP(ISPEC)
         PQ=PQ+NQ*PP(ISPEC)
-c        write(*,*) ISPEC,SPLIST(ISPEC),PP(ISPEC),PTOT,PG
       ENDDO
-c      stop
       DPTOT=DABS(PTOT-PG)/PG
       DPQ=DABS(PE-PQ)/PG
-c      write(*,*) PG,PTOT,DELMAX,DPTOT,DPQ,FACTOR
       IF(PRINT) THEN
         WRITE(*,203) NGIT,NAMEMX,DELMAX,PE,B(KMAX),P(KMAX),
      *               PTOT/TEMP/KBOL,DPTOT,PE/TEMP/KBOL,DPQ
@@ -2746,7 +2387,6 @@ c      IF(myDASUM(NLIST-1,PP,1)+PE.GT.PG*1.01D0) THEN
   35    CONTINUE
         WRITE(*,206) NSP1,ENAME,PE0,PE
         WRITE(*,*) JDAMAX(NLIST-1,PP,1),SPLIST(JDAMAX(NLIST-1,PP,1))
-c        stop
       END IF
 C
 C Fill up the output array and set up flags
@@ -2757,7 +2397,6 @@ C
       DO 36 ISPEC=1,NLIST-1
       IF(PART(ISPEC).GT.0.) THEN
         IF(PP(ISPEC)/KBOL/TEMP.GE.1.D-20) THEN
-c          XNPF(ISPEC)=PP(ISPEC)/(KBOL*TEMP*PART(ISPEC))
           XNPF(ISPEC)=PP(ISPEC)/(KBOL*TEMP)
         ELSE
           XNPF(ISPEC)=0.0
@@ -2768,17 +2407,12 @@ c          XNPF(ISPEC)=PP(ISPEC)/(KBOL*TEMP*PART(ISPEC))
         PFUNC(ISPEC)=1.
       END IF
       PNOTE=PNOTE+PP(ISPEC)
-c      write(*,*) ISPEC,PNOTE,PP(ISPEC),SPLIST(ISPEC)
-c      write(*,*) ISPEC,SPLIST(ISPEC),PFUNC(ISPEC)
   36  CONTINUE
-c      write(*,*) 'e-',XNE
-c      stop
       XNPF(NLIST)=XNE
       PFUNC(NLIST)=1.0
       XTOTAL=PD/(KBOL*TEMP)
       XNA=PNOTE/(KBOL*TEMP)
       Pgnew=PTOT
-C
       RETURN
       END
 
@@ -2821,10 +2455,6 @@ C
      *                 TOL,SPLIST,NLIST,XNE,XNA,RHO,Pgnew,
      *                 XNPF,PFUNC,POTION,XTOTAL,AWT,NGIT,
      *                 FAILED)
-c      SUBROUTINE lnGAS(TEMP,XNELEC,XNATOM,ABUND,ELEMEN,AMASS,ELESIZ,
-c     *                 TOL,SPLIST,NLIST,
-c     *                 XNE,XNA,RHO,XNPF,PFUNC,POTION,XTOTAL,AWT,NGIT,
-c     *                 FAILED)
 
       IMPLICIT NONE
       INCLUDE 'SIZES.EOS'
@@ -2857,8 +2487,6 @@ C
      *  P(ELEDIM+1),PP(SPLSIZ-1),PP0(SPLSIZ-1),PART(SPLSIZ-1),ND
 
       DOUBLE PRECISION PE,PG,PF,PNEW,PENEW,DP,DPE,PION,PARTN
-c      DOUBLE PRECISION AT,BT,PN,DPF(4),CRATIO,BBB(ELEDIM+1),
-c     *  PENQ,DPP,DPPE
       DOUBLE PRECISION RNF(ELEDIM),AL(ELEDIM+1)
       INTEGER NELM,NCHG,ANUM(4),NATM(4),IPIV(ELEDIM+1),IWORK(ELEDIM+1),
      *  INFO,ISPEC,NSP1,NELT,NQ,K,KK,IDIR,KMAX,I,J,NEQ,IELM,NP,
@@ -2866,11 +2494,7 @@ c     *  PENQ,DPP,DPPE
       DOUBLE PRECISION RATIOM,QPRD,RHSTOT,SCALE,FACTOR,PNOTE,PDTOT,PU,
      *  PD,GMU,PTOT,DELP,DELPE,PQ,RCOND,myDASUM,DELMAX,PE0,PTOTH,
      *  PHyd,PTOTC,PTOTO,WATCOR,AQUAD,BQUAD,CQUAD,DPQ,DPTOT,RENORM
-c      DOUBLE PRECISION DUMMY,SCOLD,RHS0,RHS1,RHS2
-
-c      DOUBLE PRECISION BOLD(ELEDIM+1),S(ELEDIM+1),GAMMA,BNORM,BOLDN
       DOUBLE PRECISION RSCL(ELEDIM+1),CSCL(ELEDIM+1)
-c      DOUBLE PRECISION ROWCND,COLCND,AMX
       DOUBLE PRECISION FERR(1),BERR(1),WORK(5*(ELEDIM+1))
       CHARACTER*1 EQUED
       LOGICAL BARKLEM
@@ -2879,18 +2503,8 @@ c      DOUBLE PRECISION ROWCND,COLCND,AMX
       INTEGER NFIELDS
       PARAMETER (NFIELDS=40)
       CHARACTER*(*) FORMAT201,FORMAT202
-c      CHARACTER*(*) AFIELDS
-c      PARAMETER (AFIELDS=CHAR(NFIELDS/10+ICHAR('0'))//
-c     *                   CHAR(MOD(NFIELDS,10)+ICHAR('0')))
-c      PARAMETER (FORMAT201='(4x,'//AFIELDS//'(1X,A3,2X))')
-c      PARAMETER (FORMAT202='(A2,'//AFIELDS//'F6.1)')
       PARAMETER (FORMAT201='(4x,48(1X,A3,2X))')
       PARAMETER (FORMAT202='(A2,48F6.1)')
-
-cC!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-c      real ttt(101)
-c      real*8 Kttt(101)
-cC!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 C
 C Initialize the Reciprocal Neutral Fraction (RNF). The RNF is used to
@@ -2905,7 +2519,6 @@ C
 C
 C Total gas and electron pressure
 C
-c      T=MAX(1200.,TEMP)
       T=TEMP
       PG=Pgas
       PE=Pelec
@@ -2919,12 +2532,9 @@ C
       ELSE
         XNELEC=XNATOM*0.01
       END IF
-c      PG=(XNATOM+XNELEC)*KBOL*TEMP
-c      PE=XNELEC*KBOL*TEMP
 C
 C  Calculate equilibrium constants for each species in list (except 'e-').
 C
-c      PRINT=.TRUE.
       PRINT=.FALSE.
       PION=0
       IIH2=0
@@ -2932,15 +2542,9 @@ c      PRINT=.TRUE.
       IIH2O=0
       JATOM=0
       NP=0
-cC!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-c      open(13,file='KT_eos.dat',FORM='UNFORMATTED',STATUS='UNKNOWN')
-c      write(13) NLIST,LEN(SPLIST(1))
-cC!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       DO 4 ISPEC=1,NLIST-1
       PP0(ISPEC)=0.D0
       CALL MPARSE(ELEMEN,SPLIST(ISPEC),NELM,NCHG,ANUM,NATM,ELESIZ)
-c      write(*,*) ISPEC,'"'//SPLIST(ISPEC)//'"',NELM,NCHG,
-c     *           ANUM,NATM,ELESIZ
       IF(NCHG.EQ.0) NP=ISPEC
       IF(NELM.EQ.1.AND.NATM(1).EQ.1.AND.NCHG.EQ.0) THEN
 C
@@ -2973,11 +2577,8 @@ C
           CALL XSAHA(ANUM(1),T,XNELEC,XNATOM,IONSIZ,POTI,FRACT,2)
           IT(ISPEC)=FRACT(NCHG+1)/FRACT(1)*PE**NCHG
           RNF(ANUM(1))=RNF(ANUM(1))+FRACT(NCHG+1)/FRACT(1)
-c          if(ANUM(1).eq.26) write(*,*) SPLIST(ISPEC),NCHG,
-c     *                      (FRACT(I),I=1,IONSIZ)
           CALL XSAHA(ANUM(1),T,XNELEC,XNATOM,IONSIZ,POTI,FRACT,3)
           PART(ISPEC)=FRACT(NCHG+1)
-c          if(ANUM(1).eq.62) write(*,*) 'pf: ',SPLIST(ISPEC),NCHG,FRACT
           POTION(ISPEC)=POTI(NCHG+1)
           KT(ISPEC)=1.0
         ELSE IF(NCHG.LT.0) THEN
@@ -3032,14 +2633,6 @@ C  Now get the molecular constants from MOLCON.
 C
         CALL MOLCON(SPLIST(ISPEC),TEMP,NTOT(ISPEC),RATIOM,QPRD,
      *              KT(ISPEC),PART(ISPEC),PION,BARKLEM)
-cC!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-c        do ittt=0,100
-c          ttt(ittt+1)=20.*ittt+1000.
-c          CALL MOLCON(SPLIST(ISPEC),ttt(ittt+1),NTOT(ISPEC),
-c     *                RATIOM,QPRD,Kttt(ittt+1),PART(ISPEC),PION)
-c        END DO
-c        write(13) SPLIST(ispec),ttt,Kttt
-cC!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 C
 C  Finally, record the charge state of the molecule.
 C
@@ -3050,18 +2643,6 @@ C  The first option was used with Sauval & Tatum constants.
 C  JV fits to NextGen pressures needed IT(ISPEC)=1.0 for positive
 C  molecular ions.
 C
-c-----------------------------------------------------------------------
-c          IF(SPLIST(ISPEC).EQ.'H2+'.OR.SPLIST(ISPEC).EQ.'NO+') THEN
-c            K=1
-c            DO IELM=2,NELM
-c              IF(POTION(INDSP(ANUM(IELM))).LT.POTION(INDSP(ANUM(K))))
-c     *          K=IELM
-c            ENDDO
-c            IT(ISPEC)=IT(INDSP(ANUM(K))+1)
-c            KT(ISPEC)=KT(ISPEC)/IT(ISPEC)
-c          ENDIF
-c          IT(ISPEC)=1.0
-c-----------------------------------------------------------------------
 C
 C Positively charged molecules (single charge only!)
 C
@@ -3133,42 +2714,13 @@ C
 C
 C  Go back for next species.
 C
-c      write(*,*) ISPEC,SPLIST(ISPEC),IT(ISPEC),KT(ISPEC)
-c      IT(ISPEC)=MIN(MAX(1.D-250,IT(ISPEC)),1.D250)
-c      KT(ISPEC)=MIN(MAX(1.D-250,KT(ISPEC)),1.D250)
-c      write(*,'(f10.2,I4,A12,4E13.4)') TEMP,ISPEC,SPLIST(ISPEC),
-c     *     PART(ISPEC),KT(ISPEC),IT(ISPEC)
-c     *     ,KT(ISPEC)/MAX(IT(ISPEC),1.D-150)
    4  CONTINUE
-c      RENORM=LOG(SQRT(myDASUM(NLIST-1,KT,1)))
-c      write(*,*) RENORM
-c      DO ISPEC=1,NLIST-1
-c        KT(ISPEC)=LOG(KT(ISPEC))+RENORM*NTOT(ISPEC)
-c      END DO
-      
-cC!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-c      close(13)
-c      stop
-cC!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       NEQ=JATOM+1
 C==================================
 C== End of species list parsing. ==
 C==================================
 C
-C Print diagnostic: neutral fractions.
-C
-c     write(*,*) 'Reciprocal Neutral Fractions'
-c     do 850 i=1,JATOM/7
-c       write(*,860) (jeff(iatom(j)),j=7*i-6,7*i)
-c850  continue
-c860  format(1p,7e10.3,a)
-c     if(JATOM.gt.7*(JATOM/7)) write(*,860)
-c    *  (jeff(iatom(j)),j=7*(JATOM/7)+1,JATOM)
-c      do 52 i=1,nlist-1
-c  52  write(*,'(I4,1P2E12.4,3I3,A6,0Pf8.2,8I4)')
-c     *  i,IT(i),KT(i),NCH(i),NTOT(i),NEL(i),SPLIST(i),AWT(i),
-c     *  (ZAT(j,i),NAT(j,i),j=1,NEL(i))
 C================================================================
 C== UPDATE MAIN ARRAYS                                         ==
 C================================================================
@@ -3201,7 +2753,6 @@ c
       ELSE
         PHyd=(PG-PE)*ABUND(1)
       END IF
-c      IF(PHyd.GT.0.0.AND.PHyd.LT.Pgas-Pelec) P(1)=PHyd
 c
 c Make an initial guess at the balance between C, O, CO, and H2O.
 c Constraints:
@@ -3228,21 +2779,6 @@ c
       PE0=PE
       NAMEMX=BLANK
       DELMAX=0.0D0
-c      COMPZ=0.0D0
-c      PZS=0.0D0
-c      DO 6 J=1,JATOM
-c      NN=INDSP(J)
-c      IF(IPR(NN).NE.2) GOTO 3
-c      NNP=INDX(3,ITAB(ZAT(1,NN)),1,1,1)
-c      COMPZ=COMPZ+ABUND(IATOM(J))
-c      IF(PE.EQ.0.0D0) PZS= PZS + P(J)
-c      IF(PE.GT.0.0D0) PZS= PZS + (1.0D0+IT(NNP)/PE)*P(J)
-c   6  CONTINUE
-c      do J=1,JATOM
-c        write(*,*) J,P(J),ABUND(IATOM(J)),SPLIST(INDSP(J))
-c      END DO
-c      write(*,*) JATOM+1,PE,'e-'
-c      stop
 C================================================================
 C== MAIN LOOP: FILL LINEARIZED COEFFICIENT MATRIX AND RHS VECTOR,
 C== AND SOLVE SYSTEM FOR PARTIAL PRESSURE CORRECTIONS.         ==
@@ -3268,19 +2804,14 @@ C================================================================
       FACTOR=1.D0
       NGIT=0
       RHSTOT=1.D99
-c      goto 2222
 C
 C Top of loop in which linearized equations are solved recursively.
 C
       KMAX=1
-c      PG=PG+myDASUM(NEQ-1,P)*(RENORM-1)
       DO J=1,NEQ-1
-c        P(J)=LOG(P(J))+RENORM
         P(J)=LOG(P(J))
       END DO
       PE=LOG(MAX(PE,1.D-150))
-c      open(unit=4,file='dump.bin',form='UNFORMATTED')
-c      write(4) NEQ
       REPEAT=0
    7  IF(NGIT.GE.MAXIT) THEN
         WRITE(*,208)
@@ -3292,39 +2823,11 @@ c      write(4) NEQ
       NGIT=NGIT+1
       P(NEQ)=PE
 
-c      do J=1,NEQ
-c        p(J)=exp(p(j))
-c      enddo
-c      write(*,*) (P(J),J=1,NEQ)
-c      CALL lnEOSFCN(NEQ,P,B,A,1,PG,NCH,NLIST,
-c     *     IATOM,INDSP,NAT,ZAT,NTOT,NEL,IAT,INDZAT,ABUND,KT,IT)
-c      CALL lnEOSFCN(NEQ,P,B,A,2,PG,NCH,NLIST,
-c     *     IATOM,INDSP,NAT,ZAT,NTOT,NEL,IAT,INDZAT,ABUND,KT,IT)
-c      do j=1,NEQ
-c        SCALE=P(J)
-c        P(J)=P(J)+0.1d0
-c        CALL lnEOSFCN(NEQ,P,BB,A,1,PG,NCH,NLIST,
-c     *    IATOM,INDSP,NAT,ZAT,NTOT,NEL,IAT,INDZAT,ABUND,KT,IT)
-c        write(*,*) J,SCALE
-c        write(*,'(40e10.3)')(a(i,j)-(bb(i)-b(i))/0.1d0
-c     *                            ,i=1,40)
-c        write(*,'(40e10.3)')(a(i,j),i=1,40)
-c        write(*,'(40e10.3)')((bb(i)-b(i))/0.1d0,i=1,40)
-c        write(*,'(40e10.3)')(bb(i),i=1,40)
-c        P(J)=SCALE
-c      enddo
-c      stop
-
       SCALE=10.D0
       IDIR=0
-c      do j=1,NEQ
-c        write(*,*) J,P(J),PG
-c      enddo
-c      write(*,*) B(1),PG
    9  CALL lnEOSFCN(NEQ,P,B,A,1,PG,NCH,NLIST,
      *              IATOM,INDSP,NAT,ZAT,NTOT,
      *              NEL,IAT,INDZAT,ABUND,KT,IT)
-c      write(*,*) SCALE,B(1),PG
       IF(B(1).GT.0.001D0*PG) THEN
         IF(IDIR.NE.-1) THEN
           SCALE=SQRT(SCALE)
@@ -3356,11 +2859,6 @@ C
       CALL lnEOSFCN(NEQ,P,B,A,2,PG,NCH,NLIST,
      *              IATOM,INDSP,NAT,ZAT,NTOT,
      *              NEL,IAT,INDZAT,ABUND,KT,IT)
-c      DO I=1,NEQ-1
-c      WRITE(*,FORMAT202) SPLIST(INDSP(I)),(A(I,J),J=1,NEQ-1),B(I)
-c      END DO
-c      stop
-C
 C================================================================
 C== NOW SOLVE THE LINEARIZED EQUATIONS (USING ROUTINE "LINEQ") ==
 C================================================================
@@ -3402,19 +2900,13 @@ C
 c
 c  Using LAPACK routine
 c
-c        open(unit=4,file='dump.bin',form='UNFORMATTED')
-c        write(4) NEQ
-c        write(4) ((A(i,j),i=1,NEQ),j=1,NEQ)
-c        write(4) (B(i),i=1,NEQ)
-c      write(4) ((A(i,j),i=1,NEQ),j=1,NEQ),(B(i),i=1,NEQ)
       CALL myDGESVX('E','N',NEQ,1,A,ELEDIM+1,AA,ELEDIM+1,IPIV,EQUED,
      *            RSCL,CSCL,B,ELEDIM+1,BB,ELEDIM+1,RCOND,FERR,BERR,
      *            WORK,IWORK,INFO)
       CALL xDCOPY(NEQ,BB,1,B,1)
-c      write(4) ((A(i,j),i=1,NEQ),j=1,NEQ),(B(i),i=1,NEQ)
 c
 c  The same thing using LINEQ2 or LINEQ and BLAS 2/3
-c      CALL LINEQ(NEQ,1,A,ELEDIM+1,IPIV,B,ELEDIM+1,INFO)
+c
       IF(INFO.NE.0) THEN
         IF(REPEAT.LT.2) THEN
           DO J=1,NEQ-1
@@ -3451,32 +2943,6 @@ c      CALL LINEQ(NEQ,1,A,ELEDIM+1,IPIV,B,ELEDIM+1,INFO)
         END IF
       END IF
       REPEAT=0
-c      IF(INFO.NE.0) THEN
-c        WRITE(*,*) 'lnEOS: LINEQ failed to solved for corrections to'
-c        WRITE(*,*) '     the partial pressures. Matrix is degenerate'
-c        WRITE(*,*) '     Temp=',TEMP,', Natom=',XNATOM,', Nelec=',XNELEC
-c        WRITE(*,*) '     Pg=',PG,', INFO=',INFO,
-c     *             ', Element: ',SPLIST(INDSP(INFO)),
-c     *             ', Iter=',NGIT,' EQUED=',EQUED
-cc        open(unit=4,file='dump.bin',form='UNFORMATTED')
-cc        write(4) NEQ,((A(i,j),i=1,NEQ),j=1,NEQ),(B(i),i=1,NEQ)
-cc        close(4)
-cc        write(1) 0
-cc        close(1)
-c        IF(PRINT) THEN
-cc          close(4)
-c          STOP
-c        END IF
-cc        DO J=1,NEQ
-cc          P(J)=MAX(P(J)+0.1D0,-115.d0)
-cc          write(*,*) J,P(J),B(J),B(J)*FACTOR
-cc        END DO
-c        write(*,*) P(INFO),B(INFO),B(INFO)*FACTOR
-c        P(INFO)=MAX(P(INFO)+0.1D0,-115.d0)
-c        PRINT=.TRUE.
-c        GO TO 9
-c      END IF
-c
 C=================================================================
 C== FINALLY, UPDATE THE PARTIAL PRESSURES FOR THE MAJOR SPECIES ==
 C== BY ADDING THE PRESSURE CORRECTIONS OBTAINED FOR EACH ATOM   ==
@@ -3485,7 +2951,6 @@ C=================================================================
       DELMAX=-200.0D0
       KMAX=1
       DO K=1,JATOM
-c        write(*,*) K,P(K),B(K)
         ISPEC=INDSP(K)
         DELP=ABS(B(K))
         IF(DELP.GT.DELMAX) THEN
@@ -3500,7 +2965,6 @@ c        write(*,*) K,P(K),B(K)
         DELMAX=DELPE
         KMAX=NEQ
       END IF
-c      write(*,*) KMAX,EXP(P(KMAX)),EXP(B(KMAX)),P(KMAX),B(KMAX)
 C
 C  Under-relaxation factor
 C
@@ -3532,17 +2996,14 @@ C================================================================
         PP(ISPEC)=EXP(PF)
         PTOT=PTOT+PP(ISPEC)
         PQ=PQ+NQ*PP(ISPEC)
-c        write(*,*) ISPEC,SPLIST(ISPEC),PP(ISPEC),PTOT,PG,NQ,PQ,EXP(PE)
       END DO
       DPTOT=DABS(PTOT-PG)/PG
       DPQ=DABS(EXP(PE)-PQ)/PG
-c      write(*,*) DELMAX,DPTOT,DPQ
       IF(PRINT) THEN
         WRITE(*,203) NGIT,NAMEMX,DELMAX,PE,B(KMAX),P(KMAX),
      *               PTOT/TEMP/KBOL,DPTOT,EXP(PE)/TEMP/KBOL,DPQ,FACTOR
  203    FORMAT(I10,2X,A8,1P,9E11.3)
       END IF
-c      write(*,*) NGIT,TOL,DPTOT,DELMAX,PTOT,PG
       IF((RHSTOT.GT.TOL.OR.DPTOT.GT.TOL.OR.DELMAX.GT.TOL)
      *   .AND.NGIT.LT.MAXIT) GO TO 7
 C
@@ -3551,7 +3012,6 @@ C
 C================================================================
 C== CALCULATE FINAL PARTIAL PRESSURES AFTER CONVERGENCE OBTAINED=
 C================================================================
-c      write(*,*) RHSTOT,DELMAX,DPTOT,DPQ,TOL
       PTOT=EXP(PE)
       PD=0.0D0
       PU=0.0D0
@@ -3569,7 +3029,6 @@ c      write(*,*) RHSTOT,DELMAX,DPTOT,DPQ,TOL
         PD=PD+NTOT(ISPEC)*PP(ISPEC)
         PQ=PQ+NQ*PP(ISPEC)
         PU=PU+AWT(ISPEC)*PP(ISPEC)
-c        write(*,*) ISPEC,SPLIST(ISPEC),PP(ISPEC),PTOT,PG,NQ,PQ,EXP(PE)
       END DO
       PE=EXP(PE)
       DO J=1,JATOM
@@ -3633,16 +3092,12 @@ C
         PFUNC(ISPEC)=1.
       END IF
       PNOTE=PNOTE+PP(ISPEC)
-c      write(*,'(I4,2E12.4,2X,A)') ISPEC,PNOTE,PP(ISPEC),SPLIST(ISPEC)
-c      write(*,*) ISPEC,SPLIST(ISPEC),PFUNC(ISPEC)
   36  CONTINUE
       XNPF(NLIST)=XNE
       PFUNC(NLIST)=1.0
       XTOTAL=PD/(TEMP*KBOL)
       XNA=PNOTE/(TEMP*KBOL)
-c      write(*,*) 'Pg,PD,PNOTE,PE,PNOTE+PE',Pg,PD,PTOT,PE,PNOTE+PE
       Pgnew=Ptot
-C
       RETURN
       END
 
@@ -4766,7 +4221,6 @@ C
      &              LOGTH*(COEF(5,J)+LOGTH*(COEF(6,J)+
      &              LOGTH*(COEF(7,J))))))
      &             -TH*COEF(1,J)
-C    &             +1.0D0
       EQK =10.D0**EQK
 C
 C Just for the reference, the relation between partition functions
@@ -4824,26 +4278,6 @@ C
      &         1.5D0*RATIOM+QPRD-PART-COEF(1,J)*5039.7475D0/T
         EQK=10.D0**EQK_ST
       endif
-c      write(*,'(''cMOLCON:'',F10.1,A9,5G13.6)') T,SPNAME,EQK,
-c     &                             PART,BARKLEM
-c      if(spname.eq.'NO') write(*,'(a,f10.2,1p3e16.8)')
-c     &   spname,t , eqk, eqk_st, part
-c      if(spname.eq.'C3') write(*,'(a,f10.2,1p6e16.8)')
-c     &   spname,t , eqk, eqk_st, part, TH, LOGTH, TLIM
-c      if(spname.eq.'H3O+') write(*,'(a,f10.2,1p3e16.8)')
-c     &   spname,t , eqk, eqk_st, part
-c      if(spname.eq.'SiS') write(*,'(a,f10.2,1p3e16.8)')
-c     &   spname,t , eqk, eqk_st, part
-c      if(spname.eq.'NO') write(*,'(a,f10.2,1p3e16.8,L)')
-c     &   spname,t , eqk, eqk_st, part,barklem
-c      if(spname.eq.'CH') write(*,'(a,f10.2,1p5e16.8,L)')
-c     &   spname,t , eqk, eqk_st, part,COEF(1,J),Kp_spln,barklem
-c      if(spname.eq.'CH-') write(*,'(a,f10.2,1p5e16.8,L)')
-c     &   spname,t , eqk, eqk_st, part,COEF(1,J),Kp_spln,barklem
-c      if(spname.eq.'CH-') write(*,'(a,f10.2,1p3e14.6,i3,1p2e14.6,L)')
-c     &   spname,t , eqk, eqk_st, part,NTOT,QPRD,RATIOM,BARKLEM
-c      if(spname.eq.'H2') write(*,'(a,f10.2,1p3e14.6,i3,1p2e14.6)')
-c     &   spname,t , eqk, eqk_st, part,NTOT,Kp_spln,COEF(1,J)*5040.D0/T
 c
 c Don't use EQK_ST based on partition function - use direct fit to EQK.
 c
@@ -5792,7 +5226,6 @@ C
       DO 2 IONN=1,NION2
       Z=IONN
       POTLO(IONN)=POTLOW*Z
-C      write(*,*) IP(IONN)-POTLO(IONN)
       N=N+1
       NNN100=NNNPFN(6,N)/100
       IP(IONN)=FLOAT(NNN100)/1000.
@@ -5825,7 +5258,6 @@ C      write(*,*) IP(IONN)-POTLO(IONN)
           IF(DT.LT.0.AND.KSCALE.LE.1.AND.KP1.EQ.INT(P2+.5)) PMIN=KP1
         END IF
         PART(IONN)=MAX(PMIN,P1+(P2-P1)*DT)
-c        write(*,*) (NNNPFN(I,N),I=1,6),PART(IONN),IP(IONN),G,IONN
         IF(G.EQ.0.0.OR.POTLO(IONN).LT.0.1.OR.TT.LT.T2000*4.0) GO TO 2
         IF(TT.GT.(T2000*11.)) TV=(T2000*11.)*8.6171E-5
         D1=0.1/TV

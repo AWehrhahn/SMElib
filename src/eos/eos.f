@@ -38,8 +38,7 @@ c     *                         environment,ELESIZ)
       real a(IONSIZ)
 c      character*(*) environment
       double precision b(IONSIZ)
-      INCLUDE 'DEFAULT.EOS.current'
-c      INCLUDE 'DEFAULT.EOS'
+      INCLUDE 'DEFAULT.EOS'
 C
       eqcount=0
       ionmax=0
@@ -203,8 +202,7 @@ C not a problem.
 C
       integer splmax
       character*(SPCHAR) chname
-      INCLUDE 'DEFAULT.EOS.current'
-c      INCLUDE 'DEFAULT.EOS'
+      INCLUDE 'DEFAULT.EOS'
 C
 C Determine maximum allowed number of species, based on sizes of arrays
 C  defined locally (using SPLSIZ) and passed by argument (using spldim).

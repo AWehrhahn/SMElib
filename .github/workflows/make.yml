@@ -21,6 +21,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           # Which type of bump to use when none explicitly provided (default: `patch`).
           # default_bump: # optional, default is patch
+          fetch_all_tags: true
 
       - name: Create Release
         id: create_release

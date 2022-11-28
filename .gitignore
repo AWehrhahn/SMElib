@@ -90,3 +90,4 @@ origin/
 **/.deps/
 cython/smelib.egg-info/
 cython/smelib.cpp
+.version

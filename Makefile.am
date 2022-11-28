@@ -26,9 +26,13 @@ dist_pkgdata_DATA = src/data/bpo_self.grid.INTEL \
 	src/data/stehle_long.dat.INTEL \
 	src/data/vcsbalmer.dat
 
-BUILT_SOURCES = src/sme/platform.h old_link
+BUILT_SOURCES = src/sme/platform.h old_link $(top_srcdir)/.version
 
 CLEANFILES = src/sme/platform.h
+
+EXTRA_DIST = $(top_srcdir)/.version
+
+
 
 PLATFORM = @TARGET@
 MACHINE = @TARGET_CPU@
@@ -52,3 +56,9 @@ flib_source:
 
 flib_target:
 	echo $(@OUTPUT_DIR@)/libgfortran@EXTENSION@
+
+$(top_srcdir)/.version:
+	echo '$(VERSION)' > $@-t
+	mv $@-t $@
+dist-hook:
+	echo '$(VERSION)' > $(distdir)/.tarball-version

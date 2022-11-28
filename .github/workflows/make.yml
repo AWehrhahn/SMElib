@@ -55,7 +55,7 @@ jobs:
 
     steps:
       - run: yum install -y zip python3-pip python3-devel
-      - run: git clone https://github.com/AWehrhahn/SMElib .
+      - run: git clone --depth=100 https://github.com/AWehrhahn/SMElib .
       - name: Install F2C & Compile libf2c.a
         if: matrix.compiler == 'f2c'
         run: |

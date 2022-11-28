@@ -17,7 +17,7 @@ jobs:
         id: tag_release
         # You may pin to the exact commit or the version.
         # uses: mathieudutour/github-tag-action@1bab3ab0712cafa42b54c512453487b89bb06504
-        uses: mathieudutour/github-tag-action@v5
+        uses: mathieudutour/github-tag-action@v6.1
         with:
           # Required for permission to tag the repo.
           github_token: ${{ secrets.GITHUB_TOKEN }}

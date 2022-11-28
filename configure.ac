@@ -1,5 +1,5 @@
 # Metadata
-AC_INIT([libsme], [m4_esyscmd([./git-version-gen .tarball-version])], [nikolai.piskunov@physics.uu.se])
+AC_INIT([libsme], [6.03], [nikolai.piskunov@physics.uu.se])
 AC_CANONICAL_TARGET
 
 # Use Automake

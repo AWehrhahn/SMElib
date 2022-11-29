@@ -146,10 +146,17 @@ jobs:
           #            config_flags: --build=x86_64-pc-linux-gnu --host=x86_64-w64-mingw32
           #            outputs: bin share
           - name: macos-gfortran
-            runs_on: macos-latest
+            runs_on: macos-11
             packages: automake libtool
             cxx: gcc-9
             f77: gfortran-9
+            outputs: lib share
+            makefile: Makefile.am
+          - name: macos-12-gfortran
+            runs_on: macos-12
+            packages: automake libtool
+            cxx: gcc-11
+            f77: gfortran-11
             outputs: lib share
             makefile: Makefile.am
           # F2C also fails on MacOSX, because the F2C library is difficult to install

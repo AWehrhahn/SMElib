@@ -181,7 +181,7 @@ jobs:
         run: sudo apt-get install -y ${{ matrix.packages }}
 
       - name: Install packages
-        if: matrix.runs_on == 'macos-latest'
+        if: matrix.runs_on == 'macos-11' || matrix.runs_on == 'macos-12'
         run: brew tap ${{ matrix.taps }} && brew install ${{ matrix.packages }}
 
       - name: Install F2C
@@ -219,7 +219,7 @@ jobs:
         run: make install
 
       - name: Fix dylib names
-        if: matrix.name == 'macos-gfortran'
+        if: matrix.runs_on == 'macos-11' || matrix.runs_on == 'macos-12'
         run: |
           cd lib
           install_name_tool -id $PWD/libsme.dylib libsme.dylib
@@ -234,7 +234,7 @@ jobs:
           cp -v $(readlink -f $(make -s flib_source)) $(make -s flib_target)
 
       - name: Copy libgfortran
-        if: matrix.name == 'macos-gfortran'
+        if: matrix.runs_on == 'macos-11' || matrix.runs_on == 'macos-12'
         run: |
           make -s flib_source
           make -s flib_target
